@@ -44,4 +44,15 @@ Convierte `Data/Local/<Eng|Por|Spn>/Item_<idioma>.bmd` a `Data/Items/*.json` y c
 completa desde el grupo. Los items con slots de equipo que este cliente no tiene (12, 13, 14...) quedan sin
 slot (no equipables) y se listan en `MuError.log`.
 
+### Modelos de los items custom
+
+```
+Main.exe --muemu-import-models="<cliente MuEmu>\MAIN_INFO\Custom"
+```
+
+Lee las tablas de GetMainInfo con modelo (`CustomItem`, `CustomJewel` seccion 0, `CustomPet` y `CustomFlag`) y
+agrega o actualiza las entradas en `Data/Items/Models/Group*.json`, con las mismas carpetas que Main.dll:
+`Data/Player` para los sets (grupos 7 a 11), `Data/Custom/CustomFlag` para las banderas y `Data/Item` para el
+resto. Sin argumento usa `MAIN_INFO/Custom` junto a `Main.exe`.
+
 Punto de enganche en upstream: `WinMain` en `src/source/App/Platform/Windows/Winmain.cpp`.
