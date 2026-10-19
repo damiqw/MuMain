@@ -245,6 +245,54 @@ bool ImportModels(const std::filesystem::path& customFolder)
         changedGroups.insert(group);
     }
 
+    // CustomItemPosition.txt: ItemIndex TranslationX TranslationY RotationX RotationY RotationZ Scale ScaleDrop.
+    // Como Main.dll: la traslacion se suma a la posicion, las rotaciones reemplazan las del item y Scale
+    // multiplica la escala de inventario; ScaleDrop (si no es 0) es la escala en el piso.
+    int positions = 0;
+    std::ifstream positionStream(customFolder / "CustomItemPosition.txt");
+    for (std::string line; std::getline(positionStream, line);)
+    {
+        const auto comment = line.find("//");
+        if (comment != std::string::npos)
+        {
+            line.erase(comment);
+        }
+
+        std::istringstream tokens(line);
+        int itemIndex = 0;
+        double tx = 0, ty = 0, rx = 0, ry = 0, rz = 0, scale = 0, scaleDrop = 0;
+        if (!(tokens >> itemIndex >> tx >> ty >> rx >> ry >> rz >> scale))
+        {
+            continue;
+        }
+        tokens >> scaleDrop;
+
+        const int group = itemIndex / MaxItemIndex;
+        const int number = itemIndex % MaxItemIndex;
+        auto model = std::find_if(models.begin(), models.end(), [&](const Data::Items::ItemModelDefinition& m)
+                                  { return m.group == group && m.number == number; });
+        if (model == models.end())
+        {
+            MU_LOG_WARN(mu::log::Get("data"), "MuEmu model import: position of item ({},{}) without model, skipped", group,
+                        number);
+            continue;
+        }
+
+        model->inventory.offset = {tx, ty, 0.0};
+        model->inventory.rotation = {rx, ry, rz};
+        if (scale > 0)
+        {
+            model->inventory.scale = Data::Items::ItemInventoryDisplay::DefaultScale * scale;
+        }
+        if (scaleDrop > 0)
+        {
+            model->ground.scale = scaleDrop;
+        }
+
+        changedGroups.insert(group);
+        ++positions;
+    }
+
     for (const int group : changedGroups)
     {
         const std::filesystem::path file =
@@ -260,8 +308,8 @@ bool ImportModels(const std::filesystem::path& customFolder)
     }
 
     MU_LOG_INFO(mu::log::Get("data"),
-                "MuEmu model import: {} custom models ({} added, {} updated, {} without file) in {} groups",
-                entries.size(), added, updated, missing, changedGroups.size());
+                "MuEmu model import: {} custom models ({} added, {} updated, {} without file), {} positions, in {} groups",
+                entries.size(), added, updated, missing, positions, changedGroups.size());
     return true;
 }
 

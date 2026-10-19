@@ -55,6 +55,9 @@ agrega o actualiza las entradas en `Data/Items/Models/Group*.json`, con las mism
 `Data/Player` para los sets (grupos 7 a 11), `Data/Custom/CustomFlag` para las banderas y `Data/Item` para el
 resto. Sin argumento usa `MAIN_INFO/Custom` junto a `Main.exe`.
 
+Tambien aplica `CustomItemPosition.txt` (traslacion, rotacion y escala de inventario; escala en el piso)
+sobre los modelos que existan, como lo hace Main.dll.
+
 Punto de enganche en upstream: `WinMain` en `src/source/App/Platform/Windows/Winmain.cpp`.
 
 ## Opciones visuales
