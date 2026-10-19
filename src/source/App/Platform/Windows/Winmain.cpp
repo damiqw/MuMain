@@ -10,6 +10,7 @@
 #include "Core/Text/Utf8.h"
 #include "App/Platform/DiagnosticFrameCaptureSchedule.h"
 #include "App/Platform/DiagnosticFrameCaptureWriter.h"
+#include "MuEmu/MuEmuTools.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_EXTRA_LEAN
@@ -1984,6 +1985,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int nC
 #endif
 {
     InitializeWorkingDirectoryAndLog();
+    if (MuEmu::RunCommandLineTool(szCmdLine)) // Herramientas MuEmu (fork): se ejecutan y cierran
+    {
+        return 0;
+    }
+
     // Installed before SDL starts so init failures are captured; every early
     // return restores it, and ShutdownRuntime() releases it before mu::log closes.
     std::optional<Core::Log::Sdl::ScopedLogOutput> sdlLogOutput;

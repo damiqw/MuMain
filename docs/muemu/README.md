@@ -30,3 +30,18 @@ DecryptKeyFile = Data\Dec2.dat
 Sin la sección `[MuEmu]` (o con `Enabled = 0`) se usa el cifrado original de OpenMU.
 
 Punto de enganche en upstream: `ClientLibrary/ConnectionManager.cs` (`ConnectInner`).
+
+## Items del servidor (`src/source/MuEmu/MuEmuTools.cpp`)
+
+Este cliente no lee `Item.bmd`: usa `Data/Items/Group*.json`. Para usar los items del servidor
+(incluidos los custom), copiar la carpeta `Data` del cliente MuEmu sobre la de este cliente y correr:
+
+```
+Main.exe --muemu-import-items
+```
+
+Convierte `Data/Local/<Eng|Por|Spn>/Item_<idioma>.bmd` a `Data/Items/*.json` y cierra. El tipo de arma se
+completa desde el grupo. Los items con slots de equipo que este cliente no tiene (12, 13, 14...) quedan sin
+slot (no equipables) y se listan en `MuError.log`.
+
+Punto de enganche en upstream: `WinMain` en `src/source/App/Platform/Windows/Winmain.cpp`.
