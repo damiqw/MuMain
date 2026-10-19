@@ -1045,6 +1045,7 @@ int CSItemOption::RenderSetOptionListInItem(const ITEM* ip, int TextNum, bool bI
     mu_swprintf(TextList[TNum], L"\n"); TNum++;
 
 
+    bool setFound = false;
     for (int i = 0; i < m_SetSearchResultCount; i++)
     {
         const auto& set = m_SetSearchResult[i];
@@ -1052,8 +1053,45 @@ int CSItemOption::RenderSetOptionListInItem(const ITEM* ip, int TextNum, bool bI
         {
             // Set Found.
             TNum = RenderSetOptionList(set, TNum, bIsEquippedItem, true);
+            setFound = true;
             break;
         }
+    }
+
+    if (!setFound)
+    {
+        // MuEmu (fork): como el cliente original, un set que no esta activo (item en el inventario o una sola
+        // pieza equipada) muestra todas sus opciones, inactivas.
+        SET_SEARCH_RESULT_OPT set{};
+        set.SetNumber = m_bySelectedItemOption;
+        set.CompleteSetItemCount = setOption.bySetItemCount;
+        set.ItemCount = 0;
+        set.SetTypeIndex = static_cast<std::uint8_t>(ip->AncientDiscriminator - 1);
+        wcscpy(set.SetName, setOption.strSetName);
+
+        const int firstClass = gCharacterManager.GetBaseClass(Hero->Class);
+        const int secondClass = gCharacterManager.IsSecondClass(Hero->Class);
+        const auto requireClass = isClassRequirementFulfilled(setOption, firstClass, secondClass);
+        const auto standardOptionCount = std::min<int>(set.CompleteSetItemCount - 1, MAX_ITEM_SET_STANDARD_OPTION_COUNT);
+        for (int o = 0; o < standardOptionCount; ++o)
+        {
+            for (int n = 0; n < MAX_ITEM_SET_STANDARD_OPTION_PER_ITEM_COUNT; ++n)
+            {
+                TryAddSetOption(setOption.byStandardOption[o][n], setOption.byStandardOptionValue[o][n], o, set, setOption, false, false, false, requireClass, firstClass, secondClass);
+            }
+        }
+
+        for (int o = 0; o < MAX_ITEM_SET_EXT_OPTION_COUNT; ++o)
+        {
+            TryAddSetOption(setOption.byExtOption[o], setOption.byExtOptionValue[o], 0, set, setOption, false, false, true, requireClass, firstClass, secondClass);
+        }
+
+        for (int o = 0; o < MAX_ITEM_SET_FULL_OPTION_COUNT; ++o)
+        {
+            TryAddSetOption(setOption.byFullOption[o], setOption.byFullOptionValue[o], 255, set, setOption, false, true, false, requireClass, firstClass, secondClass);
+        }
+
+        TNum = RenderSetOptionList(set, TNum, bIsEquippedItem, true);
     }
 
     mu_swprintf(TextList[TNum], L"\n"); TNum++;
