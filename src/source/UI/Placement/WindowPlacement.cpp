@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "Core/Utilities/FrameProfiler.h"
 
 #include "UI/Placement/WindowPlacement.h"
@@ -305,6 +306,37 @@ static bool FitRegions(Rml::ElementDocument* workspace, const UI::Scaling::Trans
     return changed;
 }
 
+// MuEmu (fork): con [MuEmu] DockRightMiddle = 1 (por defecto), las ventanas de la derecha (inventario,
+// personaje, MU Helper...) quedan centradas en vertical en vez de apoyarse sobre el HUD.
+// True cuando movio una region, para volver a calcular el layout.
+static bool CenterDockRegions(Rml::ElementDocument* workspace)
+{
+    static const bool centered = MuEmu::GetConfigInt("DockRightMiddle", 1) != 0;
+    if (!centered)
+        return false;
+
+    bool changed = false;
+    Rml::ElementList regions;
+    workspace->QuerySelectorAll(regions, ".region.dock-right");
+    for (Rml::Element* region : regions)
+    {
+        Rml::Element* parent = region->GetParentNode();
+        if (parent == nullptr)
+            continue;
+        const float available = parent->GetBox().GetSize(Rml::BoxArea::Content).y;
+        const float height = region->GetBox().GetSize(Rml::BoxArea::Border).y;
+        if (available <= 0.f || height <= 0.f)
+            continue;
+        const float top = std::max(0.f, (available - height) * 0.5f);
+        if (std::abs(region->GetOffsetTop() - top) < 0.5f)
+            continue;
+        region->SetProperty("bottom", "auto");
+        region->SetProperty(Rml::PropertyId::Top, Rml::Property(top, Rml::Unit::PX));
+        changed = true;
+    }
+    return changed;
+}
+
 static Rml::ElementList PrepareSlots(Rml::ElementDocument* workspace, const UI::Scaling::Transform& dock)
 {
     Rml::ElementList slots;
@@ -506,6 +538,11 @@ static void ArrangeNow()
             FRAME_PROFILE(UILayout);
             workspace->UpdateDocument();
         }
+    }
+    if (CenterDockRegions(workspace))
+    {
+        FRAME_PROFILE(UILayout);
+        workspace->UpdateDocument();
     }
     UpdateUncoveredArea(workspace, slots);
     PlaceSlots(slots, dock);
