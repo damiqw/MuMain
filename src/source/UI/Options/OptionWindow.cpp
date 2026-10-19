@@ -118,7 +118,7 @@ const std::vector<int>& UI::Options::UIScalePercentChoices()
 {
     // Ascending, spanning GameConfig's clamp (CfgMinUIScalePercent..CfgMaxUIScalePercent); 100 (the
     // default) is one of them so "back to normal" is a single click.
-    static const std::vector<int> choices = {75, 80, 90, 100, 125, 150};
+    static const std::vector<int> choices = {50, 60, 67, 75, 80, 90, 100, 125, 150}; // MuEmu (fork): desde 50%
     return choices;
 }
 

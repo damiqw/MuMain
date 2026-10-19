@@ -56,3 +56,18 @@ agrega o actualiza las entradas en `Data/Items/Models/Group*.json`, con las mism
 resto. Sin argumento usa `MAIN_INFO/Custom` junto a `Main.exe`.
 
 Punto de enganche en upstream: `WinMain` en `src/source/App/Platform/Windows/Winmain.cpp`.
+
+## Opciones visuales
+
+En `config.ini`:
+
+```ini
+[MuEmu]
+; FOV vertical (grados) de la seleccion de personaje. 0 = el de upstream (~30). Los clientes MuEmu usan 35 o mas.
+CharacterSceneFov = 45
+
+[UI]
+; Escala de la interfaz: el fork permite desde 50% (upstream: 75%). 67% se parece a la proporcion de los
+; clientes MuEmu en 1080p.
+UIScalePercent = 67
+```

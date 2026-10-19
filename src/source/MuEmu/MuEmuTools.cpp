@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <cctype>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -287,6 +288,44 @@ std::filesystem::path GetFlagPath(const char* commandLine, const char* flag, con
     return std::filesystem::path(value);
 }
 } // namespace
+
+int MuEmu::GetConfigInt(const char* key, int defaultValue)
+{
+    std::ifstream stream("config.ini");
+    bool inSection = false;
+    for (std::string line; std::getline(stream, line);)
+    {
+        const auto first = line.find_first_not_of(" 	");
+        if (first == std::string::npos || line[first] == ';' || line[first] == '#')
+        {
+            continue;
+        }
+
+        if (line[first] == '[')
+        {
+            inSection = line.compare(first, 7, "[MuEmu]") == 0;
+            continue;
+        }
+
+        const auto separator = line.find('=');
+        if (!inSection || separator == std::string::npos)
+        {
+            continue;
+        }
+
+        std::string name = line.substr(first, separator - first);
+        name.erase(name.find_last_not_of(" 	") + 1);
+        const std::string wanted = key;
+        if (name.size() == wanted.size() &&
+            std::equal(name.begin(), name.end(), wanted.begin(),
+                       [](char a, char b) { return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b)); }))
+        {
+            return std::atoi(line.c_str() + separator + 1);
+        }
+    }
+
+    return defaultValue;
+}
 
 bool MuEmu::RunCommandLineTool(const char* commandLine)
 {

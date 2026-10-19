@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "MuEmu/MuEmuTools.h"
+
 /// Convert horizontal FOV (degrees) to vertical FOV (degrees) for gluPerspective.
 /// hFovDeg is the horizontal FOV at the 4:3 reference aspect. The `aspectRatio`
 /// argument is intentionally ignored — we want vFov tied to the reference
@@ -240,6 +242,13 @@ struct CameraConfig
         config.objectCullRange = 4100.0f;
         config.fogStart = config.farPlane * 1.0f;
         config.fogEnd = config.farPlane * 1.25f;
+
+        // MuEmu (fork): [MuEmu] CharacterSceneFov = FOV vertical en grados (los clientes MuEmu usan 35 o mas).
+        if (const int characterSceneFov = MuEmu::GetConfigInt("CharacterSceneFov", 0); characterSceneFov > 0)
+        {
+            config.hFov = VFovToHFov(static_cast<float>(characterSceneFov), 4.0f / 3.0f);
+        }
+
         return config;
     }
 };

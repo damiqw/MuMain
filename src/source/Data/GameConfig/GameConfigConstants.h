@@ -125,7 +125,8 @@ namespace CfgDefaults
 
     // Bounds GameConfig clamps to, on load and on set. Below 75% text gets too small to read;
     // above 150% a docked panel no longer fits a small window.
-    inline constexpr int CfgMinUIScalePercent = 75;
+    // MuEmu (fork): 50% para acercarse a la proporcion de la interfaz de los clientes MuEmu.
+    inline constexpr int CfgMinUIScalePercent = 50;
     inline constexpr int CfgMaxUIScalePercent = 150;
 
     inline constexpr bool CfgDefaultEnableAnimationTaskPool = false;
