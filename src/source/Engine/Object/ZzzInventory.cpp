@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "Data/GameConfig/GameConfig.h"
 #include "UI/Placement/WindowPlacement.h"
 #include "UI/Core/UIManager.h"
 #include "Render/Textures/ZzzOpenglUtil.h"
@@ -6583,6 +6584,10 @@ void RenderObjectScreen(int Type, int ItemLevel, int excellentFlags, int ancient
     int ScreenPos_X = 0, ScreenPos_Y = 0;
     CameraProjection::WorldToScreen(g_Camera, Position, &ScreenPos_X, &ScreenPos_Y);
 #endif //PBG_ADD_ITEMRESIZE
+
+    // MuEmu (fork): el modelo se dibuja a una distancia fija de la camara, asi que no seguia la escala de la
+    // interfaz: con UIScalePercent < 100 las celdas se achicaban y los items no.
+    Scale *= static_cast<float>(GameConfig::GetInstance().GetUIScalePercent()) / 100.0f;
 
     o->Scale = Scale;
 
