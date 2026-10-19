@@ -2,6 +2,8 @@
     INCLUDE.
 +++++++++++++++++++++++++++++++++++++*/
 #include "stdafx.h"
+#include "Core/Text/Utf8.h"
+#include "Core/Utilities/Log/MuLogger.h"
 #include "Render/Textures/ZzzOpenglUtil.h"
 #include "Engine/Object/ZzzInfomation.h"
 #include "Render/Models/ZzzBMD.h"
@@ -109,8 +111,8 @@ bool CSItemOption::OpenItemSetType(const wchar_t* filename)
 
     if (checksum != GenerateCheckSum2(buffer.data(), static_cast<int>(buffer.size()), 0xE5F1))
     {
-        ReportFileIssue(filename, L"File corrupted.");
-        return false;
+        // MuEmu (fork): las herramientas de los servidores MuEmu guardan estos archivos con otro checksum.
+        mu::log::Get("data")->warn("{}: checksum mismatch, loaded anyway", Core::Text::ToUtf8(filename));
     }
 
     auto* pSeek = buffer.data();
@@ -134,6 +136,13 @@ bool CSItemOption::OpenItemSetOption(const wchar_t* filename)
     }
 
     const std::size_t entrySize = sizeof(ITEM_SET_OPTION_FILE);
+
+    // MuEmu (fork): los clientes MuEmu pueden traer mas sets (p. ej. 256); se leen los primeros MAX_SET_OPTION.
+    std::fseek(file.get(), 0, SEEK_END);
+    const long fileSize = std::ftell(file.get());
+    std::fseek(file.get(), 0, SEEK_SET);
+    const std::size_t fileEntries = (fileSize > 4) ? static_cast<std::size_t>(fileSize - 4) / entrySize : 0;
+
     std::vector<std::uint8_t> buffer(entrySize * MAX_SET_OPTION);
     if (std::fread(buffer.data(), buffer.size(), 1, file.get()) != 1)
     {
@@ -141,17 +150,25 @@ bool CSItemOption::OpenItemSetOption(const wchar_t* filename)
         return false;
     }
 
-    std::uint32_t checksum{};
-    if (std::fread(&checksum, sizeof(checksum), 1, file.get()) != 1)
+    if (fileEntries == MAX_SET_OPTION)
     {
-        ReportFileIssue(filename, L"Failed to read checksum.");
-        return false;
-    }
+        std::uint32_t checksum{};
+        if (std::fread(&checksum, sizeof(checksum), 1, file.get()) != 1)
+        {
+            ReportFileIssue(filename, L"Failed to read checksum.");
+            return false;
+        }
 
-    if (checksum != GenerateCheckSum2(buffer.data(), static_cast<int>(buffer.size()), 0xA2F1))
+        if (checksum != GenerateCheckSum2(buffer.data(), static_cast<int>(buffer.size()), 0xA2F1))
+        {
+            // MuEmu (fork): las herramientas de los servidores MuEmu guardan estos archivos con otro checksum.
+            mu::log::Get("data")->warn("{}: checksum mismatch, loaded anyway", Core::Text::ToUtf8(filename));
+        }
+    }
+    else
     {
-        ReportFileIssue(filename, L"File corrupted.");
-        return false;
+        mu::log::Get("data")->warn("{}: {} sets in the file, the first {} are loaded", Core::Text::ToUtf8(filename),
+                                   fileEntries, static_cast<int>(MAX_SET_OPTION));
     }
 
     auto* pSeek = buffer.data();
