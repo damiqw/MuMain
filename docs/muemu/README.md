@@ -79,3 +79,9 @@ DockRightMiddle = 1
 ; clientes MuEmu en 1080p.
 UIScalePercent = 67
 ```
+
+## Tooltips custom (`src/source/MuEmu/MuEmuTooltip.cpp`)
+
+Copiar `CustomItemToolTip.txt` y `CustomItemTooltipText.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/`. El tooltip
+del item muestra al final el titulo y las lineas (hasta 15) con sus colores, como Main.dll. Los colores 1 a 13
+son los de Webzen; 14 es blanco y 15 a 24 se aproximan a los del cliente.

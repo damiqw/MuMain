@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "MuEmu/MuEmuTooltip.h"
 #include "Data/GameConfig/GameConfig.h"
 #include "UI/Placement/WindowPlacement.h"
 #include "UI/Core/UIManager.h"
@@ -5207,6 +5208,8 @@ static void RenderItemInfo(const UI::Scaling::Transform& screen, int sx, int sy,
         TextNum = g_csItemOption.RenderSetOptionListInItem(ip, TextNum, bThisisEquippedItem);
 
         TextNum = g_SocketItemMgr.AttachToolTipForSocketItem(ip, TextNum);
+
+        TextNum = MuEmu::Tooltip::Append(ip->Type, TextNum); // MuEmu (fork): tooltips custom del servidor
 
         SIZE TextSize = { 0, 0 };
         int	Height = 0;
