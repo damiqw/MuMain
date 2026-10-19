@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuHealthBar.h"
 #include "App/Control/ControlTaps.h"
 #include "Core/Utilities/Log/MuLogger.h"
 #include "UI/Chat/Chat.h"
@@ -13367,6 +13368,9 @@ static void ProcessPacket(const BYTE* ReceiveBuffer, int32_t Size)
 
         switch (subcode)
         {
+        case 0xE2: // MuEmu (fork): barras de vida del servidor
+            MuEmu::HealthBar::Receive(ReceiveBuffer, Size);
+            break;
         case 0x00: // receive characters list
             ReceiveCharacterListExtended(ReceiveBuffer);
             break;

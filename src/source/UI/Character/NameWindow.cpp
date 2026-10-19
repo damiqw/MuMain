@@ -20,6 +20,7 @@
 #include "World/GameMaps/GMHellas.h"
 #include "World/GameMaps/GM_Kanturu_3rd.h"
 #include "Render/Text/CUIRenderText.h"
+#include "MuEmu/MuEmuHealthBar.h"
 
 // DevEditor forward declarations (must be at global scope)
 #ifdef _EDITOR
@@ -208,6 +209,7 @@ void mu::ui::window::CNameWindow::RenderLabels()
     matchEvent::RenderMatchTimes();
     UI::Chat::RenderBooleans();
     RenderMonsterHealthBars();
+    MuEmu::HealthBar::Render(); // MuEmu (fork)
     DrawPersonalShopTitleImp();
     DisableAlphaBlend();
 }

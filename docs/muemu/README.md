@@ -65,6 +65,9 @@ En `config.ini`:
 [MuEmu]
 ; FOV vertical (grados) de la seleccion de personaje. 0 = el de upstream (~30). Los clientes MuEmu usan 35 o mas.
 CharacterSceneFov = 45
+; Barras de vida del servidor (paquete F3 E2), como Main.dll: monstruos con nombre y jugador seleccionado.
+MonsterHpBar = 1
+UserHpBar = 1
 
 [UI]
 ; Escala de la interfaz: el fork permite desde 50% (upstream: 75%). 67% se parece a la proporcion de los
