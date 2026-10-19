@@ -199,6 +199,7 @@ bool ImportModels(const std::filesystem::path& customFolder)
     std::set<int> changedGroups;
     int added = 0;
     int updated = 0;
+    int missing = 0;
     for (const CustomModelEntry& entry : entries)
     {
         const int group = entry.itemIndex / MaxItemIndex;
@@ -215,6 +216,15 @@ bool ImportModels(const std::filesystem::path& customFolder)
         definition.number = number;
         definition.file = "Data/" + folder + "/" + entry.modelName + ".bmd";
         definition.textureFolders = {folder};
+
+        // Un modelo que no esta en la Data no se registra: el item conserva el modelo que ya tenia (si tenia).
+        if (!std::filesystem::exists(definition.file))
+        {
+            MU_LOG_WARN(mu::log::Get("data"), "MuEmu model import: item ({},{}) model {} not found, skipped", group, number,
+                        definition.file);
+            ++missing;
+            continue;
+        }
 
         auto existing = std::find_if(models.begin(), models.end(), [&](const Data::Items::ItemModelDefinition& m)
                                      { return m.group == group && m.number == number; });
@@ -248,8 +258,9 @@ bool ImportModels(const std::filesystem::path& customFolder)
         output << Data::Items::WriteItemModelGroupJson(group, models);
     }
 
-    MU_LOG_INFO(mu::log::Get("data"), "MuEmu model import: {} custom models ({} added, {} updated) in {} groups",
-                entries.size(), added, updated, changedGroups.size());
+    MU_LOG_INFO(mu::log::Get("data"),
+                "MuEmu model import: {} custom models ({} added, {} updated, {} without file) in {} groups",
+                entries.size(), added, updated, missing, changedGroups.size());
     return true;
 }
 
