@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "UIMapName.h"
+#include "Core/Utilities/Log/MuLogger.h"
 #include "World/MapInfra/MapManager.h"
 #include "Render/Textures/ZzzOpenglUtil.h"
 #include "Render/Textures/ZzzTexture.h"
@@ -156,7 +157,17 @@ void CUIMapName::ShowMapName()
         ::wcscpy(szImgPath, m_mapImgPath[gMapManager.WorldActive].data());
 
         DeleteBitmap(BITMAP_INTERFACE_EX + 45);
-        LoadBitmap(szImgPath, BITMAP_INTERFACE_EX + 45);
+
+        // MuEmu (fork): los mapas sin imagen de nombre (p. ej. mapas custom del servidor) no muestran el
+        // cartel de error: solo se omite la imagen.
+        if (m_mapImgPath[gMapManager.WorldActive].empty() ||
+            !LoadBitmap(szImgPath, BITMAP_INTERFACE_EX + 45, GL_NEAREST, GL_CLAMP_TO_EDGE, false))
+        {
+            mu::log::Get("ui")->info("Map {} has no map name image", static_cast<int>(gMapManager.WorldActive));
+            m_nOldWorld = gMapManager.WorldActive;
+            m_eState = HIDE;
+            return;
+        }
 
         m_nOldWorld = gMapManager.WorldActive;
 

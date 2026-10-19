@@ -707,8 +707,8 @@ bool IsTerrainHeightExtMap(int iWorld)
 
 bool OpenTerrainHeight(wchar_t* filename)
 {
-    const int Index = 1080;
-    const int Size = 256 * 256 + Index;
+    int Index = 1080;
+    int Size = 256 * 256 + Index;
     wchar_t FileName[256];
 
     wchar_t NewFileName[256];
@@ -751,6 +751,16 @@ bool OpenTerrainHeight(wchar_t* filename)
     }
 
     long fileSize = ftell(fp);
+
+    // MuEmu (fork): algunos clientes guardan el BMP sin los 2 bytes de relleno (datos en 1078 y no en 1080).
+    // Las alturas son siempre los ultimos 256x256 bytes, asi que la posicion sale del tamano real.
+    const long BmpHeaderSize = fileSize - 4 - 256 * 256;
+    if (BmpHeaderSize >= 54 && BmpHeaderSize < Index)
+    {
+        Index = static_cast<int>(BmpHeaderSize);
+        Size = 256 * 256 + Index;
+    }
+
     const long RequiredSize = Size + 4;
     if (fileSize < 0 || fileSize < RequiredSize)
     {
