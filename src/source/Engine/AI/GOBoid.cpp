@@ -751,6 +751,10 @@ void RenderDarkHorseSkill(OBJECT* o, BMD* b)
     if (o == NULL)	return;
     if (b == NULL)	return;
 
+    // MuEmu: los caballos custom usan los efectos de CustomEarthQuakeSkill.
+    if (MuEmu::PetEffect::RenderHorseSkill(o, b))
+        return;
+
     // The weapon level is misused here to count the reference frames of this effect.
     o->WeaponLevel += REFERENCE_FRAME_STEP;
 

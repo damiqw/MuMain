@@ -184,3 +184,19 @@ Los numeros de textura de 1.04E coinciden con los del cliente solo hasta 32274. 
 numero en `main.exe` 1.04E con los `LoadBitmap` del cliente; los numeros que el cliente no tiene se omiten.
 
 Punto de enganche en upstream: `RenderMount` (`Engine/AI/GOBoid.cpp`).
+
+## Earthquake de caballos custom (`src/source/MuEmu/MuEmuPetEffect.cpp`)
+
+Copiar `CustomEarthQuakeSkill.txt` a `Data/MuEmu/`. Cuando el caballo custom (tipo 6) hace el Earthquake, en lugar de
+los efectos del Dark Horse se usan los de su linea, como CustomEarthQuakeSkill.cpp de Main.dll:
+
+- `EffectCode`: la onda que sale cada 400 ms, con el color R G B si `UseRGB` es 1 (Main.dll pasa los valores de 0 a
+  255 sin dividir, asi que cada canal queda en 0 o 1) y `EffectSize` como subtipo.
+- `Skill1`: el efecto del centro al final del golpe; `Skill2`: las piedras alrededor (por ejemplo 228 hielo y
+  229 fuego). Los modelos de skill de 1.04E coinciden con los del cliente entre 226 (Dark Horse) y 332 (piedras);
+  los demas y el 0 se omiten.
+
+Como en Main.dll, un caballo custom sin linea no dibuja efectos del Earthquake, y la linea del Dark Horse original
+(13,4) no cambia nada.
+
+Punto de enganche en upstream: `RenderDarkHorseSkill` (`Engine/AI/GOBoid.cpp`).
