@@ -758,8 +758,16 @@ static void CheckServerConnection()
     // Auto-reconnect only makes sense in-game, where the server restores the
     // character's saved position. Other scenes keep the original behaviour.
     // MuEmu (fork): the offline shop and /offhelper close the connection on purpose and leave the character in
-    // the game; reconnecting would log it back in and end them.
-    if (SceneFlag == MAIN_SCENE && ReconnectManager::Instance().HasSession() && !MuEmu::Ui::IsOfflineDisconnect())
+    // the game; reconnecting would log it back in and end them, so go back to the server list instead.
+    if (SceneFlag == MAIN_SCENE && MuEmu::Ui::IsOfflineDisconnect())
+    {
+        g_ErrorReport.Write(L"> Connection closed by the offline shop/helper - back to the login. ");
+        g_ErrorReport.WriteCurrentTime();
+        MuEmu::Ui::RequestReturnToLogin();
+        return;
+    }
+
+    if (SceneFlag == MAIN_SCENE && ReconnectManager::Instance().HasSession())
     {
         g_ErrorReport.Write(L"> Connection lost in game - starting auto-reconnect. ");
         g_ErrorReport.WriteCurrentTime();

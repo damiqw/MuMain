@@ -11,6 +11,7 @@
 #include "App/Platform/DiagnosticFrameCaptureSchedule.h"
 #include "App/Platform/DiagnosticFrameCaptureWriter.h"
 #include "MuEmu/MuEmuTools.h"
+#include "MuEmu/MuEmuUi.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_EXTRA_LEAN
@@ -1578,6 +1579,8 @@ MSG MainLoop()
         // Run a pending reconnect teardown between frames (self-guards on its
         // pending flag). Replaces the old WM_START_RECONNECT round-trip.
         ReconnectManager::Instance().Begin();
+        // MuEmu (fork): back to the login after the offline shop or /offhelper closed the connection.
+        MuEmu::Ui::ProcessReturnToLogin();
 
         // Fire any due timers. Replaces the Win32 SetTimer/WM_TIMER dispatch.
         Core::Time::FrameTimerScheduler::Instance().Tick();

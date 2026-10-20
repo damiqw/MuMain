@@ -29,6 +29,11 @@ void ShowPartyMenu();
 void MarkOfflineDisconnect();
 // Verdadero durante unos segundos despues de pedir quedar offline.
 bool IsOfflineDisconnect();
+// La conexion se cerro por quedar offline: en el proximo paso entre frames se vuelve al login (lista de
+// servidores) en vez de mostrar "conexion perdida".
+void RequestReturnToLogin();
+// Entre frames (Winmain, junto a la reconexion): hace la vuelta al login pedida.
+void ProcessReturnToLogin();
 
 // --- Ayudas para los modulos de cada ventana ---
 

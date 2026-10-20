@@ -177,6 +177,7 @@ void MuEmu::Ui::ShowPartyMenu()
 namespace
 {
 ULONGLONG g_offlineTick = 0;
+bool g_returnToLogin = false;
 constexpr ULONGLONG OfflineWindowMs = 15000;
 } // namespace
 
@@ -188,6 +189,25 @@ void MuEmu::Ui::MarkOfflineDisconnect()
 bool MuEmu::Ui::IsOfflineDisconnect()
 {
     return g_offlineTick != 0 && GetTickCount64() - g_offlineTick < OfflineWindowMs;
+}
+
+void MuEmu::Ui::RequestReturnToLogin()
+{
+    g_returnToLogin = true;
+}
+
+void MuEmu::Ui::ProcessReturnToLogin()
+{
+    if (!g_returnToLogin)
+        return;
+    g_returnToLogin = false;
+    g_offlineTick = 0;
+    Panel::Hide();
+
+    // Como la cancelacion de la reconexion de SVEN: suelta la sesion y queda en el login con una conexion nueva
+    // al servidor de conexion.
+    ResetClientToLoginScene();
+    DeleteSocket();
 }
 
 void MuEmu::Ui::Send(uint8_t head, uint8_t sub, const std::vector<uint8_t>& payload)
