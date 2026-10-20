@@ -19,6 +19,8 @@ struct PartyListCardEntry
     bool showLeave = false;
     float healthLength = 0.f; // reference px of the health bar's texture shown
     int index = 0;            // position in Party[]
+    // MuEmu (fork): the member's buffs from the server (C1 2E), as icon decorators (MuEmuParty.cpp).
+    std::vector<Rml::String> buffs;
 };
 
 struct PartyListRmlModel

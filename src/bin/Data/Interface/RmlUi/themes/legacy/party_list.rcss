@@ -82,3 +82,7 @@
 }
 /* A card takes the pointer: its hover is the skill target, and a click on it never walks. */
 .card { pointer-events: auto; }
+
+/* MuEmu (fork): the member's buffs from the server (C1 2E), half-size icons left of the card. */
+.card-buffs { position: absolute; right: 79px; top: 3px; width: 96px; height: 14px; text-align: right; pointer-events: none; }
+.card-buff { display: inline-block; width: 10px; height: 14px; margin-left: 1px; }

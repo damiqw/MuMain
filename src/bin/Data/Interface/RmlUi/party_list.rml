@@ -4,6 +4,7 @@
 	<title>Party List</title>
 	<link type="text/rcss" href="base.rcss"/>
 	<link type="text/rcss" href="party_list.rcss"/>
+	<link type="text/rcss" href="buff_icons.rcss"/>
 </head>
 <body>
 	<!-- The party HUD list (CPartyListWindow): one card per member down the right side, left of
@@ -24,6 +25,8 @@
 			<span class="sharp-text card-name" data-style-font-size="card.name_text_px + 'px'">{{card.name}}</span>
 			<div class="card-health" data-style-width="card.health_length + 'px'"></div>
 			<div class="card-leave" data-if="card.show_leave" data-event-click="party_leave(card.index)"></div>
+			<!-- MuEmu (fork): the member's buffs from the server (C1 2E), left of the card. -->
+			<div class="card-buffs"><div class="card-buff" data-for="icon : card.buffs" data-style-decorator="icon"></div></div>
 		</div>
 	</div>
 </body>

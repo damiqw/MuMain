@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <string>
+#include <vector>
 
 // Las ventanas de MuEmu::Ui, cada una en su archivo. Receive() devuelve verdadero si el paquete era suyo.
 namespace MuEmu::Ui::Events
@@ -147,6 +149,24 @@ namespace MuEmu::Ui::Register
 void Open();
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Register
+
+namespace MuEmu::Ui::PartyInfo
+{
+// Buffs de los miembros (C1 2E, PartyBuffs de Main.dll): decoradores RmlUi de sus iconos (hasta 8).
+std::vector<std::string> BuffIcons(const std::string& name);
+// Ayuda de asignacion (PartyAssignHelper): el lider mantiene Ctrl + S (C1 FF 38), los miembros lo siguen (C1 FB 38).
+void Frame();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::PartyInfo
+
+namespace MuEmu::Ui::MiniMapInfo
+{
+// Minimapa con datos del servidor (MiniMapInfo de Main.dll): lugares (C1 E7 03) y party (C1 F3 F9).
+void Frame(); // pide los datos al abrir el mapa (C1 E7 01) y avisa al cerrarlo (E7 02)
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+// Los marcadores para agregar al mapa: tipo (1 NPC, 2 portal), casilla y nombre.
+void ForEachMarker(const std::function<void(int kind, int x, int y, const std::wstring& name)>& add);
+} // namespace MuEmu::Ui::MiniMapInfo
 
 namespace MuEmu::AntiLag
 {

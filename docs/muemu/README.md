@@ -295,3 +295,10 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
   - Crear cuenta: boton "Crear cuenta" debajo de la conexion rapida del login (ambos temas). Pide cuenta, clave,
     codigo personal y email paso a paso y manda C3 F1 12 con la version del cliente SVEN; el GameServer la acepta
     cuando `SvenClientSwitch` esta prendido.
+- **Party y minimapa** (`MuEmuParty.cpp`):
+  - Buffs de la party: los iconos de los buffs de cada miembro (C1 2E) a la izquierda de su tarjeta en la lista de la
+    party (ambos temas; los iconos salen de `buff_icons.rcss`, copia de las hojas de `buff_strip.rcss`).
+  - Ayuda de asignacion: el lider mantiene Ctrl + S (C1 FF 38 con su posicion); los miembros (C1 FB 38) apagan el MU
+    Helper, caminan hasta el lider y al soltar lo vuelven a prender. `[MuEmu] AssignHelper = 0` lo apaga.
+  - Minimapa (Tab): al abrirlo pide los datos (C1 E7 01, al cerrar E7 02); los lugares del servidor (C1 E7 03, grupo 0
+    portal) y los miembros de la party en el mismo mapa (C1 F3 F9) se agregan como marcadores con su nombre.

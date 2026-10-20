@@ -12,6 +12,7 @@
 #include "Camera/CameraProjection.h"
 
 #include "Core/Utilities/StringUtils.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include "Render/RmlUi/RmlUiRuntime.h"
 #include "UI/Party/PartyListLayout.h"
 #include "UI/RmlBridge/RmlDocumentVisibility.h"
@@ -196,6 +197,8 @@ void CPartyListWindow::BindRmlModel(Rml::DataModelConstructor& c, PartyListRmlMo
     card.RegisterMember("show_leave", &PartyListCardEntry::showLeave);
     card.RegisterMember("health_length", &PartyListCardEntry::healthLength);
     card.RegisterMember("index", &PartyListCardEntry::index);
+    c.RegisterArray<std::vector<Rml::String>>();
+    card.RegisterMember("buffs", &PartyListCardEntry::buffs);
     c.RegisterArray<std::vector<PartyListCardEntry>>();
     c.Bind("cards", &model.cards);
 
@@ -255,6 +258,8 @@ void CPartyListWindow::SyncCards()
         card.selected = !card.absent && m_iSelectedCharacter == i;
         card.showLeave = CanLeave(i);
         card.healthLength = HealthBarLength(member.stepHP);
+        for (const std::string& icon : MuEmu::Ui::PartyInfo::BuffIcons(card.name))
+            card.buffs.push_back(icon);
         if (member.index >= 0 && member.index < MAX_CHARACTERS_CLIENT)
         {
             OBJECT* memberObject = &CharactersClient[member.index].Object;
@@ -276,7 +281,7 @@ void CPartyListWindow::SyncCards()
                                          return a.name == b.name && a.nameTextPx == b.nameTextPx &&
                                                 a.absent == b.absent && a.defenseBuff == b.defenseBuff &&
                                                 a.selected == b.selected && a.showLeave == b.showLeave &&
-                                                a.healthLength == b.healthLength;
+                                                a.healthLength == b.healthLength && a.buffs == b.buffs;
                                      });
     if (!changed)
         return;

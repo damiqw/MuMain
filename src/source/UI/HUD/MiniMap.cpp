@@ -4,6 +4,7 @@
 #include "I18N/All.h"
 
 #include "UI/HUD/MiniMap.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include "UI/Core/WindowSystem.h"
 #include "UI/Dialogs/CommonMessageBox.h"
 #include "UI/Dialogs/CustomMessageBox.h"
@@ -256,6 +257,10 @@ void mu::ui::window::CMiniMap::LoadImages(const wchar_t* Filename)
 
         delete[] Buffer;
     }
+
+    m_FileEntries = 0;
+    while (m_FileEntries < MAX_MINI_MAP_DATA && m_Mini_Map_Data[m_FileEntries].Kind > 0)
+        ++m_FileEntries;
 }
 
 void mu::ui::window::CMiniMap::UnloadImages()
@@ -399,6 +404,24 @@ void mu::ui::window::CMiniMap::SyncClips()
 
 void mu::ui::window::CMiniMap::SyncMap()
 {
+    // MuEmu (fork): the server's spots and the party members (MuEmuParty.cpp), after the map file's entries.
+    {
+        int at = m_FileEntries;
+        MuEmu::Ui::MiniMapInfo::ForEachMarker([this, &at](int kind, int x, int y, const std::wstring& name)
+        {
+            if (at >= MAX_MINI_MAP_DATA)
+                return;
+            MINI_MAP& entry = m_Mini_Map_Data[at++];
+            entry.Kind = static_cast<BYTE>(kind);
+            entry.Location[0] = x;
+            entry.Location[1] = y;
+            entry.Rotation = 0;
+            wcsncpy_s(entry.Name, name.c_str(), _TRUNCATE);
+        });
+        if (at < MAX_MINI_MAP_DATA)
+            m_Mini_Map_Data[at].Kind = 0;
+    }
+
     const UI::MiniMap::Screen screen = CurrentScreen();
     const float length = UI::MiniMap::MapLength;
     const float heroY = (static_cast<float>(Hero->PositionX) / 256.f) * length;

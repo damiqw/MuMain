@@ -57,6 +57,7 @@ private:
 
     CManager* m_pNewUIMng;
     MINI_MAP m_Mini_Map_Data[MAX_MINI_MAP_DATA];
+    int m_FileEntries = 0; // MuEmu (fork): the map file's entries; the server's spots and party go after them
     float m_Btn_Loc[MAX_MINI_MAP_DATA][4];
 
     // The world folder (e.g. L"World1") whose mini_map texture the document shows.
