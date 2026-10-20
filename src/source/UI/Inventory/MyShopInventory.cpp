@@ -315,6 +315,13 @@ void mu::ui::window::CMyShopInventory::BindRmlModel(Rml::DataModelConstructor& c
     // 6 leaves it open offline and 7 closes it (the server reports it open or closed with F3 EC).
     c.Bind("muemu_store", &model.muemuStore);
     c.Bind("muemu_shop_open", &model.muemuShopOpen);
+    c.Bind("muemu_bless", &model.muemuBless);
+    c.Bind("muemu_soul", &model.muemuSoul);
+    c.Bind("muemu_chaos", &model.muemuChaos);
+    c.Bind("muemu_coin1", &model.muemuCoin1);
+    c.Bind("muemu_coin2", &model.muemuCoin2);
+    c.Bind("muemu_coin3", &model.muemuCoin3);
+    c.Bind("muemu_offstore", &model.muemuOffStore);
     c.BindEventCallback("muemu_store",
         [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
         {
@@ -779,6 +786,22 @@ void mu::ui::window::CMyShopInventory::SyncRmlModel()
     static const bool muEmu = MuEmu::GetConfigInt("Enabled", 0) != 0;
     syncBool(&MyShopRmlModel::muemuStore, "muemu_store", muEmu);
     syncBool(&MyShopRmlModel::muemuShopOpen, "muemu_shop_open", m_EnablePersonalShop || MuEmu::Ui::Store::IsActive());
+
+    // The same switches as MainInfo.ini (EnableStoreBlessButtom...); the server does not check them.
+    static const bool bless = MuEmu::GetConfigInt("StoreBless", 1) != 0;
+    static const bool soul = MuEmu::GetConfigInt("StoreSoul", 1) != 0;
+    static const bool chaos = MuEmu::GetConfigInt("StoreChaos", 1) != 0;
+    static const bool coin1 = MuEmu::GetConfigInt("StoreCoin1", 0) != 0;
+    static const bool coin2 = MuEmu::GetConfigInt("StoreCoin2", 0) != 0;
+    static const bool coin3 = MuEmu::GetConfigInt("StoreCoin3", 0) != 0;
+    static const bool offStore = MuEmu::GetConfigInt("OffStore", 1) != 0;
+    syncBool(&MyShopRmlModel::muemuBless, "muemu_bless", bless);
+    syncBool(&MyShopRmlModel::muemuSoul, "muemu_soul", soul);
+    syncBool(&MyShopRmlModel::muemuChaos, "muemu_chaos", chaos);
+    syncBool(&MyShopRmlModel::muemuCoin1, "muemu_coin1", coin1);
+    syncBool(&MyShopRmlModel::muemuCoin2, "muemu_coin2", coin2);
+    syncBool(&MyShopRmlModel::muemuCoin3, "muemu_coin3", coin3);
+    syncBool(&MyShopRmlModel::muemuOffStore, "muemu_offstore", offStore);
 }
 
 bool mu::ui::window::CMyShopInventory::Render()

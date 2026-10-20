@@ -44,6 +44,14 @@ namespace mu::ui::window
             // prices in jewels or coins, and leave it open offline.
             bool muemuStore = false;
             bool muemuShopOpen = false;
+            // Which custom store buttons are shown (MainInfo.ini's EnableStore...Buttom, from config.ini [MuEmu]).
+            bool muemuBless = true;
+            bool muemuSoul = true;
+            bool muemuChaos = true;
+            bool muemuCoin1 = false;
+            bool muemuCoin2 = false;
+            bool muemuCoin3 = false;
+            bool muemuOffStore = true;
 
             // The editable shop name, two-way bound to my_shop.rml's <input data-value="shop_title">.
             // RmlUi owns the edit buffer/caret/selection/IME; this is only the committed value, read
