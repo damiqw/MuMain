@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MuEmu/MuEmuBuff.h"
+#include "MuEmu/MuEmuEffect.h"
 #include "MuEmu/MuEmuHealthBar.h"
 #include "App/Control/ControlTaps.h"
 #include "Core/Utilities/Log/MuLogger.h"
@@ -13371,6 +13372,9 @@ static void ProcessPacket(const BYTE* ReceiveBuffer, int32_t Size)
         {
         case 0xE2: // MuEmu (fork): barras de vida del servidor
             MuEmu::HealthBar::Receive(ReceiveBuffer, Size);
+            break;
+        case 0xEF: // MuEmu (fork): datos de la runa de un jugador
+            MuEmu::Effect::ReceiveRune(ReceiveBuffer, Size);
             break;
         case 0x00: // receive characters list
             ReceiveCharacterListExtended(ReceiveBuffer);

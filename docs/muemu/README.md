@@ -128,3 +128,17 @@ descripcion se llenan con los valores del paquete C1 FB 13 del servidor (si no l
 
 Copiar `CustomEventEntryLevel.txt` a `Data/MuEmu/`. Cambia los niveles de entrada que muestra y valida el cliente
 para Blood Castle, Devil Square, Chaos Castle, Kalima e Illusion Temple (columnas comunes y de MG/DL/RF).
+
+## Efectos visuales (`src/source/MuEmu/MuEmuEffect.cpp`)
+
+Copiar `CustomEffectStatic.txt`, `CustomModelEffect.txt` y `CustomRuneEffect.txt` a `Data/MuEmu/`:
+
+- `CustomEffectStatic`: sprites sobre los huesos del item (alas, armas...); el item deja de dibujar los suyos.
+- `CustomModelEffect`: efectos sobre el personaje que lleva el casco, la armadura, los pantalones o las botas con
+  el nivel y el excelente pedidos (los guantes no tienen efecto, como en Main.dll).
+- `CustomRuneEffect`: runa en el piso segun el VIP (o PK nivel 6) que manda el servidor en C1 F3 EF.
+
+Las texturas usan los numeros de 1.04E, que coinciden con los del cliente desde 32001 (`BITMAP_LIGHT` = 32002).
+Los efectos de skill con modelos (numeros menores) se omiten porque en este cliente tienen otros numeros. Los
+efectos y el brillo de mascotas custom (CustomPet*, CustomEarthQuakeSkill) quedan para cuando las mascotas custom
+se dibujen como montura.

@@ -131,6 +131,7 @@ namespace
 #include "GameLogic/Social/MonkSystem.h"
 #include "UI/Core/WindowSystem.h"
 #include "Render/Lighting/LightMoodSetting.h"
+#include "MuEmu/MuEmuEffect.h"
 #include "MuEmu/MuEmuMonster.h"
 
 CHARACTER* CharactersClient;
@@ -7076,6 +7077,13 @@ void RenderLinkObject(float x, float y, float z, CHARACTER* c, PART_t* f, int Ty
     float Luminosity;
     vec3_t Light;
     Luminosity = (float)(rand() % 30 + 70) * 0.005f;
+
+    // MuEmu (fork): efectos custom del item (CustomEffectStatic.txt); reemplazan los del cliente.
+    if (MuEmu::Effect::RenderItem(Type - MODEL_ITEM, b, Object))
+    {
+        goto MuEmuItemEffectsDone;
+    }
+
     switch (Type)
     {
     case MODEL_TIGER_BOW:
@@ -8449,6 +8457,7 @@ void RenderLinkObject(float x, float y, float z, CHARACTER* c, PART_t* f, int Ty
         }
         break;
     }
+MuEmuItemEffectsDone:
 
     if (gMapManager.WorldActive != WD_10HEAVEN && gMapManager.InHellas() == FALSE &&
         !g_Direction.m_CKanturu.IsMayaScene() && !IsWingShadowDisabledDebug())
@@ -11454,6 +11463,12 @@ void RenderCharacter(CHARACTER* c, OBJECT* o, int Select)
         {
             RenderProtectGuildMark(c);
         }
+    }
+
+    // MuEmu (fork): efectos de set y runa del servidor (CustomModelEffect / CustomRuneEffect).
+    if (SceneFlag == MAIN_SCENE && o->Type == MODEL_PLAYER)
+    {
+        MuEmu::Effect::RenderCharacter(c, o);
     }
 
     giPetManager::RenderPet(c);
