@@ -272,13 +272,13 @@ body {
 	font-family: "token(font-body)";
 }
 
-/* MuEmu (fork): the quick connect row under the panel (five saved accounts, Main.dll's layout). */
+/* MuEmu (fork): the quick connect row under the panel and its trust warning (dp, like the rest of this theme) (five saved accounts, Main.dll's layout). */
 .quick-connect {
 	position: absolute;
-	left: -58rem;
-	top: 252rem;
-	width: 445rem;
-	height: 24rem;
+	left: -58dp;
+	top: 276dp;
+	width: 445dp;
+	height: 24dp;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -286,22 +286,22 @@ body {
 }
 .quick-slot {
 	position: relative;
-	width: 85rem;
-	height: 24rem;
+	width: 85dp;
+	height: 24dp;
 	background-color: rgba(0, 0, 0, 190);
-	border-width: 1rem;
+	border-width: 1dp;
 	border-color: #6b5a3a;
-	border-radius: 3rem;
+	border-radius: 3dp;
 }
 .quick-slot:hover { background-color: rgba(70, 60, 30, 220); }
 .quick-slot-name {
 	position: absolute;
 	left: 0;
 	top: 0;
-	right: 18rem;
-	height: 22rem;
-	line-height: 22rem;
-	padding-left: 4rem;
+	right: 18dp;
+	height: 22dp;
+	line-height: 22dp;
+	padding-left: 4dp;
 	white-space: nowrap;
 	overflow: hidden;
 	color: #ffffd1;
@@ -311,11 +311,11 @@ body {
 .quick-slot-name.empty { right: 0; padding-left: 0; text-align: center; color: #808080; }
 .quick-slot-remove {
 	position: absolute;
-	right: 2rem;
-	top: 3rem;
-	width: 15rem;
-	height: 15rem;
-	line-height: 14rem;
+	right: 2dp;
+	top: 3dp;
+	width: 15dp;
+	height: 15dp;
+	line-height: 14dp;
 	text-align: center;
 	color: #e2e2e2;
 	background-color: rgba(120, 40, 40, 200);
