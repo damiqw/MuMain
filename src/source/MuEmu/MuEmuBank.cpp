@@ -247,6 +247,8 @@ void MuEmu::Ui::Bank::ChangeWarehouse(int step)
     const int next = g_warehouse.current + step;
     if (next < 0 || next > g_warehouse.count)
         return;
+    // Como Main.dll: el numero cambia ya; el servidor manda los items del baul nuevo.
+    g_warehouse.current = next;
     std::vector<uint8_t> payload;
     WriteInt(payload, next);
     Send(0xF3, 0xF7, payload);

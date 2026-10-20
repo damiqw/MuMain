@@ -228,5 +228,6 @@ flechas para cambiar de baul cuando el servidor manda los baules (C1 FB D5). Cop
 Las posiciones de los datos salen de las estructuras del GameServer (empaquetado por defecto de MSVC). ESC cierra la ventana MuEmu abierta. El banco de
 joyas cuenta y deposita tambien los paquetes de 10 (10 x (nivel + 1)) y retira 1/10/20/30 o "Max".
 
-Los NPC no tienen barra de vida y su nombre se ve siempre (`[MuEmu] NpcNames`, 1 por defecto). Las mascotas de
+Los NPC no tienen barra de vida. Como en Main.dll, el nombre de los jugadores (con su guild y logo) y de los NPC se
+ve siempre, con el mismo cartel que al pasar el cursor (`[MuEmu] PlayerNames` y `NpcNames`, 1 por defecto). Las mascotas de
 `CustomPet.txt` toman la escala de inventario y de piso de sus columnas ScaleInv y ScaleDrop al importar los modelos.

@@ -159,16 +159,21 @@
 /* MuEmu (fork): the arrows that change the server's warehouse, at both ends of the title. */
 .muemu-storage-arrow {
 	position: absolute;
-	top: 9px;
-	width: 16px;
-	height: 16px;
-	line-height: 16px;
+	top: 5px;
+	width: 26px;
+	height: 24px;
+	line-height: 22px;
 	text-align: center;
+	font-size: 20px;
 	font-weight: bold;
 	color: #ffd23c;
+	background-color: rgba(60, 50, 25, 220);
+	border-width: 1px;
+	border-color: #8a7444;
+	border-radius: 3px;
 	cursor: pointer;
 	pointer-events: auto;
 }
-.muemu-storage-arrow:hover { color: #ffffff; }
-#muemu_storage_prev { left: 18px; }
-#muemu_storage_next { right: 18px; }
+.muemu-storage-arrow:hover { color: #ffffff; background-color: rgba(110, 95, 45, 240); }
+#muemu_storage_prev { left: 12px; }
+#muemu_storage_next { right: 12px; }

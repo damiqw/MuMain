@@ -21,6 +21,7 @@
 #include "World/GameMaps/GM_Kanturu_3rd.h"
 #include "Render/Text/CUIRenderText.h"
 #include "MuEmu/MuEmuHealthBar.h"
+#include "MuEmu/MuEmuTools.h"
 
 // DevEditor forward declarations (must be at global scope)
 #ifdef _EDITOR
@@ -228,6 +229,24 @@ void mu::ui::window::CNameWindow::RenderName()
                 {
                     UI::Chat::CreateChat(c->ID, L"", c);
                 }
+            }
+        }
+    }
+
+    // MuEmu (fork): como Main.dll, el nombre de los jugadores (con su guild) y de los NPC se ve siempre; el
+    // mismo cartel que al pasar el cursor, asi no se duplica. Se configura en [MuEmu] PlayerNames y NpcNames.
+    static const bool alwaysPlayerNames = MuEmu::GetConfigInt("PlayerNames", 1) != 0;
+    static const bool alwaysNpcNames = MuEmu::GetConfigInt("NpcNames", 1) != 0;
+    if (!gMapManager.InChaosCastle() && (alwaysPlayerNames || alwaysNpcNames))
+    {
+        for (int i = 0; i < MAX_CHARACTERS_CLIENT; i++)
+        {
+            CHARACTER* c = &CharactersClient[i];
+            OBJECT* o = &c->Object;
+            const bool named = (o->Kind == KIND_PLAYER && alwaysPlayerNames) || (o->Kind == KIND_NPC && alwaysNpcNames);
+            if (o->Live && o->Visible && named && c->ID[0] != 0 && IsShopTitleVisible(c) == false)
+            {
+                UI::Chat::CreateChat(c->ID, L"", c);
             }
         }
     }

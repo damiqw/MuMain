@@ -47,53 +47,6 @@ void DrawBar(float x, float y, float width, float height, float rate, unsigned i
     RenderColorQuadARGB(x, y, width * (rate / 100.f), height, color);
     DisableAlphaBlend();
 }
-// Posicion en pantalla sobre la cabeza del objeto; falso si queda detras de la camara o fuera.
-bool ToScreen(OBJECT* o, float height, int& screenX, int& screenY)
-{
-    vec3_t position;
-    Vector(o->Position[0], o->Position[1], o->Position[2] + o->BoundingBoxMax[2] + height, position);
-
-    vec3_t transformed;
-    VectorTransform(position, g_Camera.Matrix, transformed);
-    if (transformed[2] >= 0)
-    {
-        return false;
-    }
-
-    CameraProjection::WorldToScreen(g_Camera, position, &screenX, &screenY);
-    return screenX >= -100 && screenY >= -100 && screenX <= (REFERENCE_WIDTH + 100) && screenY <= (REFERENCE_HEIGHT + 100);
-}
-
-// Los nombres de los NPC, siempre visibles como en Main.dll (el cliente solo los muestra con el cursor encima).
-void RenderNpcNames()
-{
-    static const bool enabled = IsEnabled("NpcNames");
-    if (!enabled)
-    {
-        return;
-    }
-
-    for (int index = 0; index < MAX_CHARACTERS_CLIENT; ++index)
-    {
-        CHARACTER* c = &CharactersClient[index];
-        OBJECT* o = &c->Object;
-        if (!o->Live || !o->Visible || o->Kind != KIND_NPC || o->Alpha <= 0.f || c->ID[0] == 0 || index == SelectedCharacter)
-        {
-            continue;
-        }
-
-        int screenX = 0;
-        int screenY = 0;
-        if (!ToScreen(o, 60.f, screenX, screenY))
-        {
-            continue;
-        }
-
-        g_pRenderText->SetTextColor(150, 255, 240, 255);
-        g_pRenderText->SetBgColor(0, 0, 0, 120);
-        g_pRenderText->RenderText(screenX, screenY, c->ID, 0, 0, RT3_WRITE_CENTER);
-    }
-}
 } // namespace
 
 void MuEmu::HealthBar::Receive(const BYTE* buffer, int size)
@@ -127,7 +80,6 @@ void MuEmu::HealthBar::Render()
     static const bool monsterBars = IsEnabled("MonsterHpBar");
     static const bool userBars = IsEnabled("UserHpBar");
 
-    RenderNpcNames();
 
     for (const Entry& entry : g_entries)
     {
@@ -154,7 +106,7 @@ void MuEmu::HealthBar::Render()
             continue;
         }
 
-        // Los NPC no muestran barra (como en Main.dll): su nombre se dibuja siempre, abajo.
+        // Los NPC no muestran barra (como en Main.dll); su nombre lo muestra NameWindow.
         if (o->Kind == KIND_NPC)
         {
             continue;
