@@ -40,6 +40,11 @@ namespace mu::ui::window
             float textPx = 0.f; // native text size in physical px (RmlNativeTextSize.h)
             Rml::String title;
 
+            // MuEmu (fork): the custom store of the MuEmu servers (Main.dll's OffTrade): open the shop with
+            // prices in jewels or coins, and leave it open offline.
+            bool muemuStore = false;
+            bool muemuShopOpen = false;
+
             // The editable shop name, two-way bound to my_shop.rml's <input data-value="shop_title">.
             // RmlUi owns the edit buffer/caret/selection/IME; this is only the committed value, read
             // back by GetTitle() and written by SetTitle()/ResetSubject(). Length is capped by the

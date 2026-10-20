@@ -21,6 +21,8 @@
 #include "UI/RmlBridge/RmlNativeTextSize.h"
 #include "Core/Utilities/StringUtils.h"
 #include <RmlUi/Core/ElementDocument.h>
+#include "MuEmu/MuEmuTools.h"
+#include "MuEmu/MuEmuUi.h"
 #include <optional>
 #include <vector>
 
@@ -307,6 +309,21 @@ void mu::ui::window::CMyShopInventory::BindRmlModel(Rml::DataModelConstructor& c
 
     c.Bind("title", &model.title);
     c.Bind("shop_title", &model.shopTitle);
+
+    // MuEmu (fork): custom store (F3 EB): 0-5 open it in Bless, Soul, Chaos, WCoinC, WCoinP or Goblin Points,
+    // 6 leaves it open offline.
+    c.Bind("muemu_store", &model.muemuStore);
+    c.Bind("muemu_shop_open", &model.muemuShopOpen);
+    c.BindEventCallback("muemu_store",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+        {
+            if (args.empty())
+                return;
+            std::vector<uint8_t> payload;
+            MuEmu::Ui::WriteInt(payload, args[0].Get<int>());
+            MuEmu::Ui::Send(0xF3, 0xEB, payload);
+            PlayBuffer(SOUND_CLICK01);
+        });
     c.Bind("exit_tooltip", &model.exitTooltip);
 
     c.Bind("open_locked", &model.openLocked);
@@ -755,6 +772,10 @@ void mu::ui::window::CMyShopInventory::SyncRmlModel()
     syncWide(&MyShopRmlModel::closeTooltip, "close_tooltip", I18N::Game::Closed);
 
     syncBool(&MyShopRmlModel::showStillOpening, "show_still_opening", m_EnablePersonalShop);
+
+    static const bool muEmu = MuEmu::GetConfigInt("Enabled", 0) != 0;
+    syncBool(&MyShopRmlModel::muemuStore, "muemu_store", muEmu);
+    syncBool(&MyShopRmlModel::muemuShopOpen, "muemu_shop_open", m_EnablePersonalShop);
 }
 
 bool mu::ui::window::CMyShopInventory::Render()

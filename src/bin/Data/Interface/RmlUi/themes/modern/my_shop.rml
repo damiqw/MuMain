@@ -70,6 +70,17 @@
 		     data-event-click="my_shop_close_click" data-attr-data-hint="close_tooltip">
 			<span class="modern-icon-btn-glyph-px">&#9632;</span>
 		</div>
+		<!-- MuEmu (fork): the custom store of the MuEmu servers, under the window (MyShopInventory.cpp):
+		     open the shop in jewels or coins, or leave it open offline. -->
+		<div class="muemu-store" data-if="muemu_store">
+			<div class="muemu-store-btn" data-if="!muemu_shop_open" data-event-click="muemu_store(0)">Bless</div>
+			<div class="muemu-store-btn" data-if="!muemu_shop_open" data-event-click="muemu_store(1)">Soul</div>
+			<div class="muemu-store-btn" data-if="!muemu_shop_open" data-event-click="muemu_store(2)">Chaos</div>
+			<div class="muemu-store-btn" data-if="!muemu_shop_open" data-event-click="muemu_store(3)">WCoinC</div>
+			<div class="muemu-store-btn" data-if="!muemu_shop_open" data-event-click="muemu_store(4)">WCoinP</div>
+			<div class="muemu-store-btn" data-if="!muemu_shop_open" data-event-click="muemu_store(5)">Goblin</div>
+			<div class="muemu-store-btn muemu-store-offline" data-if="muemu_shop_open" data-event-click="muemu_store(6)">Tienda offline</div>
+		</div>
 
 		<!-- Former RenderTextInfo(): native's rows, each a block that wraps, in its three
 		     groups inside one bounded pane (shop_notice.rcss). -->

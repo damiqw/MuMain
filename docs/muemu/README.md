@@ -252,3 +252,6 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
 - **Stats de mas de 65.535**: los stats, puntos libres, dano y defensa del personaje pasan a 32 bits en el cliente
   (`CHARACTER_ATTRIBUTE` y las cuentas que los usan) y se toman de los paquetes propios de MuEmu (C1 F3 E0 y E1,
   `MuEmuStats.cpp`), porque el formato de OpenMU los manda en 16 bits.
+- **Tienda offline y tiendas en joyas/monedas** (OffTrade de Main.dll): debajo de la tienda personal hay botones para
+  abrirla cobrando en Bless, Soul, Chaos, WCoinC, WCoinP o Goblin (C1 F3 EB tipo 0 a 5) y, con la tienda abierta,
+  "Tienda offline" (tipo 6). El GameServer manda el precio de esas tiendas con su moneda (PriceItemType de OpenMU).

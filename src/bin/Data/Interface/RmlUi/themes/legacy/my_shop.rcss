@@ -100,3 +100,32 @@
    controls take their own. */
 #panel.slot-placed { pointer-events: none; }
 #panel { font-size: calc(var(--text-px, 12px) / var(--root-scale)); }
+
+/* MuEmu (fork): the custom store buttons under the window (jewel and coin shops, offline shop). */
+.muemu-store {
+	position: absolute;
+	left: 0;
+	top: 432px;
+	width: 190px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	pointer-events: auto;
+}
+.muemu-store-btn {
+	width: 60px;
+	height: 20px;
+	line-height: 20px;
+	margin-bottom: 3px;
+	text-align: center;
+	color: #ffff79;
+	background-color: rgba(0, 0, 0, 200);
+	border-width: 1px;
+	border-color: #8a7444;
+	border-radius: 3px;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.muemu-store-btn:hover { color: #ffffff; background-color: rgba(70, 60, 30, 230); }
+.muemu-store-btn.muemu-store-offline { width: 188px; color: #60e060; }
