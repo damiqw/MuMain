@@ -257,3 +257,7 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
   "Tienda offline" (tipo 6). El GameServer manda el precio de esas tiendas con su moneda (PriceItemType de OpenMU).
 - **Ver el equipo de otro jugador** (como el ranking de Main.dll): cada fila del Custom Ranking tiene "Ver", que pide el
   personaje (C1 D3 40) y muestra su nivel, resets, guild y los 12 items equipados con nivel y opciones (C2 D3 40).
+- **Item en el chat** (post_item de Main.dll, `MuEmuPostItem.cpp`): Ctrl + click sobre un item del inventario (o del
+  equipo) abre una ventana con un mensaje opcional y "Publicar" (C1 78 con la posicion del item). Los items publicados
+  (C1 78 del servidor, para todos los jugadores) salen en el chat como `[Item] Personaje: mensaje [item +9 +Skill]` y
+  los ultimos 20 se ven en Menu > Items publicados. El servidor cobra y limita segun `CommandPostItem` de su configuracion.

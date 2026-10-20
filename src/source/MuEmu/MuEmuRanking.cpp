@@ -253,7 +253,7 @@ void RequestCharacter(int row)
 }
 
 // Item de 12 bytes del servidor: el nombre con su nivel y opciones, o vacio.
-std::string DescribeItem(const uint8_t* item)
+std::string DescribeItemBytes(const uint8_t* item)
 {
     bool empty = true;
     for (int n = 0; n < 6; ++n)
@@ -305,7 +305,7 @@ void ShowCharacter(const uint8_t* buffer, int size)
     content.header = { "Lugar", "Item" };
     for (int n = 0; n < 12 && 76 + (n + 1) * 16 <= size; ++n)
     {
-        const std::string item = DescribeItem(buffer + 76 + n * 16);
+        const std::string item = DescribeItemBytes(buffer + 76 + n * 16);
         MuEmu::Panel::Row row;
         row.cells = { SlotNames[n], item.empty() ? "-" : item };
         if (item.rfind("Exc", 0) == 0 || item.rfind("Anc", 0) == 0)
@@ -323,6 +323,11 @@ void ShowCharacter(const uint8_t* buffer, int size)
     });
 }
 } // namespace
+
+std::string MuEmu::Ui::Ranking::DescribeItem(const uint8_t* item)
+{
+    return DescribeItemBytes(item);
+}
 
 void MuEmu::Ui::Ranking::Open()
 {

@@ -31,6 +31,8 @@ bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 void Frame();      // rango sobre los jugadores y medidor de dano
 // Equipo de un personaje del ranking (C2 D3 40), pedido con el boton Ver.
 bool ReceiveCharacter(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+// Item de 12 bytes del servidor: nombre, nivel y opciones ("Exc Espada +9 +Skill"), o vacio.
+std::string DescribeItem(const uint8_t* item);
 } // namespace MuEmu::Ui::Ranking
 
 namespace MuEmu::Ui::Rewards
@@ -54,6 +56,16 @@ namespace MuEmu::Ui::OffHelper
 // /offhelper: el servidor pide la configuracion del MU Helper (C1 FB 3E) y se le manda (C1 FB 3D).
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::OffHelper
+
+namespace MuEmu::Ui::PostItem
+{
+// Ventana para publicar el item en esa posicion del inventario (Ctrl + click).
+void Open(int position);
+// Los ultimos items publicados en el chat.
+void OpenRecent();
+// Item publicado por un jugador (C1 78): va al chat.
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::PostItem
 
 namespace MuEmu::Ui::Stats
 {

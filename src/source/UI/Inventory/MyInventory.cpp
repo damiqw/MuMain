@@ -53,6 +53,8 @@ extern bool SelectFlag;
 #include "UI/Tooltip/LegacyTextListTooltip.h"
 #include "UI/Inventory/ItemOptionTooltipModel.h"
 #include "Core/Utilities/StringUtils.h"
+#include "MuEmu/MuEmuTools.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Event.h>
 #include <cmath>
@@ -623,6 +625,25 @@ void CMyInventory::SetRepairMode(bool bRepair)
 
 bool CMyInventory::UpdateMouseEvent()
 {
+    // MuEmu (fork): Ctrl + click on an item shows it in the chat (Main.dll's post_item). The inventory
+    // index is already the server position (equipment 0-11, bag from MAX_EQUIPMENT).
+    if (m_pNewInventoryCtrl && IsRepeat(VK_CONTROL) && IsRelease(VK_LBUTTON) && CInventoryCtrl::GetPickedItem() == nullptr
+        && MuEmu::GetConfigInt("Enabled", 0) != 0)
+    {
+        int position = -1;
+        if (ITEM* pItem = m_pNewInventoryCtrl->FindItemAtPointer())
+            position = m_pNewInventoryCtrl->GetIndexByItem(pItem);
+        else if (m_iPointedSlot >= 0 && m_iPointedSlot < MAX_EQUIPMENT_INDEX && CharacterMachine
+                 && CharacterMachine->Equipment[m_iPointedSlot].Type != -1)
+            position = m_iPointedSlot;
+        if (position >= 0)
+        {
+            MuEmu::Ui::PostItem::Open(position);
+            PlayBuffer(SOUND_CLICK01);
+            return false;
+        }
+    }
+
     if (m_pNewInventoryCtrl && !m_pNewInventoryCtrl->UpdateMouseEvent())
         return false;
 

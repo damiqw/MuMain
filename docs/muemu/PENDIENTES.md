@@ -24,16 +24,13 @@ lo resuelve SVEN de otra forma.
 | Boton Menu (MENU_NEW) | `MuEmuMenuButton` |
 | MuHelper (offhelper) | `MuEmuOffHelper` |
 | LoginBox (conexion rapida) | `MuEmuQuickConnect` |
+| Stats de mas de 65.000, OffTrade (tienda offline), ver equipo (ranking), post_item | `MuEmuStats`, `MyShopInventory`, `MuEmuRanking`, `MuEmuPostItem` |
 
 ## Prioridad A: juego diario o pedido por el servidor
 
 | Funcion | Main.dll | Paquetes | Nota |
 |---|---|---|---|
-| Stats de mas de 65.000 | (protocolo) | F3 03/E0/E1, 26 FF/FE | El cliente SVEN los recibe como WORD: se cortan. Hay que mandar el formato extendido desde el traductor del servidor. |
-| Slots de equipo custom (aros, 12-14) | NewUIMyInventory | C1 A9 | Los items se importan sin slot: no se pueden equipar. |
-| Tienda offline | OffTrade | F3 EC, recibe PShop | Dejar la tienda abierta al salir. Los jugadores la usan mucho. |
-| Ver items de otro jugador | ViewCharItem | RecvInfo (PMSG_ANS_VIEW_CHAR_ITEMS) | Click derecho sobre un jugador: su equipo. |
-| Item en el chat | post_item | envia 0x79 01, recibe 0x78 | Mostrar un item en el chat con su tooltip. |
+| Slots de equipo custom (aros, 12-14) | NewUIMyInventory | C1 A9 | Los items se importan sin slot: no se pueden equipar. Hoy no se usan en el servidor. |
 | HWID | HWID | login | El servidor no lo recibe del cliente SVEN (limites por PC). |
 | Bandera de set ancient completo | (protocolo) | apariencia | No se manda: el brillo del set completo no se ve. |
 | Cartas (letters) | (protocolo) | OpenLetterExtended | Muestran la clase sin equipo. |

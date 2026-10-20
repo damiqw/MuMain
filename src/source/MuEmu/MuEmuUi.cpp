@@ -23,6 +23,7 @@ enum MenuAction
     MenuDaily,
     MenuInvasion,
     MenuDps,
+    MenuPostItem,
 };
 
 // La N: la party, como en Main.dll.
@@ -75,7 +76,7 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
     return Events::Receive(head, sub, buffer, size) || Bank::Receive(head, sub, buffer, size) ||
            Ranking::Receive(head, sub, buffer, size) || Ranking::ReceiveCharacter(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
            GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size) ||
-           Stats::Receive(head, sub, buffer, size);
+           Stats::Receive(head, sub, buffer, size) || PostItem::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()
@@ -133,6 +134,7 @@ void MuEmu::Ui::ShowMenu()
         { "Custom Ranking", MenuRanking },
         { "Invasiones", MenuInvasion },
         { "Medidor de dano", MenuDps },
+        { "Items publicados", MenuPostItem },
     };
     for (const auto& entry : entries)
         content.buttons.push_back({ entry.label, entry.action });
@@ -148,6 +150,7 @@ void MuEmu::Ui::ShowMenu()
         case MenuDaily: Rewards::OpenDaily(); break;
         case MenuInvasion: Rewards::OpenInvasion(); break;
         case MenuDps: Ranking::ToggleDps(); break;
+        case MenuPostItem: PostItem::OpenRecent(); break;
         default: break;
         }
     });
