@@ -21,6 +21,7 @@
 #include "UI/Scaling/UITransform.h"
 #include "Core/Utilities/StringUtils.h"
 #include "Render/Text/CUIRenderText.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Element.h>
 
@@ -849,6 +850,15 @@ void mu::ui::window::CChatLogWindow::UpdatePointedLine()
     {
         model.pointedIndex = pointed;
         m_RmlView.MarkDirty("pointed_index");
+    }
+
+    // MuEmu (fork): a line of an item shown in the chat (Main.dll's post_item) shows the item's tooltip.
+    {
+        type_vector_msgs* pvecMsgs = pointed >= 0 ? GetMsgs(GetCurrentMsgType()) : nullptr;
+        if (pvecMsgs != nullptr && pointed < (int)pvecMsgs->size())
+            MuEmu::Ui::PostItem::SetHoveredLine(&(*pvecMsgs)[pointed]->GetID(), &(*pvecMsgs)[pointed]->GetText());
+        else
+            MuEmu::Ui::PostItem::SetHoveredLine(nullptr, nullptr);
     }
 
     if (pointed >= 0 && mu::ui::window::IsPress(VK_RBUTTON))

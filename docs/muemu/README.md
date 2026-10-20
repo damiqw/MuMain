@@ -254,10 +254,10 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
   `MuEmuStats.cpp`), porque el formato de OpenMU los manda en 16 bits.
 - **Tienda offline y tiendas en joyas/monedas** (OffTrade de Main.dll): debajo de la tienda personal hay botones para
   abrirla cobrando en Bless, Soul, Chaos, WCoinC, WCoinP o Goblin (C1 F3 EB tipo 0 a 5) y, con la tienda abierta,
-  "Tienda offline" (tipo 6). El GameServer manda el precio de esas tiendas con su moneda (PriceItemType de OpenMU).
+  "Cerrar tienda" (tipo 7) y "Tienda offline" (tipo 6), segun el estado que manda el servidor (C1 F3 EC). El GameServer manda el precio de esas tiendas con su moneda (PriceItemType de OpenMU).
 - **Ver el equipo de otro jugador** (como el ranking de Main.dll): cada fila del Custom Ranking tiene "Ver", que pide el
   personaje (C1 D3 40) y muestra su nivel, resets, guild y los 12 items equipados con nivel y opciones (C2 D3 40).
 - **Item en el chat** (post_item de Main.dll, `MuEmuPostItem.cpp`): Ctrl + click sobre un item del inventario (o del
   equipo) abre una ventana con un mensaje opcional y "Publicar" (C1 78 con la posicion del item). Los items publicados
   (C1 78 del servidor, para todos los jugadores) salen en el chat como `[Item] Personaje: mensaje [item +9 +Skill]` y
-  los ultimos 20 se ven en Menu > Items publicados. El servidor cobra y limita segun `CommandPostItem` de su configuracion.
+  los ultimos 20 se ven en Menu > Items publicados. Con el cursor sobre la linea del chat se ve el tooltip completo del item. El servidor cobra y limita segun `CommandPostItem` de su configuracion.

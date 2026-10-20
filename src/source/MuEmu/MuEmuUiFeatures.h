@@ -65,7 +65,18 @@ void Open(int position);
 void OpenRecent();
 // Item publicado por un jugador (C1 78): va al chat.
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+// La linea del chat bajo el cursor (remitente y texto), o nada: si es un item publicado se ve su tooltip.
+void SetHoveredLine(const std::wstring* id, const std::wstring* text);
+void Frame();
 } // namespace MuEmu::Ui::PostItem
+
+namespace MuEmu::Ui::Store
+{
+// Tienda personal abierta o cerrada (C1 F3 EC, como OffTrade de Main.dll): con la tienda abierta se ofrecen
+// cerrarla y dejarla offline.
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+bool IsActive();
+} // namespace MuEmu::Ui::Store
 
 namespace MuEmu::Ui::Stats
 {

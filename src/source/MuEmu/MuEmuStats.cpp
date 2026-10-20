@@ -10,6 +10,26 @@
 // - C1 F3 E0 (120 bytes): puntos libres (64) y stats base (100 fuerza, 104 agilidad, 108 vitalidad, 112 energia,
 //   116 comando).
 // - C1 F3 E1 (172 bytes): stats agregados por items y buffs (36 a 52).
+namespace
+{
+bool g_storeActive = false;
+}
+
+// C1 F3 EC (12 bytes): Active (int, 4) y tipo de la tienda custom (int, 8).
+bool MuEmu::Ui::Store::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)
+{
+    if (head != 0xF3 || sub != 0xEC || buffer[0] != 0xC1)
+        return false;
+    if (size >= 8)
+        g_storeActive = ReadInt(buffer, 4) != 0;
+    return true;
+}
+
+bool MuEmu::Ui::Store::IsActive()
+{
+    return g_storeActive;
+}
+
 bool MuEmu::Ui::Stats::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)
 {
     if (head != 0xF3 || buffer[0] != 0xC1 || (sub != 0xE0 && sub != 0xE1))

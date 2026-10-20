@@ -3,11 +3,16 @@
 
 #include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUi.h"
+#include "Data/GameData/ItemData/ItemDatabase.h"
+#include "Engine/Object/ZzzInventory.h"
 #include "UI/Core/WindowSystem.h"
+#include "UI/Inventory/ItemMng.h"
 
 #include <algorithm>
 #include <cstring>
 #include <deque>
+#include <memory>
+#include <span>
 #include <vector>
 
 // Item en el chat (post_item de Main.dll): Ctrl + click sobre un item del inventario abre una ventana con el
@@ -16,6 +21,7 @@
 //   y despues (35, 43).
 // - Recibo C1 78 (104 bytes, PMSG_POST_ITEM_SEND): personaje (11, 3), texto antes (35, 14) y despues (35, 49),
 //   indice (short, 84), durabilidad (86), item de 12 bytes (87) y tiempo del item temporal (int, 100).
+// Pasar el cursor por la linea del chat muestra el tooltip del item, como Main.dll.
 namespace
 {
 constexpr const char* PostId = "post_item";
@@ -36,10 +42,73 @@ struct Post
     std::string text;
     std::string item;
     int durability = 0;
+    // La linea del chat (remitente y texto) y el item para su tooltip.
+    std::wstring chatId;
+    std::wstring chatText;
+    std::shared_ptr<ITEM> object;
 };
 
 std::deque<Post> g_recent;
 int g_position = -1;
+std::shared_ptr<ITEM> g_hovered;
+
+// Item de 12 bytes del servidor -> formato extendido que lee el cliente (igual que SvenConvertItem del
+// GameServer), para crear el item con todas sus opciones.
+std::shared_ptr<ITEM> CreateItem(const uint8_t* info)
+{
+    const int index = info[0] + ((info[3] & 0x80) * 2) + ((info[5] & 0xF0) * 32);
+    const int group = index / MAX_ITEM_INDEX;
+    const int number = index % MAX_ITEM_INDEX;
+    const int option = (info[1] & 3) + ((info[3] & 0x40) ? 4 : 0);
+    const bool wing = g_ItemDatabase.GetSlot(index) == Data::Items::ItemSlot::Wings;
+    const uint8_t excellent = info[3] & (wing ? 0x0F : 0x3F);
+    const uint8_t optionType = wing ? ((info[3] >> 4) & 3) : 0;
+
+    int sockets = 0;
+    for (int n = 0; n < 5; ++n)
+    {
+        if (info[7 + n] != 0xFF)
+            sockets = n + 1;
+    }
+
+    uint8_t flags = 0;
+    flags |= option != 0 ? 0x01 : 0;
+    flags |= (info[1] & 4) != 0 ? 0x02 : 0;
+    flags |= (info[1] & 128) != 0 ? 0x04 : 0;
+    flags |= excellent != 0 ? 0x08 : 0;
+    flags |= (info[4] & 3) != 0 ? 0x10 : 0;
+    flags |= (sockets == 0 && info[6] != 0 && info[6] != 0xFF) ? 0x20 : 0;
+    flags |= (info[5] & 0x08) != 0 ? 0x40 : 0;
+    flags |= sockets != 0 ? 0x80 : 0;
+
+    std::vector<BYTE> data = { static_cast<BYTE>((group << 4) | ((number >> 8) & 0x0F)),
+                               static_cast<BYTE>(number & 0xFF), static_cast<BYTE>((info[1] >> 3) & 0x0F), info[2],
+                               flags };
+    if (flags & 0x01)
+        data.push_back(static_cast<BYTE>((optionType << 4) | (option & 0x0F)));
+    if (flags & 0x08)
+        data.push_back(excellent);
+    if (flags & 0x10)
+        data.push_back(static_cast<BYTE>((info[4] & 3) | (((info[4] >> 2) & 3) << 4)));
+    if (flags & 0x20)
+        data.push_back(info[6]);
+    if (flags & 0x80)
+    {
+        data.push_back(static_cast<BYTE>((((info[6] == 0xFF) ? 0x0F : (info[6] & 0x0F)) << 4) | sockets));
+        for (int n = 0; n < sockets; ++n)
+            data.push_back(info[7 + n]);
+    }
+
+    if (g_pNewItemMng == nullptr)
+        return nullptr;
+    ITEM* created = g_pNewItemMng->CreateItemExtended(std::span<const BYTE>(data.data(), data.size()));
+    if (created == nullptr)
+        return nullptr;
+    // Copia propia: el administrador de items puede borrar los suyos al cambiar de escena.
+    auto copy = std::make_shared<ITEM>(*created);
+    g_pNewItemMng->DeleteItem(created);
+    return copy;
+}
 
 // El servidor guarda los textos en ANSI (la pagina de codigos de Windows).
 std::string ToAnsi(const std::string& utf8)
@@ -144,8 +213,11 @@ bool MuEmu::Ui::PostItem::Receive(uint8_t head, uint8_t, const uint8_t* buffer, 
     line += "[" + post.item + "]";
     if (!after.empty())
         line += " " + after;
+    post.chatId = ToWide("[Item] " + post.name);
+    post.chatText = ToWide(line);
+    post.object = CreateItem(buffer + 87);
     if (g_pChatListBox != nullptr)
-        g_pChatListBox->AddText(ToWide("[Item] " + post.name), ToWide(line), mu::ui::window::TYPE_GM_MESSAGE);
+        g_pChatListBox->AddText(post.chatId, post.chatText, mu::ui::window::TYPE_GM_MESSAGE);
 
     g_recent.push_front(std::move(post));
     if (g_recent.size() > MaxRecent)
@@ -153,4 +225,26 @@ bool MuEmu::Ui::PostItem::Receive(uint8_t head, uint8_t, const uint8_t* buffer, 
     if (MuEmu::Panel::IsShown(RecentId))
         OpenRecent();
     return true;
+}
+
+void MuEmu::Ui::PostItem::SetHoveredLine(const std::wstring* id, const std::wstring* text)
+{
+    g_hovered.reset();
+    if (id == nullptr || text == nullptr || text->empty())
+        return;
+    // Una linea larga se parte en dos: la primera conserva el remitente y el comienzo del texto.
+    for (const Post& post : g_recent)
+    {
+        if (post.object && post.chatId == *id && post.chatText.compare(0, text->size(), *text) == 0)
+        {
+            g_hovered = post.object;
+            return;
+        }
+    }
+}
+
+void MuEmu::Ui::PostItem::Frame()
+{
+    if (g_hovered)
+        RenderItemInfoAtPx(g_fWindowMouseX, g_fWindowMouseY - 20.f, g_hovered.get(), false);
 }

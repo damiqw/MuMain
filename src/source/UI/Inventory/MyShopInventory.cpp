@@ -23,6 +23,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUi.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include <optional>
 #include <vector>
 
@@ -311,7 +312,7 @@ void mu::ui::window::CMyShopInventory::BindRmlModel(Rml::DataModelConstructor& c
     c.Bind("shop_title", &model.shopTitle);
 
     // MuEmu (fork): custom store (F3 EB): 0-5 open it in Bless, Soul, Chaos, WCoinC, WCoinP or Goblin Points,
-    // 6 leaves it open offline.
+    // 6 leaves it open offline and 7 closes it (the server reports it open or closed with F3 EC).
     c.Bind("muemu_store", &model.muemuStore);
     c.Bind("muemu_shop_open", &model.muemuShopOpen);
     c.BindEventCallback("muemu_store",
@@ -775,7 +776,7 @@ void mu::ui::window::CMyShopInventory::SyncRmlModel()
 
     static const bool muEmu = MuEmu::GetConfigInt("Enabled", 0) != 0;
     syncBool(&MyShopRmlModel::muemuStore, "muemu_store", muEmu);
-    syncBool(&MyShopRmlModel::muemuShopOpen, "muemu_shop_open", m_EnablePersonalShop);
+    syncBool(&MyShopRmlModel::muemuShopOpen, "muemu_shop_open", m_EnablePersonalShop || MuEmu::Ui::Store::IsActive());
 }
 
 bool mu::ui::window::CMyShopInventory::Render()

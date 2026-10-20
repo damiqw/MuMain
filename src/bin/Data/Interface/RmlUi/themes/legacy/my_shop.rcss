@@ -128,4 +128,5 @@
 	pointer-events: auto;
 }
 .muemu-store-btn:hover { color: #ffffff; background-color: rgba(70, 60, 30, 230); }
-.muemu-store-btn.muemu-store-offline { width: 188px; color: #60e060; }
+.muemu-store-btn.muemu-store-wide { width: 92px; }
+.muemu-store-btn.muemu-store-offline { color: #60e060; }
