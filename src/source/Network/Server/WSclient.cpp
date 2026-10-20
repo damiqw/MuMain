@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuBuff.h"
 #include "MuEmu/MuEmuHealthBar.h"
 #include "App/Control/ControlTaps.h"
 #include "Core/Utilities/Log/MuLogger.h"
@@ -14735,6 +14736,12 @@ static void ProcessPacket(const BYTE* ReceiveBuffer, int32_t Size)
     case 0xAE:
         // Received mu helper config from server
         ReceiveMuHelperConfigurationData(received_span);
+        break;
+    case 0xFB: // MuEmu (fork): valores de los buffs (FB 13) para sus tooltips
+        if (bIsC1C3 && Size > 4 && ReceiveBuffer[3] == 0x13)
+        {
+            MuEmu::Buff::ReceiveValues(ReceiveBuffer, Size);
+        }
         break;
     default:
         break;

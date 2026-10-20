@@ -4269,6 +4269,7 @@ enum eBuffState
     EFFECT_MASTER_SCROLL_OF_STRENGTH = 203,
     EFFECT_MASTER_SCROLL_OF_QUICK = 204,
     EFFECT_TESTE_205 = 205,
+    EFFECT_MUEMU_LAST = 255, // MuEmu (fork): buffs custom del servidor (CustomBuffIcon.txt)
     eBuff_Count,
 };
 

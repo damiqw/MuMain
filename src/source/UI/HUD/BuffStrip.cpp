@@ -14,6 +14,7 @@
 #include "UI/Dialogs/ConfirmRequest.h"
 #include "Network/Server/WSclient.h"
 #include "Core/Utilities/StringUtils.h"
+#include "MuEmu/MuEmuBuff.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Event.h>
 #include <algorithm>
@@ -142,7 +143,7 @@ namespace
     const int kMaxTileIndex = 89; // rows 0-8, 10 cols
     Rml::String BuildIconDecorator(eBuffState buff)
     {
-        const int buffId = static_cast<int>(buff);
+        const int buffId = MuEmu::Buff::GetIcon(static_cast<int>(buff)); // MuEmu (fork): icono de los buffs custom
         const bool isAtlas1 = (buffId < 81); // eBuff_Berserker, matches RenderBuffIcon()'s own branch
         const int rawIndex = isAtlas1 ? (buffId - 1) : (buffId - 81);
         const int tileIndex = std::min(std::max(rawIndex, 0), kMaxTileIndex);

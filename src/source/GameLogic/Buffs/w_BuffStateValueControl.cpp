@@ -3,6 +3,7 @@
 #include "GameLogic/Items/ItemAddOptioninfo.h"
 #include "w_BuffStateValueControl.h"
 #include "w_BuffScriptLoader.h"
+#include "MuEmu/MuEmuBuff.h"
 #include "Core/Utilities/_GlobalFunctions.h"
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -101,6 +102,7 @@ void BuffStateValueControl::GetBuffInfoString(std::list<std::wstring>& outstr, e
     const BuffInfo buffinfo = g_BuffInfo(bufftype);
 
     outstr = buffinfo.s_BuffDescriptlist;
+    MuEmu::Buff::FormatLines(bufftype, outstr); // MuEmu (fork): valores del buff que manda el servidor
     outstr.push_front(L"\n");
     outstr.push_front(buffinfo.s_BuffName);
 

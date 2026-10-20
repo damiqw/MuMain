@@ -117,3 +117,9 @@ de `Data/Music/` (solo si el archivo esta).
 
 Copiar `CustomServerInfo.txt` a `Data/MuEmu/`. El servidor N del grupo indicado muestra el texto custom en lugar
 de "Grupo-N" y su estado, como Main.dll.
+
+## Buffs custom (`src/source/MuEmu/MuEmuBuff.cpp`)
+
+Copiar `CustomBuffIcon.txt` a `Data/MuEmu/`. Sus lineas reemplazan o agregan buffs sobre `BuffEffect` (el cliente
+acepta buffs hasta el 255). Los buffs desde el 205 usan como icono el de la segunda columna. Los `%d` de la
+descripcion se llenan con los valores del paquete C1 FB 13 del servidor (si no llego, se ve `?`).

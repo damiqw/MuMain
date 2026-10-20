@@ -6,6 +6,7 @@
 #include "w_BuffScriptLoader.h"
 #include "Core/Platform/WinCompat.h"
 #include "Core/Utilities/Log/MuLogger.h"
+#include "MuEmu/MuEmuBuff.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -122,6 +123,24 @@ bool BuffScriptLoader::Load(const std::wstring& pchFileName)
 
                 pSeek += structsize;
             }
+
+            // MuEmu (fork): buffs custom del servidor (CustomBuffIcon.txt), sobre los de BuffEffect.
+            MuEmu::Buff::ForEach([this](const MuEmu::Buff::Entry& custom)
+            {
+                BuffInfo buffinfo;
+                buffinfo.s_BuffIndex = static_cast<short>(custom.index);
+                buffinfo.s_BuffEffectType = static_cast<BYTE>(custom.effectType);
+                buffinfo.s_ItemType = static_cast<BYTE>(custom.itemType);
+                buffinfo.s_ItemIndex = static_cast<BYTE>(custom.itemIndex);
+                wcsncpy(buffinfo.s_BuffName, custom.name.c_str(), MAX_BUFF_NAME_LENGTH - 1);
+                wcsncpy(buffinfo.s_BuffDescript, custom.descript.c_str(), MAX_DESCRIPT_LENGTH - 1);
+                buffinfo.s_BuffClassType = static_cast<BYTE>(custom.classType);
+                buffinfo.s_NoticeType = static_cast<BYTE>(custom.noticeType);
+                buffinfo.s_ClearType = static_cast<BYTE>(custom.clearType);
+
+                CutTokenString(buffinfo.s_BuffDescript, buffinfo.s_BuffDescriptlist);
+                m_Info[static_cast<eBuffState>(custom.index)] = buffinfo;
+            });
         }
         delete[] Buffer;
     }
