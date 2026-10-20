@@ -274,3 +274,10 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
 - **Tooltip de items en el piso** (ShowInfoItemDrop de Main.dll): con el cursor sobre un item del piso se ve su tooltip
   completo. `[MuEmu] GroundItemTooltip`: 0 apagado, 1 mientras se mantiene Alt (por defecto, como MainInfo.ini), 2 siempre.
   Alt (o soltarlo y volver a apretar) sigue mostrando los nombres de todos los items, como en SVEN.
+- **Lucky Wheel, XShop y banderas** (`MuEmuShops.cpp`, en el Menu):
+  - Lucky Wheel: lista de ruletas (C1 D3 8C / C2 D3 8A), premios y costo (C1/C2 D3 8B), "Girar" (C1 D3 8A) y el
+    premio resaltado cuando llega el resultado (C1 D3 8C).
+  - XShop: tiendas (C1 D5 13 / C2 D5 11), items con precio (C1/C2 D5 12; en gris los que no son para la clase) y
+    compra con confirmacion (C1 D5 11).
+  - Banderas: pide una por una (C1 FF 03 tipo 0) hasta que el servidor contesta -1 (C1 FB 18); muestra ataque,
+    defensa, vida, mana y precio, "Comprar"/"Usar" (tipo 1) y "Mostrar/Ocultar bandera" (tipo 3).

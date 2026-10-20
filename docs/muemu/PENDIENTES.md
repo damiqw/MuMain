@@ -27,6 +27,7 @@ lo resuelve SVEN de otra forma.
 | Stats de mas de 65.000, OffTrade (tienda offline), ver equipo (ranking), post_item | `MuEmuStats`, `MyShopInventory`, `MuEmuRanking`, `MuEmuPostItem` |
 | HWID (limites y baneos por PC), set ancient completo, cartas con equipo | `MuEmuHwid` + GameServer (`HwidManager`, `SvenProtocol`) |
 | BuyVip, Antilag, ShowInfoItemDrop (tooltip del item en el piso) | `MuEmuVip`, `MuEmuAntiLag`, `NameWindow` |
+| Lucky Wheel V2 (VongQuay), SPK_xShop, ThueFlag (alquiler de banderas) | `MuEmuShops` |
 
 ## Prioridad A: juego diario o pedido por el servidor
 
@@ -38,9 +39,6 @@ lo resuelve SVEN de otra forma.
 
 | Funcion | Main.dll | Paquetes | Nota |
 |---|---|---|---|
-| Ruleta (Lucky Wheel) | Interface (VongQuay) | CustomVongQuay | Ventana con premios y giro. |
-| Tienda XShop | SPK_xShop | D5 12/13 | Tienda custom por monedas. |
-| Alquiler de banderas | ThueFlag | FF 03 | Elegir y comprar bandera (las banderas ya se ven). |
 | Tienda Ruud | NPCRuud | EA, EE, 0x31 | Ventana del NPC Ruud. |
 | Color de items (tienda de tintes) | CustomItemColor | EF 10, NpcOpen/Answer/ViewportSync | Teñir items y ver los de otros. |
 | Stats avanzados | CustomStatsAdvance | F3 F4 | Panel con los stats finales del personaje. |

@@ -85,6 +85,27 @@ void Open();
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Vip
 
+namespace MuEmu::Ui::Wheel
+{
+// Ruleta (Lucky Wheel V2 de Main.dll): C1/C2 D3 8A, 8B y 8C.
+void Open();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Wheel
+
+namespace MuEmu::Ui::XShop
+{
+// Tienda XShop (SPK_xShop de Main.dll): C1/C2 D5 11, 12 y 13.
+void Open();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::XShop
+
+namespace MuEmu::Ui::Flag
+{
+// Alquiler de banderas (ThueFlag de Main.dll): envia C1 FF 03, recibe C1 FB 18.
+void Open();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Flag
+
 namespace MuEmu::AntiLag
 {
 // Panel AntiLag (Antilag de Main.dll): apaga efectos y modelos para PCs lentas. Se guarda en config.ini [MuEmu].

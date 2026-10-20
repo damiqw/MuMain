@@ -26,6 +26,9 @@ enum MenuAction
     MenuPostItem,
     MenuVip,
     MenuAntiLag,
+    MenuWheel,
+    MenuXShop,
+    MenuFlag,
 };
 
 // La N: la party, como en Main.dll.
@@ -79,7 +82,8 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
            Ranking::Receive(head, sub, buffer, size) || Ranking::ReceiveCharacter(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
            GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size) ||
            Stats::Receive(head, sub, buffer, size) || PostItem::Receive(head, sub, buffer, size) ||
-           Store::Receive(head, sub, buffer, size) || Vip::Receive(head, sub, buffer, size);
+           Store::Receive(head, sub, buffer, size) || Vip::Receive(head, sub, buffer, size) ||
+           Wheel::Receive(head, sub, buffer, size) || XShop::Receive(head, sub, buffer, size) || Flag::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()
@@ -141,6 +145,9 @@ void MuEmu::Ui::ShowMenu()
         { "Items publicados", MenuPostItem },
         { "Buy Vip", MenuVip },
         { "AntiLag", MenuAntiLag },
+        { "Lucky Wheel", MenuWheel },
+        { "XShop", MenuXShop },
+        { "Banderas", MenuFlag },
     };
     for (const auto& entry : entries)
         content.buttons.push_back({ entry.label, entry.action });
@@ -159,6 +166,9 @@ void MuEmu::Ui::ShowMenu()
         case MenuPostItem: PostItem::OpenRecent(); break;
         case MenuVip: Vip::Open(); break;
         case MenuAntiLag: MuEmu::AntiLag::Open(); break;
+        case MenuWheel: Wheel::Open(); break;
+        case MenuXShop: XShop::Open(); break;
+        case MenuFlag: Flag::Open(); break;
         default: break;
         }
     });
