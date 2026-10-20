@@ -52,6 +52,9 @@ std::string GetInput();
 
 void Hide();
 
+// Se llama una vez cuando la ventana abierta se cierra (ESC, la X o al abrir otra ventana). Va despues de Show().
+void SetOnClose(std::function<void()> onClose);
+
 // Texto UTF-8 de un texto del cliente.
 std::string ToUtf8(const wchar_t* text);
 } // namespace MuEmu::Panel

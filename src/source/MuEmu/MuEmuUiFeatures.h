@@ -106,6 +106,27 @@ void Open();
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Flag
 
+namespace MuEmu::Ui::Ruud
+{
+// Tienda Ruud (NPCRuud de Main.dll): la abre el NPC (C1/C3 EE y lista C2 EA); compra C1 EE y cierra C1 31.
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Ruud
+
+namespace MuEmu::Ui::ItemColor
+{
+// Color de items (CustomItemColor de Main.dll): ventana del NPC (C1 EF 10/12) y colores de los jugadores (C2 EF 13).
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+// Tine la luz de una parte del equipo (lugar del servidor, 0 a 11) del jugador con ese indice; falso si no tiene color.
+bool Tint(int characterKey, int slot, float* light);
+} // namespace MuEmu::Ui::ItemColor
+
+namespace MuEmu::Ui::StatsAdvance
+{
+// Stats avanzados (CustomStatsAdvance de Main.dll): C1 F3 F4.
+void Open();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::StatsAdvance
+
 namespace MuEmu::AntiLag
 {
 // Panel AntiLag (Antilag de Main.dll): apaga efectos y modelos para PCs lentas. Se guarda en config.ini [MuEmu].

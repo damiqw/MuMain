@@ -281,3 +281,10 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
     compra con confirmacion (C1 D5 11).
   - Banderas: pide una por una (C1 FF 03 tipo 0) hasta que el servidor contesta -1 (C1 FB 18); muestra ataque,
     defensa, vida, mana y precio, "Comprar"/"Usar" (tipo 1) y "Mostrar/Ocultar bandera" (tipo 3).
+- **Tienda Ruud, color de items y stats avanzados** (`MuEmuExtras.cpp`):
+  - Tienda Ruud: se abre al hablar con el NPC (C3 EE + lista C2 EA); compra con confirmacion (C1 EE pagina/lugar) y
+    al cerrar la ventana manda C1 31 para que el servidor libere al personaje.
+  - Color de items: el NPC abre la ventana (C1 EF 10) con los items equipados y su precio; colores predefinidos o
+    R G B a mano (C1 EF 10). Los colores de cada jugador (C2 EF 13) tinen casco, armadura, pantalones, guantes y botas
+    en el juego. Armas y alas todavia no se tinen.
+  - Stats avanzados (Menu): los 52 valores que manda el servidor (C1 F3 F4) en dos columnas.

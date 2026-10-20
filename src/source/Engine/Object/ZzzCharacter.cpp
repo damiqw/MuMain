@@ -9713,7 +9713,13 @@ void RenderCharacter(CHARACTER* c, OBJECT* o, int Select)
                             }
                             else
                             {
-                                RenderPartObject(&c->Object, Type, p, c->Light, o->Alpha, p->Level, p->ExcellentFlags, p->AncientDiscriminator, false, false, Translate, Select);
+                                // MuEmu (fork): the dyed armor pieces (CustomItemColor, MuEmuExtras.cpp). Body
+                                // part i is the server's equipment slot i + 1 (helm 2 ... boots 6).
+                                vec3_t partLight;
+                                VectorCopy(c->Light, partLight);
+                                if (i > 0)
+                                    MuEmu::Ui::ItemColor::Tint(c->Key, i + 1, partLight);
+                                RenderPartObject(&c->Object, Type, p, partLight, o->Alpha, p->Level, p->ExcellentFlags, p->AncientDiscriminator, false, false, Translate, Select);
                             }
                     }
                 }

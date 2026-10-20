@@ -28,6 +28,7 @@ lo resuelve SVEN de otra forma.
 | HWID (limites y baneos por PC), set ancient completo, cartas con equipo | `MuEmuHwid` + GameServer (`HwidManager`, `SvenProtocol`) |
 | BuyVip, Antilag, ShowInfoItemDrop (tooltip del item en el piso) | `MuEmuVip`, `MuEmuAntiLag`, `NameWindow` |
 | Lucky Wheel V2 (VongQuay), SPK_xShop, ThueFlag (alquiler de banderas) | `MuEmuShops` |
+| NPCRuud, CustomItemColor (armaduras), CustomStatsAdvance | `MuEmuExtras` |
 
 ## Prioridad A: juego diario o pedido por el servidor
 
@@ -39,9 +40,6 @@ lo resuelve SVEN de otra forma.
 
 | Funcion | Main.dll | Paquetes | Nota |
 |---|---|---|---|
-| Tienda Ruud | NPCRuud | EA, EE, 0x31 | Ventana del NPC Ruud. |
-| Color de items (tienda de tintes) | CustomItemColor | EF 10, NpcOpen/Answer/ViewportSync | Teñir items y ver los de otros. |
-| Stats avanzados | CustomStatsAdvance | F3 F4 | Panel con los stats finales del personaje. |
 | Sumar puntos rapido | CustomQuickAddStats | (comandos) | Ventanas para sumar N puntos a cada stat. |
 | Party: ayuda de asignacion | PartyAssignHelper | FF 38 | Marca el objetivo del lider. |
 | Buffs de la party | PartyBuffs | 2E | Iconos de buffs de los miembros. |

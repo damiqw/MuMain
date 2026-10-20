@@ -34,6 +34,16 @@ struct PanelModel
 
 std::string g_shownId;
 MuEmu::Panel::ActionHandler g_onAction;
+std::function<void()> g_onClose;
+
+void RunOnClose()
+{
+    if (!g_onClose)
+        return;
+    std::function<void()> onClose = std::move(g_onClose);
+    g_onClose = nullptr;
+    onClose();
+}
 
 void BindModel(Rml::DataModelConstructor& c, PanelModel& model)
 {
@@ -135,6 +145,10 @@ void MuEmu::Panel::Show(const std::string& id, Content content, ActionHandler on
     if (!View().Ensure())
         return;
 
+    // Otra ventana reemplaza a la abierta: la anterior se cerro.
+    if (id != g_shownId)
+        RunOnClose();
+    g_onClose = nullptr;
     g_shownId = id;
     g_onAction = std::move(onAction);
     Apply(std::move(content));
@@ -163,8 +177,14 @@ bool MuEmu::Panel::IsAnyShown()
     return !g_shownId.empty() && IsShown(g_shownId);
 }
 
+void MuEmu::Panel::SetOnClose(std::function<void()> onClose)
+{
+    g_onClose = std::move(onClose);
+}
+
 void MuEmu::Panel::Hide()
 {
+    RunOnClose();
     g_shownId.clear();
     g_onAction = nullptr;
     if (View().IsBuilt())
