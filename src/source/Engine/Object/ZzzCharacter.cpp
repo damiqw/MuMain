@@ -134,6 +134,7 @@ namespace
 #include "MuEmu/MuEmuEffect.h"
 #include "MuEmu/MuEmuMonster.h"
 #include "MuEmu/MuEmuPet.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 
 CHARACTER* CharactersClient;
 CHARACTER CharacterView;
@@ -11547,6 +11548,14 @@ void RenderCharactersClient()
         }
         if (o->Live)
         {
+            // MuEmu (fork): AntiLag hides the other players or their wings (MuEmuAntiLag.cpp).
+            const bool otherPlayer = c != Hero && o->Kind == KIND_PLAYER && o->Type == MODEL_PLAYER;
+            if (otherPlayer && MuEmu::AntiLag::IsHidden(MuEmu::AntiLag::OtherPlayers))
+                continue;
+            const int savedWing = c->Wing.Type;
+            if (otherPlayer && MuEmu::AntiLag::IsHidden(MuEmu::AntiLag::OtherWings))
+                c->Wing.Type = -1;
+
             if (o->Visible)
             {
                 if (i != SelectedCharacter && i != SelectedNpc)
@@ -11562,6 +11571,7 @@ void RenderCharactersClient()
                     RenderCharacterPickBoxDebug(o);
 #endif
             }
+            c->Wing.Type = savedWing;
         }
     }
 

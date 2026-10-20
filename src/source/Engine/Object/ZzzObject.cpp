@@ -51,6 +51,7 @@
 #include "Render/Items/ItemEffects.h"
 #include "Render/Items/ItemRenderStyles.h"
 #include "Data/GameData/ItemData/ItemModelSlots.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 
 // DevEditor function declarations
 #ifdef _EDITOR
@@ -5851,6 +5852,10 @@ void RenderItems()
             float cullRadius = DEFAULT_CULL_RADIUS_ITEM;
 #endif
             o->Visible = TestFrustrum(o->Position, cullRadius);
+
+            // MuEmu (fork): AntiLag can hide the zen on the ground (MuEmuAntiLag.cpp).
+            if (o->Type == MODEL_ZEN && MuEmu::AntiLag::IsHidden(MuEmu::AntiLag::GroundZen))
+                o->Visible = false;
 
 #ifdef _EDITOR
             // Debug visualization: frustum-cull sphere (NOT the pick volume)

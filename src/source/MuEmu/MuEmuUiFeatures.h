@@ -78,6 +78,30 @@ bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 bool IsActive();
 } // namespace MuEmu::Ui::Store
 
+namespace MuEmu::Ui::Vip
+{
+// Comprar VIP (BuyVip de Main.dll): planes del servidor (C2 F3 FB) y compra (C1 F3 F0).
+void Open();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Vip
+
+namespace MuEmu::AntiLag
+{
+// Panel AntiLag (Antilag de Main.dll): apaga efectos y modelos para PCs lentas. Se guarda en config.ini [MuEmu].
+enum Option
+{
+    CustomItemEffects, // efectos de los items custom (CustomEffectStatic)
+    SetEffects,        // efectos de set y runa (CustomModelEffect, CustomRuneEffect)
+    OtherPlayers,      // los demas jugadores
+    OtherWings,        // alas de los demas jugadores
+    GroundZen,         // zen en el piso
+    OptionCount,
+};
+// Verdadero si la opcion esta apagada (no se dibuja).
+bool IsHidden(Option option);
+void Open();
+} // namespace MuEmu::AntiLag
+
 namespace MuEmu::Ui::Stats
 {
 // Stats de 32 bits de los servidores MuEmu (C1 F3 E0 y E1).

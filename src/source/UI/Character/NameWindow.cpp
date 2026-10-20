@@ -301,7 +301,19 @@ void mu::ui::window::CNameWindow::RenderName()
 #ifdef _EDITOR
             if (DevEditor_ShouldRenderItemLabels())
 #endif
+            {
                 RenderItemName(SelectedItem, &Items[SelectedItem].Object, &Items[SelectedItem].Item, false);
+
+                // MuEmu (fork): the full tooltip of the item under the cursor (Main.dll's ShowInfoItemDrop):
+                // [MuEmu] GroundItemTooltip 0 off, 1 while Alt is held (MainInfo's ItemTooltipDropType 1), 2 always.
+                static const int groundTooltip = MuEmu::GetConfigInt("GroundItemTooltip", 1);
+                ITEM* groundItem = &Items[SelectedItem].Item;
+                if (groundItem->Type != ITEM_ZEN &&
+                    (groundTooltip == 2 || (groundTooltip == 1 && mu::ui::window::IsRepeat(VK_MENU))))
+                {
+                    RenderItemInfoAtPx(g_fWindowMouseX, g_fWindowMouseY, groundItem, false);
+                }
+            }
         }
     }
 

@@ -11,4 +11,6 @@ bool RunCommandLineTool(const char* commandLine);
 
 // Lee un entero de la seccion [MuEmu] de config.ini (junto a Main.exe); defaultValue si no esta.
 int GetConfigInt(const char* key, int defaultValue);
+// Guarda un entero en la seccion [MuEmu] de config.ini (reemplaza la clave o la agrega al final de la seccion).
+void SetConfigInt(const char* key, int value);
 } // namespace MuEmu

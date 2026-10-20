@@ -2,6 +2,7 @@
 #include "MuEmu/MuEmuEffect.h"
 
 #include "MuEmu/MuEmuTexture.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 
 #include "Engine/Object/ZzzCharacter.h"
 #include "Render/Effects/ZzzEffect.h"
@@ -287,6 +288,9 @@ bool MuEmu::Effect::RenderItem(int itemType, BMD* model, OBJECT* object)
     const auto effects = g_static.equal_range(itemType);
     if (effects.first == effects.second || model == nullptr || object == nullptr)
         return false;
+    // AntiLag: el item custom queda sin efectos (ni los suyos ni los del cliente).
+    if (MuEmu::AntiLag::IsHidden(MuEmu::AntiLag::CustomItemEffects))
+        return true;
 
     for (auto it = effects.first; it != effects.second; ++it)
     {
@@ -306,6 +310,8 @@ void MuEmu::Effect::RenderCharacter(CHARACTER* c, OBJECT* o)
 {
     EnsureLoaded();
     if (c == nullptr || o == nullptr || g_isCharacterBuff(o, eBuff_Cloaking))
+        return;
+    if (MuEmu::AntiLag::IsHidden(MuEmu::AntiLag::SetEffects))
         return;
 
     RenderSetEffects(c, o);

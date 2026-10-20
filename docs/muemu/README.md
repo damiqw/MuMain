@@ -266,3 +266,11 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
   por PC y en el login confirma que es el cliente SVEN. `[MuEmu] SendHwid = 0` lo apaga.
 - **Set ancient completo y cartas**: el GameServer marca el set completo en la apariencia (brillo violeta) y arma la
   apariencia de la foto de las cartas desde el CharSet guardado (antes se veia la clase sin equipo).
+- **Comprar VIP** (`MuEmuVip.cpp`, Menu > Buy Vip): los planes que manda el servidor (C2 F3 FB) con exp, drop, dias y
+  precio; "Comprar" pide confirmacion y manda C1 F3 F0 con el plan. El servidor cobra y avisa.
+- **AntiLag** (`MuEmuAntiLag.cpp`, Menu > AntiLag): ocultar efectos de items custom, efectos de set y runa, otros
+  jugadores, alas de otros jugadores y zen en el piso. Se guarda en `config.ini` `[MuEmu]` (`AntiLagItemEffects`,
+  `AntiLagSetEffects`, `AntiLagPlayers`, `AntiLagWings`, `AntiLagZen`; 1 = oculto).
+- **Tooltip de items en el piso** (ShowInfoItemDrop de Main.dll): con el cursor sobre un item del piso se ve su tooltip
+  completo. `[MuEmu] GroundItemTooltip`: 0 apagado, 1 mientras se mantiene Alt (por defecto, como MainInfo.ini), 2 siempre.
+  Alt (o soltarlo y volver a apretar) sigue mostrando los nombres de todos los items, como en SVEN.

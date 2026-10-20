@@ -451,6 +451,75 @@ int MuEmu::GetConfigInt(const char* key, int defaultValue)
     return defaultValue;
 }
 
+void MuEmu::SetConfigInt(const char* key, int value)
+{
+    std::vector<std::string> lines;
+    {
+        std::ifstream stream("config.ini");
+        for (std::string line; std::getline(stream, line);)
+        {
+            if (!line.empty() && line.back() == '\r')
+                line.pop_back();
+            lines.push_back(line);
+        }
+    }
+
+    const std::string wanted = key;
+    const auto sameName = [&wanted](const std::string& line, std::size_t first, std::size_t separator)
+    {
+        std::string name = line.substr(first, separator - first);
+        name.erase(name.find_last_not_of(" \t") + 1);
+        return name.size() == wanted.size() &&
+               std::equal(name.begin(), name.end(), wanted.begin(), [](char a, char b)
+                          { return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b)); });
+    };
+
+    const std::string entry = wanted + " = " + std::to_string(value);
+    bool inSection = false;
+    std::size_t sectionEnd = std::string::npos;
+    bool written = false;
+    for (std::size_t n = 0; n < lines.size() && !written; ++n)
+    {
+        const std::string& line = lines[n];
+        const auto first = line.find_first_not_of(" \t");
+        if (first == std::string::npos || line[first] == ';' || line[first] == '#')
+            continue;
+        if (line[first] == '[')
+        {
+            inSection = line.compare(first, 7, "[MuEmu]") == 0;
+            if (inSection)
+                sectionEnd = n + 1;
+            continue;
+        }
+        if (!inSection)
+            continue;
+        sectionEnd = n + 1;
+        const auto separator = line.find('=');
+        if (separator != std::string::npos && sameName(line, first, separator))
+        {
+            lines[n] = entry;
+            written = true;
+        }
+    }
+
+    if (!written)
+    {
+        if (sectionEnd == std::string::npos)
+        {
+            lines.push_back("[MuEmu]");
+            lines.push_back(entry);
+        }
+        else
+        {
+            lines.insert(lines.begin() + static_cast<std::ptrdiff_t>(sectionEnd), entry);
+        }
+    }
+
+    std::ofstream out("config.ini", std::ios::binary | std::ios::trunc);
+    for (const std::string& line : lines)
+        out << line << "\r\n";
+}
+
 bool MuEmu::RunCommandLineTool(const char* commandLine)
 {
     if (HasFlag(commandLine, "--muemu-import-items"))

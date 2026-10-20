@@ -26,6 +26,7 @@ lo resuelve SVEN de otra forma.
 | LoginBox (conexion rapida) | `MuEmuQuickConnect` |
 | Stats de mas de 65.000, OffTrade (tienda offline), ver equipo (ranking), post_item | `MuEmuStats`, `MyShopInventory`, `MuEmuRanking`, `MuEmuPostItem` |
 | HWID (limites y baneos por PC), set ancient completo, cartas con equipo | `MuEmuHwid` + GameServer (`HwidManager`, `SvenProtocol`) |
+| BuyVip, Antilag, ShowInfoItemDrop (tooltip del item en el piso) | `MuEmuVip`, `MuEmuAntiLag`, `NameWindow` |
 
 ## Prioridad A: juego diario o pedido por el servidor
 
@@ -37,7 +38,6 @@ lo resuelve SVEN de otra forma.
 
 | Funcion | Main.dll | Paquetes | Nota |
 |---|---|---|---|
-| Comprar VIP | BuyVip | F3 FB (lista), envio propio | Estaba en el menu original (Buy Vip). |
 | Ruleta (Lucky Wheel) | Interface (VongQuay) | CustomVongQuay | Ventana con premios y giro. |
 | Tienda XShop | SPK_xShop | D5 12/13 | Tienda custom por monedas. |
 | Alquiler de banderas | ThueFlag | FF 03 | Elegir y comprar bandera (las banderas ya se ven). |
@@ -50,8 +50,6 @@ lo resuelve SVEN de otra forma.
 | Minimapa con datos del servidor | Minimap, MiniMapInfo | pide F3 37, recibe info y party | SVEN tiene minimapa; faltan NPC/party del servidor. |
 | Ping en pantalla | CustomPing | F3 F1 | Mostrar el ping. |
 | Crear cuenta en el login | CreateAccount | F1 12 | Registro desde el cliente. |
-| Panel AntiLag | Antilag | (cliente) | Apagar efectos para PCs lentas (estaba en el menu). |
-| Nombres de items en el piso | ShowInfoItemDrop | (cliente) | Mostrar siempre el nombre de lo que cae. |
 | Aviso de PK | PKNotice | (cliente) | Cartel del sistema PK. |
 | Ocultar alas | WingInvisible | (cliente) | Opcion para no dibujar alas. |
 | Humo de items | ItemSmoke (CustomSmokeEffect) | (cliente) | El archivo esta vacio en el servidor actual. |

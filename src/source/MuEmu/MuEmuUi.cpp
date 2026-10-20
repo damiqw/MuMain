@@ -24,6 +24,8 @@ enum MenuAction
     MenuInvasion,
     MenuDps,
     MenuPostItem,
+    MenuVip,
+    MenuAntiLag,
 };
 
 // La N: la party, como en Main.dll.
@@ -77,7 +79,7 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
            Ranking::Receive(head, sub, buffer, size) || Ranking::ReceiveCharacter(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
            GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size) ||
            Stats::Receive(head, sub, buffer, size) || PostItem::Receive(head, sub, buffer, size) ||
-           Store::Receive(head, sub, buffer, size);
+           Store::Receive(head, sub, buffer, size) || Vip::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()
@@ -137,6 +139,8 @@ void MuEmu::Ui::ShowMenu()
         { "Invasiones", MenuInvasion },
         { "Medidor de dano", MenuDps },
         { "Items publicados", MenuPostItem },
+        { "Buy Vip", MenuVip },
+        { "AntiLag", MenuAntiLag },
     };
     for (const auto& entry : entries)
         content.buttons.push_back({ entry.label, entry.action });
@@ -153,6 +157,8 @@ void MuEmu::Ui::ShowMenu()
         case MenuInvasion: Rewards::OpenInvasion(); break;
         case MenuDps: Ranking::ToggleDps(); break;
         case MenuPostItem: PostItem::OpenRecent(); break;
+        case MenuVip: Vip::Open(); break;
+        case MenuAntiLag: MuEmu::AntiLag::Open(); break;
         default: break;
         }
     });
