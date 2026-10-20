@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MuEmu/MuEmuEffect.h"
 
+#include "MuEmu/MuEmuTexture.h"
+
 #include "Engine/Object/ZzzCharacter.h"
 #include "Render/Effects/ZzzEffect.h"
 #include "Render/Models/ZzzBMD.h"
@@ -17,7 +19,8 @@
 
 namespace
 {
-// Las texturas de efectos empiezan en 32001 en los dos clientes; los modelos (numeros menores) no coinciden.
+// Las texturas de efectos empiezan en 32001 en los dos clientes (con otros numeros desde 32275, ver MuEmuTexture);
+// los modelos (numeros menores) no coinciden.
 constexpr int FirstEffectTexture = 32001;
 
 struct StaticEffect
@@ -116,7 +119,7 @@ void LoadStatic(const char* path)
     for (const auto& row : ReadRows(path, 10))
     {
         StaticEffect effect;
-        effect.texture = static_cast<int>(row[1]);
+        effect.texture = MuEmu::Texture::From104E(static_cast<int>(row[1]));
         effect.bone = static_cast<int>(row[2]);
         Vector(row[4], row[5], row[6], effect.color);
         effect.size = row[7];
@@ -145,6 +148,8 @@ void LoadModelEffects()
 
         // Los efectos de skill con modelos de 1.04E tienen otros numeros en este cliente: se omiten.
         if (effect.code >= FirstEffectTexture)
+            effect.code = MuEmu::Texture::From104E(effect.code);
+        if (effect.code >= FirstEffectTexture)
             g_models.push_back(effect);
     }
 }
@@ -156,7 +161,9 @@ void LoadRunes()
     {
         RuneEffect rune;
         rune.active = row[0] != 0.f;
-        rune.texture = static_cast<int>(row[1]);
+        rune.texture = MuEmu::Texture::From104E(static_cast<int>(row[1]));
+        if (rune.texture < 0)
+            rune.active = false;
         rune.speed = row[2];
         rune.size = row[3];
         Vector(row[4], row[5], row[6], rune.color);

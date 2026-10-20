@@ -138,10 +138,9 @@ Copiar `CustomEffectStatic.txt`, `CustomModelEffect.txt` y `CustomRuneEffect.txt
   el nivel y el excelente pedidos (los guantes no tienen efecto, como en Main.dll).
 - `CustomRuneEffect`: runa en el piso segun el VIP (o PK nivel 6) que manda el servidor en C1 F3 EF.
 
-Las texturas usan los numeros de 1.04E, que coinciden con los del cliente desde 32001 (`BITMAP_LIGHT` = 32002).
-Los efectos de skill con modelos (numeros menores) se omiten porque en este cliente tienen otros numeros. Los
-efectos y el brillo de mascotas custom (CustomPet*, CustomEarthQuakeSkill) quedan para cuando las mascotas custom
-se dibujen como montura.
+Las texturas usan los numeros de 1.04E y se pasan a los del cliente con `MuEmu::Texture` (ver "Numeros de
+textura"). Los efectos de skill con modelos (numeros menores) se omiten porque en este cliente tienen otros numeros.
+Los efectos de las mascotas custom estan en "Efectos de mascotas custom".
 
 ## Brillo de items custom (`src/source/MuEmu/MuEmuItemGlow.cpp`)
 

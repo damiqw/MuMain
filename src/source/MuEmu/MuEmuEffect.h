@@ -5,7 +5,7 @@
 // - CustomModelEffect.txt: efectos sobre el personaje que lleva un casco, armadura, pantalones o botas (nivel y
 //   excelente minimos).
 // - CustomRuneEffect.txt: runa en el piso segun VIP y PK, con los datos del servidor (C1 F3 EF).
-// Las texturas usan los numeros de 1.04E, que coinciden con los del cliente desde 32001 (BITMAP_LIGHT = 32002).
+// Las texturas usan los numeros de 1.04E y se pasan a los de este cliente con MuEmu::Texture.
 namespace MuEmu::Effect
 {
 // Efectos del item `itemType` (grupo * 512 + numero) con el modelo `model` y el objeto `object`. Verdadero si el
