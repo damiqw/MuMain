@@ -106,3 +106,9 @@ Copiar `CustomMonster.txt` y `CustomNPCName.txt` de `MAIN_INFO/Custom` a `Data/M
 quedan donde dice cada linea, por ejemplo `Data/Custom/Monster/`). Cada clase custom usa uno de los modelos de
 monstruo que el cliente deja libres (183), con su nombre, tamano y tipo (0 NPC, 1 monstruo). CustomNPCName cambia
 el nombre del NPC que aparece en ese mapa y posicion.
+
+## Mapas custom (`src/source/MuEmu/MuEmuMap.cpp`)
+
+Copiar `CustomMap.txt` a `Data/MuEmu/`. El mapa toma el nombre de su linea de texto si el cliente la tiene (si no,
+el de la imagen: `mundioca.tga` es "Mundioca"), la imagen del nombre de `Local/<idioma>/ImgsMapName/` y la musica
+de `Data/Music/` (solo si el archivo esta).

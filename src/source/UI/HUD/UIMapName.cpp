@@ -6,6 +6,7 @@
 #include "UIMapName.h"
 #include "Core/Utilities/Log/MuLogger.h"
 #include "World/MapInfra/MapManager.h"
+#include "MuEmu/MuEmuMap.h"
 #include "Render/Textures/ZzzOpenglUtil.h"
 #include "Render/Textures/ZzzTexture.h"
 #include "Render/RmlUi/RmlUiRuntime.h"
@@ -153,6 +154,12 @@ void CUIMapName::ShowMapName()
 
     if (m_nOldWorld != gMapManager.WorldActive)
     {
+        // MuEmu (fork): imagen del nombre de los mapas custom del servidor (CustomMap.txt).
+        if (const std::wstring customImage = MuEmu::Map::GetImage(gMapManager.WorldActive); !customImage.empty())
+        {
+            m_mapImgPath[gMapManager.WorldActive] = L"Local\\" + g_strSelectedML + L"\\ImgsMapName\\" + customImage;
+        }
+
         wchar_t szImgPath[128];
         ::wcscpy(szImgPath, m_mapImgPath[gMapManager.WorldActive].data());
 

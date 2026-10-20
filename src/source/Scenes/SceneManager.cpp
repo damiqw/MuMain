@@ -66,6 +66,7 @@ FrameTimingState g_frameTiming;
 #include "Scenes/SceneLightingSetup.h"
 #include "Scenes/SceneNames.h"
 #include "Render/Lighting/LightMoodSetting.h"
+#include "MuEmu/MuEmuMap.h"
 
 #ifdef _EDITOR
 #include "../MuEditor/Core/MuEditorCore.h"
@@ -932,6 +933,8 @@ static void StopInactiveAmbientSounds()
  */
 static void ManageBackgroundMusic()
 {
+    MuEmu::Map::UpdateMusic(gMapManager.WorldActive); // MuEmu (fork): musica de los mapas custom
+
     if (gMapManager.WorldActive == WD_0LORENCIA)
     {
         if (Hero->SafeZone)

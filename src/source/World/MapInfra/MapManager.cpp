@@ -18,6 +18,7 @@
 #include "GameLogic/Events/w_CursedTemple.h"
 #include "Network/Server/WSclient.h"
 #include "I18N/All.h"
+#include "MuEmu/MuEmuMap.h"
 #ifdef _EDITOR
 #include "Core/Utilities/WorldClearing.h"
 #endif
@@ -1687,6 +1688,12 @@ bool CMapManager::InBattleCastle(int iMap)
 
 const wchar_t* CMapManager::GetMapName(int iMap)
 {
+    // MuEmu (fork): mapas custom del servidor (CustomMap.txt).
+    if (const wchar_t* customName = MuEmu::Map::GetName(iMap))
+    {
+        return customName;
+    }
+
     if (iMap == WD_34CRYWOLF_1ST)
     {
         return(I18N::Game::CrywolfFortress);
