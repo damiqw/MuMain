@@ -29,7 +29,6 @@ enum MenuAction
 enum PartyAction
 {
     PartyPublish = 1,
-    PartyRemove,
     PartySearch,
 };
 
@@ -157,14 +156,12 @@ void MuEmu::Ui::ShowPartyMenu()
 {
     Panel::Content content;
     content.title = "Party";
-    content.buttons = { { "Publicar party", PartyPublish }, { "Quitar publicacion", PartyRemove },
-                        { "Buscar party", PartySearch } };
+    content.buttons = { { "Publicar party", PartyPublish }, { "Buscar party", PartySearch } };
     Panel::Show(PartyMenuId, std::move(content), [](int action)
     {
         switch (action)
         {
-        case PartyPublish: Rewards::PublishParty(true); break;
-        case PartyRemove: Rewards::PublishParty(false); break;
+        case PartyPublish: Rewards::OpenPublishParty(); break;
         case PartySearch: Rewards::OpenPartySearch(); break;
         default: break;
         }

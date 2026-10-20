@@ -30,6 +30,8 @@ struct Content
     std::vector<Row> rows;
     std::vector<Button> buttons;
     bool wide = false; // ventana ancha (tablas de varias columnas)
+    std::string inputLabel; // si no esta vacio, un campo de texto con este titulo
+    std::string inputValue;
 };
 
 using ActionHandler = std::function<void(int action)>;
@@ -41,6 +43,12 @@ void Show(const std::string& id, Content content, ActionHandler onAction);
 void Update(const std::string& id, Content content);
 
 bool IsShown(const std::string& id);
+
+// Si hay alguna ventana MuEmu abierta (ESC la cierra).
+bool IsAnyShown();
+
+// Lo escrito en el campo de texto de la ventana.
+std::string GetInput();
 
 void Hide();
 

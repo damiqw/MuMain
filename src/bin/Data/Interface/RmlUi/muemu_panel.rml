@@ -26,6 +26,10 @@
 				</div>
 			</div>
 		</div>
+		<div class="muemu-input-row" data-if="has_input">
+			<span class="muemu-input-label">{{input_label}}</span>
+			<input id="muemu_input" type="text" class="text-field muemu-input" maxlength="10" data-value="input_value"/>
+		</div>
 		<div class="muemu-buttons">
 			<div class="btn muemu-btn" data-for="button : buttons"
 			     data-event-click="muemu_action(button.action)">{{button.label}}</div>

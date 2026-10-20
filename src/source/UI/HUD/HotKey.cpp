@@ -26,6 +26,7 @@
 
 #include "MUHelper/MuHelper.h"
 #include "Render/RmlUi/RmlUiRuntime.h"
+#include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUi.h"
 
 using namespace SEASON3B;
@@ -115,6 +116,14 @@ bool mu::ui::window::CHotKey::UpdateMouseEvent()
 
 bool mu::ui::window::CHotKey::UpdateKeyEvent()
 {
+    // MuEmu (fork): ESC cierra primero la ventana MuEmu abierta.
+    if (mu::ui::window::IsPress(VK_ESCAPE) == true && MuEmu::Panel::IsAnyShown())
+    {
+        MuEmu::Panel::Hide();
+        PlayBuffer(SOUND_CLICK01);
+        return false;
+    }
+
     if (mu::ui::window::IsPress(VK_ESCAPE) == true)
     {
         // g_MessageBox->IsEmpty() only sees native CMessageBoxBase-family boxes -- the

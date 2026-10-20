@@ -4,11 +4,14 @@
 #include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUi.h"
 
+#include "Core/Utilities/Log/MuLogger.h"
 #include "Engine/Object/ZzzInfomation.h"
 #include "UI/Core/WindowSystem.h"
+#include "UI/Inventory/InventoryCtrl.h"
 #include "UI/Inventory/MyInventory.h"
 
 #include <array>
+#include <set>
 #include <iterator>
 #include <string>
 
@@ -26,8 +29,12 @@ constexpr std::array<std::array<int, 2>, JewelCount> Jewels = { {
     { 14, 414 }, { 14, 57 }, { 14, 51 }, { 14, 121 }, { 14, 122 },
 } };
 
-// Cantidades que se pueden retirar, como en Main.dll.
-constexpr int WithdrawCounts[] = { 1, 10, 20, 30 };
+// Paquetes de 10 de las primeras 10 joyas (grupo 12): valen 10 * (nivel + 1), como en el servidor.
+constexpr int BundleCount = 10;
+constexpr std::array<int, BundleCount> Bundles = { 30, 31, 136, 137, 138, 139, 140, 141, 142, 143 };
+
+// Cantidades que se pueden retirar, como en Main.dll; 99 es "lo que entre" (hasta el maximo del servidor).
+constexpr int WithdrawCounts[] = { 1, 10, 20, 30, 99 };
 
 // Acciones: deposito = slot, retiro = 100 + slot * 10 + indice de la cantidad.
 constexpr int WithdrawBase = 100;
@@ -45,11 +52,12 @@ struct JewelBank
     bool received = false;
 };
 
+// C1 FB D5: el baul actual se muestra tal cual ("[2/20]") y el ultimo campo dice si el servidor usa los baules.
 struct Warehouse
 {
     int current = 0;
     int count = 0;
-    bool locked = false;
+    bool enabled = false;
     bool received = false;
 };
 
@@ -69,10 +77,45 @@ std::string ItemName(int itemType)
     return MuEmu::Panel::ToUtf8(ItemAttribute[itemType].Name);
 }
 
+int BundleType(int slot)
+{
+    return slot < BundleCount ? (12 * MAX_ITEM_INDEX) + Bundles[slot] : -1;
+}
+
+// Joyas de la ranura en el inventario: sueltas y en paquetes.
+int InventoryCount(int slot)
+{
+    mu::ui::window::CInventoryCtrl* ctrl = g_pMyInventory->GetInventoryCtrl();
+    if (ctrl == nullptr)
+        return 0;
+
+    const int single = ItemType(slot);
+    const int bundle = BundleType(slot);
+    std::set<const ITEM*> seen;
+    int count = 0;
+    for (int y = 0; y < ctrl->GetNumberOfRow(); ++y)
+    {
+        for (int x = 0; x < ctrl->GetNumberOfColumn(); ++x)
+        {
+            const ITEM* item = ctrl->FindItem(x, y);
+            if (item == nullptr || !seen.insert(item).second)
+                continue;
+            if (item->Type == single)
+                ++count;
+            else if (bundle >= 0 && item->Type == bundle)
+                count += 10 * (item->Level + 1);
+        }
+    }
+    return count;
+}
+
 // Deposita una joya del inventario (el servidor recibe la posicion del item).
 void Deposit(int slot)
 {
-    const int position = g_pMyInventory->GetInventoryCtrl()->FindItemIndex(static_cast<short>(ItemType(slot)), -1);
+    mu::ui::window::CInventoryCtrl* ctrl = g_pMyInventory->GetInventoryCtrl();
+    int position = ctrl->FindItemIndex(static_cast<short>(ItemType(slot)), -1);
+    if (position < 0 && BundleType(slot) >= 0)
+        position = ctrl->FindItemIndex(static_cast<short>(BundleType(slot)), -1);
     if (position < 0)
         return;
 
@@ -110,19 +153,20 @@ MuEmu::Panel::Content BuildJewelBank()
     content.header = { "Joya", "Banco", "Inv." };
     for (int slot = first; slot < first + JewelsPerPage && slot < JewelCount; ++slot)
     {
-        const int inventory = g_pMyInventory->GetNumItemByType(static_cast<short>(ItemType(slot)));
+        const int inventory = InventoryCount(slot);
         MuEmu::Panel::Row row;
         row.cells = { ItemName(ItemType(slot)), MuEmu::Ui::FormatNumber(g_bank.counts[slot]), std::to_string(inventory) };
         if (g_bank.counts[slot] == 0 && inventory == 0)
             row.color = "#909090";
         row.buttons.push_back({ "Dep.", slot });
         for (int n = 0; n < static_cast<int>(std::size(WithdrawCounts)); ++n)
-            row.buttons.push_back({ std::to_string(WithdrawCounts[n]), WithdrawBase + slot * 10 + n });
+            row.buttons.push_back({ WithdrawCounts[n] == 99 ? "Max" : std::to_string(WithdrawCounts[n]),
+                                    WithdrawBase + slot * 10 + n });
         content.rows.push_back(std::move(row));
     }
 
     content.lines = { "Pagina " + std::to_string(g_bankPage + 1) + " / " + std::to_string(PageCount) +
-                      " - Dep.: guarda una del inventario; los numeros retiran esa cantidad." };
+                      " - Dep.: guarda las joyas (o el paquete) del inventario; los numeros retiran." };
     content.buttons = { { "< Anterior", ActionPreviousPage }, { "Siguiente >", ActionNextPage },
                         { "Actualizar", ActionRefresh } };
     return content;
@@ -138,10 +182,10 @@ MuEmu::Panel::Content BuildWarehouse()
         return content;
     }
 
-    content.lines = { "Baul actual: " + std::to_string(g_warehouse.current + 1) + " de " +
+    content.lines = { "Baul actual: " + std::to_string(g_warehouse.current) + " de " +
                       std::to_string(g_warehouse.count) };
-    if (g_warehouse.locked)
-        content.lines.push_back("El baul esta bloqueado.");
+    if (!g_warehouse.enabled)
+        content.lines.push_back("El servidor no tiene baules extra.");
 
     for (int n = 0; n < g_warehouse.count; ++n)
     {
@@ -149,7 +193,7 @@ MuEmu::Panel::Content BuildWarehouse()
         row.cells = { "Baul " + std::to_string(n + 1) };
         if (n == g_warehouse.current)
             row.color = "#ffd23c";
-        else if (!g_warehouse.locked)
+        else if (g_warehouse.enabled)
             row.buttons = { { "Usar", n } };
         content.rows.push_back(std::move(row));
     }
@@ -188,18 +232,21 @@ void MuEmu::Ui::Bank::OpenWarehouse()
 
 std::wstring MuEmu::Ui::Bank::WarehouseTitle(const wchar_t* storage)
 {
-    if (!g_warehouse.received || g_warehouse.count <= 1)
+    if (!g_warehouse.received || !g_warehouse.enabled)
         return std::wstring();
-    return std::wstring(storage != nullptr ? storage : L"Storage") + L" [" + std::to_wstring(g_warehouse.current + 1) +
+    return std::wstring(storage != nullptr ? storage : L"Storage") + L" [" + std::to_wstring(g_warehouse.current) +
            L"/" + std::to_wstring(g_warehouse.count) + L"]";
 }
 
 void MuEmu::Ui::Bank::ChangeWarehouse(int step)
 {
-    if (!g_warehouse.received || g_warehouse.count <= 1 || g_warehouse.locked)
+    // Como Main.dll: de 0 al total, sin dar la vuelta.
+    if (!g_warehouse.received || !g_warehouse.enabled)
         return;
 
-    const int next = (g_warehouse.current + step + g_warehouse.count) % g_warehouse.count;
+    const int next = g_warehouse.current + step;
+    if (next < 0 || next > g_warehouse.count)
+        return;
     std::vector<uint8_t> payload;
     WriteInt(payload, next);
     Send(0xF3, 0xF7, payload);
@@ -228,7 +275,8 @@ bool MuEmu::Ui::Bank::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, 
         {
             g_warehouse.current = ReadInt(buffer, 4);
             g_warehouse.count = ReadInt(buffer, 8);
-            g_warehouse.locked = buffer[12] != 0;
+            g_warehouse.enabled = buffer[12] != 0;
+            mu::log::Get("ui")->info("[MuEmu] baul {} de {} (activo {})", g_warehouse.current, g_warehouse.count, buffer[12]);
             g_warehouse.received = true;
             MuEmu::Panel::Update(WarehouseId, BuildWarehouse());
         }

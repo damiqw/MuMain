@@ -220,18 +220,28 @@ struct PartyEntry
 std::vector<PartyEntry> g_parties;
 bool g_partiesReceived = false;
 
+std::string g_partyPassword;
+
 void JoinParty(const PartyEntry& party)
 {
-    // C1 FF 05: nombre del lider (11), sin clave y la clave vacia (20).
+    // Nombre del lider (11), con clave (1) y la clave (20): sin clave C1 FF 05, con clave C1 FF 13.
     std::vector<uint8_t> payload(11 + 1 + 20, 0);
     std::memcpy(payload.data(), party.rawLeader.c_str(), party.rawLeader.size() < 10 ? party.rawLeader.size() : 10);
-    MuEmu::Ui::Send(0xFF, 0x05, payload);
+    if (party.password)
+    {
+        payload[11] = 1;
+        std::memcpy(payload.data() + 12, g_partyPassword.c_str(), std::min<std::size_t>(g_partyPassword.size(), 19));
+    }
+    MuEmu::Ui::Send(0xFF, party.password ? 0x13 : 0x05, payload);
 }
 
 MuEmu::Panel::Content BuildParties()
 {
     MuEmu::Panel::Content content;
     content.title = "Buscar party";
+    if (MuEmu::Panel::IsShown(PartyId))
+        g_partyPassword = MuEmu::Panel::GetInput(); // lo que se esta escribiendo
+
     if (!g_partiesReceived)
     {
         content.lines = { "Esperando la lista del servidor..." };
@@ -248,16 +258,153 @@ MuEmu::Panel::Content BuildParties()
                       std::to_string(party.x) + ", " + std::to_string(party.y), std::to_string(party.level),
                       std::to_string(party.members) + "/5", party.password ? "Si" : "No" };
         if (party.password)
-            row.color = "#a0a0a0";
-        else
-            row.buttons = { { "Unirse", static_cast<int>(n) } };
+            row.color = "#d0c080";
+        row.buttons = { { "Unirse", static_cast<int>(n) } };
         content.rows.push_back(std::move(row));
     }
 
     if (content.rows.empty())
         content.lines = { "No hay partys publicadas." };
+    content.inputLabel = "Clave (para las partys con clave):";
+    content.inputValue = g_partyPassword;
     content.buttons = { { "Actualizar", -1 } };
     return content;
+}
+// ------------------------------------------------ publicar la party propia
+
+constexpr const char* PartySettingsId = "party_settings";
+constexpr int ClassCount = 7;
+constexpr const char* ClassNames[ClassCount] = { "Dark Wizard", "Dark Knight", "Elf", "Magic Gladiator", "Dark Lord",
+                                                 "Summoner", "Rage Fighter" };
+
+struct PartySettings
+{
+    bool onlyGuild = false;
+    bool onlyAlliance = false;
+    bool oneClass = false;
+    std::array<bool, ClassCount> classes{ true, true, true, true, true, true, true };
+    int level = 1;
+    bool password = false;
+    std::string passwordText;
+};
+
+PartySettings g_partySettings;
+
+enum PartySettingsAction
+{
+    ToggleOnlyGuild = 1,
+    ToggleOnlyAlliance,
+    ToggleOneClass,
+    ToggleClassFirst, // + clase (0 a 6)
+    TogglePassword = ToggleClassFirst + ClassCount,
+    LevelMinus100 = 20,
+    LevelMinus10,
+    LevelPlus10,
+    LevelPlus100,
+    ActionPublish = 30,
+    ActionRemove,
+    ActionCancel,
+};
+
+void SendPartySettings(bool publish)
+{
+    // C1 FF 04 (44 bytes): activa (4), solo guild (5), solo alianza (6), una clase (7), las 7 clases (8-14),
+    // nivel minimo (int en 16), con clave (20) y la clave (20 desde 21).
+    const PartySettings& settings = g_partySettings;
+    std::vector<uint8_t> payload(40, 0);
+    payload[0] = publish ? 1 : 0;
+    payload[1] = settings.onlyGuild ? 1 : 0;
+    payload[2] = settings.onlyAlliance ? 1 : 0;
+    payload[3] = settings.oneClass ? 1 : 0;
+    for (int n = 0; n < ClassCount; ++n)
+        payload[4 + n] = settings.classes[n] ? 1 : 0;
+    const auto level = static_cast<uint32_t>(settings.level);
+    for (int n = 0; n < 4; ++n)
+        payload[12 + n] = static_cast<uint8_t>((level >> (8 * n)) & 0xFF);
+    const bool password = settings.password && !settings.passwordText.empty();
+    payload[16] = password ? 1 : 0;
+    if (password)
+        std::memcpy(payload.data() + 17, settings.passwordText.c_str(), std::min<std::size_t>(settings.passwordText.size(), 19));
+    MuEmu::Ui::Send(0xFF, 0x04, payload);
+}
+
+std::string YesNo(bool value)
+{
+    return value ? "Si" : "No";
+}
+
+void ShowPartySettings();
+
+void OnPartySettingsAction(int action)
+{
+    PartySettings& settings = g_partySettings;
+    settings.passwordText = MuEmu::Panel::GetInput();
+
+    if (action >= ToggleClassFirst && action < ToggleClassFirst + ClassCount)
+        settings.classes[action - ToggleClassFirst] = !settings.classes[action - ToggleClassFirst];
+
+    switch (action)
+    {
+    case ToggleOnlyGuild: settings.onlyGuild = !settings.onlyGuild; break;
+    case ToggleOnlyAlliance: settings.onlyAlliance = !settings.onlyAlliance; break;
+    case ToggleOneClass: settings.oneClass = !settings.oneClass; break;
+    case TogglePassword: settings.password = !settings.password; break;
+    case LevelMinus100: settings.level -= 100; break;
+    case LevelMinus10: settings.level -= 10; break;
+    case LevelPlus10: settings.level += 10; break;
+    case LevelPlus100: settings.level += 100; break;
+    case ActionPublish:
+        SendPartySettings(true);
+        MuEmu::Panel::Hide();
+        return;
+    case ActionRemove:
+        SendPartySettings(false);
+        MuEmu::Panel::Hide();
+        return;
+    case ActionCancel:
+        MuEmu::Panel::Hide();
+        return;
+    default: break;
+    }
+
+    settings.level = std::clamp(settings.level, 1, 400);
+    ShowPartySettings();
+}
+
+void ShowPartySettings()
+{
+    const PartySettings& settings = g_partySettings;
+    MuEmu::Panel::Content content;
+    content.title = "Publicar party";
+    content.header = { "Opcion", "Valor" };
+
+    auto add = [&content](const std::string& name, const std::string& value, bool on, std::vector<MuEmu::Panel::Button> buttons)
+    {
+        MuEmu::Panel::Row row;
+        row.cells = { name, value };
+        row.color = on ? "#60e060" : "#c0c0c0";
+        row.buttons = std::move(buttons);
+        content.rows.push_back(std::move(row));
+    };
+
+    add("Solo miembros del guild", YesNo(settings.onlyGuild), settings.onlyGuild, { { "Cambiar", ToggleOnlyGuild } });
+    add("Solo miembros de la alianza", YesNo(settings.onlyAlliance), settings.onlyAlliance, { { "Cambiar", ToggleOnlyAlliance } });
+    add("Una vez cada clase", YesNo(settings.oneClass), settings.oneClass, { { "Cambiar", ToggleOneClass } });
+    for (int n = 0; n < ClassCount; ++n)
+        add(ClassNames[n], settings.classes[n] ? "Puede entrar" : "No", settings.classes[n], { { "Cambiar", ToggleClassFirst + n } });
+    add("Nivel minimo", std::to_string(settings.level), true,
+        { { "-100", LevelMinus100 }, { "-10", LevelMinus10 }, { "+10", LevelPlus10 }, { "+100", LevelPlus100 } });
+    add("Pedir clave", YesNo(settings.password), settings.password, { { "Cambiar", TogglePassword } });
+
+    if (settings.password)
+    {
+        content.inputLabel = "Clave:";
+        content.inputValue = settings.passwordText;
+    }
+
+    content.buttons = { { "Publicar", ActionPublish }, { "Quitar publicacion", ActionRemove }, { "Cancelar", ActionCancel } };
+    content.wide = true;
+    MuEmu::Panel::Show(PartySettingsId, std::move(content), OnPartySettingsAction);
 }
 } // namespace
 
@@ -296,6 +443,7 @@ void MuEmu::Ui::Rewards::OpenPartySearch()
     Send(0xFF, 0x07);
     MuEmu::Panel::Show(PartyId, BuildParties(), [](int action)
     {
+        g_partyPassword = MuEmu::Panel::GetInput();
         if (action < 0)
             Send(0xFF, 0x07);
         else if (action < static_cast<int>(g_parties.size()))
@@ -303,16 +451,10 @@ void MuEmu::Ui::Rewards::OpenPartySearch()
     });
 }
 
-void MuEmu::Ui::Rewards::PublishParty(bool publish)
+void MuEmu::Ui::Rewards::OpenPublishParty()
 {
-    // C1 FF 04 (44 bytes): activa (4), solo guild (5), solo alianza (6), una clase (7), las 7 clases (8-14),
-    // nivel minimo (int en 16), con clave (20) y la clave (20 desde 21).
-    std::vector<uint8_t> payload(40, 0);
-    payload[0] = publish ? 1 : 0;
-    for (int n = 4; n <= 10; ++n)
-        payload[n] = 1;
-    payload[12] = 1;
-    Send(0xFF, 0x04, payload);
+    Send(0xFF, 0x06); // opciones guardadas (C1 FB 06)
+    ShowPartySettings();
 }
 
 bool MuEmu::Ui::Rewards::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)
@@ -420,8 +562,27 @@ bool MuEmu::Ui::Rewards::Receive(uint8_t head, uint8_t sub, const uint8_t* buffe
         return true;
     }
 
-    // Opciones de la party propia (C1 FB 06): sin ventana todavia.
-    return head == 0xFB && sub == 0x06;
+    if (head == 0xFB && sub == 0x06 && buffer[0] == 0xC1)
+    {
+        // C1 FB 06: las opciones guardadas, con el mismo formato que FF 04.
+        if (size >= 41)
+        {
+            PartySettings& settings = g_partySettings;
+            settings.onlyGuild = buffer[5] != 0;
+            settings.onlyAlliance = buffer[6] != 0;
+            settings.oneClass = buffer[7] != 0;
+            for (int n = 0; n < ClassCount; ++n)
+                settings.classes[n] = buffer[8 + n] != 0;
+            settings.level = std::clamp(ReadInt(buffer, 16), 1, 400);
+            settings.password = buffer[20] != 0;
+            settings.passwordText.assign(reinterpret_cast<const char*>(buffer + 21),
+                                         strnlen(reinterpret_cast<const char*>(buffer + 21), 20));
+            if (MuEmu::Panel::IsShown(PartySettingsId))
+                ShowPartySettings();
+        }
+        return true;
+    }
+    return false;
 }
 
 void MuEmu::Ui::Rewards::Frame()

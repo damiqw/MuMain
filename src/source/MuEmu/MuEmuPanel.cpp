@@ -27,6 +27,9 @@ struct PanelModel
     std::vector<Button> buttons;
     bool wide = false;
     int buttonsWidth = 0;
+    bool hasInput = false;
+    std::string inputLabel;
+    std::string inputValue;
 };
 
 std::string g_shownId;
@@ -58,6 +61,9 @@ void BindModel(Rml::DataModelConstructor& c, PanelModel& model)
     c.Bind("buttons", &model.buttons);
     c.Bind("wide", &model.wide);
     c.Bind("buttons_width", &model.buttonsWidth);
+    c.Bind("has_input", &model.hasInput);
+    c.Bind("input_label", &model.inputLabel);
+    c.Bind("input_value", &model.inputValue);
 
     c.BindEventCallback("muemu_action",
         [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
@@ -104,6 +110,9 @@ void Apply(Content content)
     model.rows = std::move(content.rows);
     model.buttons = std::move(content.buttons);
     model.wide = content.wide;
+    model.hasInput = !content.inputLabel.empty();
+    model.inputLabel = std::move(content.inputLabel);
+    model.inputValue = std::move(content.inputValue);
 
     // La columna de botones de la tabla, del ancho de la fila con mas botones (texto aproximado en dp).
     model.buttonsWidth = 0;
@@ -111,11 +120,12 @@ void Apply(Content content)
     {
         int width = 0;
         for (const Button& button : row.buttons)
-            width += 10 + static_cast<int>(button.label.size()) * 6;
+            width += std::max(26, static_cast<int>(button.label.size()) * 7) + 12; // min-width, padding, margen y borde
         model.buttonsWidth = std::max(model.buttonsWidth, width);
     }
 
-    for (const char* field : { "title", "lines", "header", "rows", "buttons", "wide", "buttons_width" })
+    for (const char* field : { "title", "lines", "header", "rows", "buttons", "wide", "buttons_width", "has_input",
+                               "input_label", "input_value" })
         View().MarkDirty(field);
 }
 } // namespace
@@ -148,12 +158,22 @@ bool MuEmu::Panel::IsShown(const std::string& id)
     return document != nullptr && document->IsVisible() && g_shownId == id;
 }
 
+bool MuEmu::Panel::IsAnyShown()
+{
+    return !g_shownId.empty() && IsShown(g_shownId);
+}
+
 void MuEmu::Panel::Hide()
 {
     g_shownId.clear();
     g_onAction = nullptr;
     if (View().IsBuilt())
         View().Hide();
+}
+
+std::string MuEmu::Panel::GetInput()
+{
+    return View().GetModel().inputValue;
 }
 
 std::string MuEmu::Panel::ToUtf8(const wchar_t* text)

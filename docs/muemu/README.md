@@ -222,11 +222,11 @@ flechas para cambiar de baul cuando el servidor manda los baules (C1 FB D5). Cop
 | Medidor de dano (`[MuEmu] DpsMeter`, 1 por defecto) | C1 F3 F7 | `MuEmuRanking.cpp` |
 | Recompensa diaria (ver y reclamar) | C1 FF 02, C1 FB 03/04 | `MuEmuRewards.cpp` |
 | Invasiones (y monstruos de la activa) | C2 FA F8/F9, C1 D3 4C | `MuEmuRewards.cpp` |
-| Party: publicar para todas las clases (FF 04), buscar y unirse sin clave | C1 FF 04/05/07, C2 F3 F0 | `MuEmuRewards.cpp` |
+| Party: publicar con opciones (guild, alianza, clases, nivel, clave), buscar y unirse (con o sin clave) | C1 FF 04/05/06/07/13, C1 FB 06, C2 F3 F0 | `MuEmuRewards.cpp` |
 | Recompensas de guild (misiones, donar, cofre, reclamar) | C2 FF 30/32, C1 FF 31/33 | `MuEmuGuildRewards.cpp` |
 
-Las posiciones de los datos salen de las estructuras del GameServer (empaquetado por defecto de MSVC). Falta:
-elegir clases, nivel y clave al publicar, y unirse a partys con clave.
+Las posiciones de los datos salen de las estructuras del GameServer (empaquetado por defecto de MSVC). ESC cierra la ventana MuEmu abierta. El banco de
+joyas cuenta y deposita tambien los paquetes de 10 (10 x (nivel + 1)) y retira 1/10/20/30 o "Max".
 
 Los NPC no tienen barra de vida y su nombre se ve siempre (`[MuEmu] NpcNames`, 1 por defecto). Las mascotas de
 `CustomPet.txt` toman la escala de inventario y de piso de sus columnas ScaleInv y ScaleDrop al importar los modelos.

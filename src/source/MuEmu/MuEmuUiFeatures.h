@@ -36,7 +36,7 @@ namespace MuEmu::Ui::Rewards
 void OpenDaily();       // recompensa diaria (C1 FF 02 / FB 03-04)
 void OpenInvasion();    // invasiones (FA F8/F9)
 void OpenPartySearch(); // busqueda de party (FF 05/07, F3 F0)
-void PublishParty(bool publish); // publica la party propia para todas las clases (FF 04)
+void OpenPublishParty(); // opciones de la party propia y publicarla (FF 04/06, FB 06)
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 void Frame();
 } // namespace MuEmu::Ui::Rewards

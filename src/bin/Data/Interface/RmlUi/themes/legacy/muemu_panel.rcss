@@ -16,7 +16,7 @@
 	font-size: 1rem;
 	pointer-events: auto;
 }
-.muemu-panel.wide { width: 470dp; }
+.muemu-panel.wide { width: 540dp; }
 
 .muemu-title {
 	display: block;
@@ -119,4 +119,23 @@
 	line-height: 26dp;
 	margin: 2dp 1%;
 	color: #ffffff;
+}
+
+/* An optional text field (a party password...). */
+.muemu-input-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 6dp;
+}
+.muemu-input-label { flex: 0 0 auto; margin-right: 6dp; color: #ffd23c; }
+.muemu-input {
+	flex: 1 1 0dp;
+	height: 18dp;
+	line-height: 18dp;
+	padding: 0dp 4dp;
+	color: #ffffff;
+	background-color: rgba(20, 16, 8, 240);
+	border-width: 1dp;
+	border-color: #8a7444;
 }
