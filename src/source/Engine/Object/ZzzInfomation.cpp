@@ -13,6 +13,7 @@
 #include "Engine/Object/ZzzObject.h"
 #include "Engine/Object/ZzzCharacter.h"
 #include "Scenes/SceneCore.h"
+#include "MuEmu/MuEmuItemPrice.h"
 #include "Engine/Object/ZzzInterface.h"
 #include "Core/Utilities/ReadScript.h"
 #include "Engine/Object/ZzzInventory.h"
@@ -1354,6 +1355,10 @@ void SetItemAttributes(ITEM* ip)
 int64_t ItemValue(ITEM* ip, int goldType)
 {
     if (ip->Type == -1) return 0;
+
+    // MuEmu (fork): precios custom del servidor (ItemValue.txt).
+    if (int64_t customValue = 0; MuEmu::ItemPrice::Find(ip, goldType, customValue))
+        return customValue;
 
     ITEM_ATTRIBUTE* p = &ItemAttribute[ip->Type];
 

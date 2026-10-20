@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "MuEmu/MuEmuItemPrice.h"
 #include "MuEmu/MuEmuTooltip.h"
 #include "Data/GameConfig/GameConfig.h"
 #include "UI/Placement/WindowPlacement.h"
@@ -1845,7 +1846,15 @@ static void RenderItemInfo(const UI::Scaling::Transform& screen, int sx, int sy,
     {
         wchar_t Text[100];
         {
-            if (Sell)
+            // MuEmu (fork): los precios custom en monedas (ItemValue.txt) se muestran sin impuesto y con su moneda.
+            const wchar_t* currency = MuEmu::ItemPrice::GetCurrencyName(ip);
+            if (currency != nullptr)
+            {
+                std::wstring format = Sell ? I18N::Game::PurchasingPriceSS : I18N::Game::SellingPriceS;
+                format = format.substr(0, format.find(L"%s"));
+                mu_swprintf(TextList[TextNum], L"%ls%lld %ls", format.c_str(), static_cast<long long>(ItemValue(ip, Sell ? 0 : 1)), currency);
+            }
+            else if (Sell)
             {
                 DWORD dwValue = ItemValue(ip, 0);
                 ConvertGold(dwValue, Text);

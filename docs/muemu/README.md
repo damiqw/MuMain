@@ -85,3 +85,10 @@ UIScalePercent = 67
 Copiar `CustomItemToolTip.txt` y `CustomItemTooltipText.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/`. El tooltip
 del item muestra al final el titulo y las lineas (hasta 15) con sus colores, como Main.dll. Los colores 1 a 13
 son los de Webzen; 14 es blanco y 15 a 24 se aproximan a los del cliente.
+
+## Precios custom (`src/source/MuEmu/MuEmuItemPrice.cpp`)
+
+Copiar `ItemValue.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/`. Cambia el precio de compra y venta del NPC (la
+primera linea que coincide por item, nivel, excelente, ancient y 380; `*` es cualquiera). Sin precio de venta se
+usa la tercera parte del de compra, y los items apilables se multiplican por la cantidad, como Main.dll. Los items
+que se pagan con WCoinC, WCoinP, Goblin Point o Ruud muestran esa moneda en el tooltip, sin impuesto.
