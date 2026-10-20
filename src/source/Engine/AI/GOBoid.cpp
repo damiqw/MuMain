@@ -24,6 +24,7 @@
 #include "Scenes/MainScene.h"
 #include "GameLogic/Items/ItemCategories.h"
 #include "Render/Renderer/MuRenderer.h"
+#include "MuEmu/MuEmuPet.h"
 
 int EnableEvent = 0;
 
@@ -176,7 +177,8 @@ bool MoveMount(OBJECT* o, bool bForceRender)
         BMD* b = &Models[o->Type];
 
         VectorCopy(o->Owner->Position, TargetPosition);
-        switch (o->Type)
+        // MuEmu: las mascotas custom que se montan se mueven como la montura original.
+        switch (MuEmu::Pet::MoveType(o->Type))
         {
         case MODEL_FENRIR_BLACK:
         case MODEL_FENRIR_BLUE:
@@ -629,6 +631,9 @@ bool MoveMount(OBJECT* o, bool bForceRender)
         case MODEL_IMP:
             FlyRange = 150.f;
             break;
+        default:
+            MuEmu::Pet::MoveFollower(o);
+            break;
         }
         b->CurrentAction = o->CurrentAction;
 
@@ -699,6 +704,7 @@ bool RenderMount(OBJECT* o, bool bForceRender)
                 && o->Type != MODEL_FENRIR_GOLD
                 )
                 o->Scale = 1.0f;
+            MuEmu::Pet::ApplyScale(o, bForceRender);
 
             int State = 0;
             if (g_isCharacterBuff(o->Owner, eBuff_Cloaking))

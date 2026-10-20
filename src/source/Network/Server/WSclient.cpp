@@ -2,6 +2,7 @@
 #include "MuEmu/MuEmuBuff.h"
 #include "MuEmu/MuEmuEffect.h"
 #include "MuEmu/MuEmuHealthBar.h"
+#include "MuEmu/MuEmuPet.h"
 #include "App/Control/ControlTaps.h"
 #include "Core/Utilities/Log/MuLogger.h"
 #include "UI/Chat/Chat.h"
@@ -2477,6 +2478,9 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         {
             c->Helper.Type = Data::Items::ToModelSlot(Type);
             c->Helper.Level = 0;
+            // MuEmu: las mascotas custom crean su propia montura.
+            if (MuEmu::Pet::CreateMount(c, o, nullptr))
+                break;
             switch (Type)
             {
             case ITEM_HELPER:

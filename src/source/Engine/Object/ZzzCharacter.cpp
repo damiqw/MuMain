@@ -133,6 +133,7 @@ namespace
 #include "Render/Lighting/LightMoodSetting.h"
 #include "MuEmu/MuEmuEffect.h"
 #include "MuEmu/MuEmuMonster.h"
+#include "MuEmu/MuEmuPet.h"
 
 CHARACTER* CharactersClient;
 CHARACTER CharacterView;
@@ -12287,6 +12288,8 @@ void SetCharacterClass(CHARACTER* c)
     else
     {
         c->Helper.Type = Data::Items::ToModelSlot(p[EQUIPMENT_HELPER].Type);
+        // MuEmu: los caballos custom se montan como el Dark Horse.
+        c->Helper.Type = MuEmu::Pet::RiderHelperType(c->Helper.Type);
     }
 
     c->Weapon[0].Level = p[EQUIPMENT_WEAPON_RIGHT].Level;
@@ -13033,6 +13036,8 @@ void ReadEquipmentExtended(int Key, BYTE flags, BYTE* Equipment, CHARACTER* pCha
         pHelper->Live = false;
     }
 
+    // MuEmu: las mascotas custom crean su propia montura.
+    if (!MuEmu::Pet::CreateMount(c, o, pHelper))
     switch (c->Helper.Type)
     {
     case MODEL_GUARDIAN_ANGEL:

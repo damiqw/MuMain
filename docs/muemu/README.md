@@ -147,3 +147,21 @@ se dibujen como montura.
 
 Copiar `CustomItem.txt` y `CustomFlag.txt` a `Data/MuEmu/`. Sus columnas R G B (0 a 255) son el color del brillo
 de los items +7 en adelante, como GetCustomItemColor de Main.dll.
+
+## Mascotas custom (`src/source/MuEmu/MuEmuPet.cpp`)
+
+Copiar `CustomPet.txt` a `Data/MuEmu/` (los modelos se registran con `--muemu-import-models`). El servidor manda la
+mascota en el slot de helper de la apariencia extendida; segun la columna Type, como Pet.cpp y PetMontura.cpp de
+Main.dll:
+
+- 6 (Dark Horse), 5 (Fenrir), 7 (Uniria) y 11 (Dinorant): el personaje la monta. Se mueve con las animaciones de la
+  montura original y el jugador usa las de esa montura (para el cliente el helper es el original: el caballo
+  custom habilita el Earthquake, como en Main.dll). Se oculta en zona segura, igual que la original.
+- 8 (Muun) y el resto: camina detras del personaje (a 150 de distancia, corre mas rapido si se aleja y salta a su
+  lado a 1000), con las acciones 0 (quieta), 1 y 2 (corriendo) del modelo.
+
+La escala es la columna View (+0.3 en la seleccion de personaje). La columna Fenrir no se usa.
+
+Puntos de enganche en upstream: `CreateMount` de las mascotas en `ReadEquipmentExtended` y `SetCharacterClass`
+(`Engine/Object/ZzzCharacter.cpp`) y en `ReceiveChangePlayer` (`Network/Server/WSclient.cpp`); movimiento y escala
+en `MoveMount` y `RenderMount` (`Engine/AI/GOBoid.cpp`).
