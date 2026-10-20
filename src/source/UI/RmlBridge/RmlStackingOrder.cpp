@@ -57,6 +57,8 @@ constexpr DocumentPlacement Placements[] = {
     {"quick_command.rml", 2.0f, MainScene},
     // MuEmu (fork): the window of the server's custom features (MuEmuPanel.cpp).
     {"muemu_panel.rml", 3.5f, MainScene},
+    // MuEmu (fork): the on-screen Menu button that opens it (MuEmuMenuButton.cpp).
+    {"muemu_menu_button.rml", 1.05f, MainScene},
     {"trade.rml", 2.1f, MainScene},
     {"storage.rml", 2.2f, MainScene},
     {"storage_ext.rml", 2.2f, MainScene},

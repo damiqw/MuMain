@@ -4,6 +4,8 @@
 #include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUi.h"
 
+#include "Core/Utilities/Log/MuLogger.h"
+
 #include <chrono>
 #include <fstream>
 #include <map>
@@ -234,6 +236,7 @@ bool MuEmu::Ui::Events::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer
     }
 
     g_lastTick = std::chrono::steady_clock::now();
+    mu::log::Get("ui")->info("[MuEmu] eventos recibidos: {}", g_events.size());
     MuEmu::Panel::Update(EventsId, BuildEvents());
     return true;
 }

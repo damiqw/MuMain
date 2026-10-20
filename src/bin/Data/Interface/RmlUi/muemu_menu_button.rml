@@ -1,0 +1,12 @@
+<rml>
+<head>
+	<title>MuEmu Menu</title>
+	<link type="text/rcss" href="base.rcss"/>
+	<link type="text/rcss" href="muemu_menu_button.rcss"/>
+</head>
+<!-- MuEmu (fork): the on-screen Menu button of Main.dll; it opens the menu of the server's custom
+     windows (MuEmuMenuButton.cpp). -->
+<body class="native-text" data-model="muemu_menu_button">
+	<div id="menu_button" class="muemu-menu-button btn" data-event-click="muemu_menu_open">{{label}}</div>
+</body>
+</rml>

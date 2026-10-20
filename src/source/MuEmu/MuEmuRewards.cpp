@@ -301,6 +301,18 @@ void MuEmu::Ui::Rewards::OpenPartySearch()
     });
 }
 
+void MuEmu::Ui::Rewards::PublishParty(bool publish)
+{
+    // C1 FF 04 (44 bytes): activa (4), solo guild (5), solo alianza (6), una clase (7), las 7 clases (8-14),
+    // nivel minimo (int en 16), con clave (20) y la clave (20 desde 21).
+    std::vector<uint8_t> payload(40, 0);
+    payload[0] = publish ? 1 : 0;
+    for (int n = 4; n <= 10; ++n)
+        payload[n] = 1;
+    payload[12] = 1;
+    Send(0xFF, 0x04, payload);
+}
+
 bool MuEmu::Ui::Rewards::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)
 {
     if (head == 0xFB && sub == 0x03 && buffer[0] == 0xC1)

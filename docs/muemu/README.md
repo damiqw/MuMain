@@ -203,8 +203,11 @@ Punto de enganche en upstream: `RenderDarkHorseSkill` (`Engine/AI/GOBoid.cpp`).
 
 ## Ventanas custom del servidor (`src/source/MuEmu/MuEmuUi.cpp` y `MuEmuPanel.cpp`)
 
-Una ventana RmlUi compartida (`muemu_panel.rml`, arrastrable) para las funciones custom de Main.dll. Tecla **N**:
-menu MuEmu; tecla **H**: horarios de eventos. Copiar `CustomEventTimeText.txt` y `CustomCommandInfo.txt` de
+Una ventana RmlUi compartida (`muemu_panel.rml`, arrastrable) para las funciones custom de Main.dll, con sus
+mismas teclas: **N** party (publicar, quitar publicacion y buscar), **H** horarios de eventos y **J** banco de
+joyas (reemplaza la lista de comandos de SVEN). El resto sale del boton **Menu** de arriba de la pantalla
+(`muemu_menu_button.rml`): eventos, comandos, rankings, banco de joyas, recompensa diaria, invasiones, baul y
+medidor de dano. Copiar `CustomEventTimeText.txt` y `CustomCommandInfo.txt` de
 `MAIN_INFO/Common` a `Data/MuEmu/`.
 
 | Ventana | Paquetes | Archivo |
@@ -218,8 +221,8 @@ menu MuEmu; tecla **H**: horarios de eventos. Copiar `CustomEventTimeText.txt` y
 | Medidor de dano (`[MuEmu] DpsMeter`, 1 por defecto) | C1 F3 F7 | `MuEmuRanking.cpp` |
 | Recompensa diaria (ver y reclamar) | C1 FF 02, C1 FB 03/04 | `MuEmuRewards.cpp` |
 | Invasiones (y monstruos de la activa) | C2 FA F8/F9, C1 D3 4C | `MuEmuRewards.cpp` |
-| Buscar party (unirse sin clave) | C1 FF 05/07, C2 F3 F0 | `MuEmuRewards.cpp` |
+| Party: publicar para todas las clases (FF 04), buscar y unirse sin clave | C1 FF 04/05/07, C2 F3 F0 | `MuEmuRewards.cpp` |
 | Recompensas de guild (misiones, donar, cofre, reclamar) | C2 FF 30/32, C1 FF 31/33 | `MuEmuGuildRewards.cpp` |
 
 Las posiciones de los datos salen de las estructuras del GameServer (empaquetado por defecto de MSVC). Falta:
-publicar la party propia (FF 04) y unirse a partys con clave.
+elegir clases, nivel y clave al publicar, y unirse a partys con clave.

@@ -1,30 +1,49 @@
 #include "stdafx.h"
 #include "MuEmu/MuEmuUi.h"
 
+#include "MuEmu/MuEmuMenuButton.h"
 #include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUiFeatures.h"
 
 #include "Network/Server/WSclient.h"
+#include "Core/Utilities/Log/MuLogger.h"
 #include "UI/Core/WindowCommon.h"
 
 #include <cstdio>
 
 namespace
 {
+// El boton Menu de la pantalla (como el menu de Main.dll).
 enum MenuAction
 {
     MenuEvents = 1,
     MenuCommands,
-    MenuJewelBank,
-    MenuWarehouse,
     MenuRanking,
-    MenuDps,
+    MenuJewelBank,
     MenuDaily,
     MenuInvasion,
-    MenuPartySearch,
+    MenuWarehouse,
+    MenuDps,
+};
+
+// La N: la party, como en Main.dll.
+enum PartyAction
+{
+    PartyPublish = 1,
+    PartyRemove,
+    PartySearch,
 };
 
 constexpr const char* MenuId = "menu";
+constexpr const char* PartyMenuId = "party_menu";
+
+void Toggle(const char* id, void (*open)())
+{
+    if (MuEmu::Panel::IsShown(id))
+        MuEmu::Panel::Hide();
+    else
+        open();
+}
 
 bool IsValidUtf8(const std::string& text)
 {
@@ -62,20 +81,23 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
 
 bool MuEmu::Ui::HandleKeys()
 {
+    // Las teclas de Main.dll: N party, H eventos y J banco de joyas.
     if (mu::ui::window::IsPress('N'))
     {
-        if (Panel::IsShown(MenuId))
-            Panel::Hide();
-        else
-            ShowMenu();
+        mu::log::Get("ui")->info("[MuEmu] N: menu de party");
+        Toggle(PartyMenuId, ShowPartyMenu);
         return true;
     }
     if (mu::ui::window::IsPress('H'))
     {
-        if (Panel::IsShown("events"))
-            Panel::Hide();
-        else
-            Events::Open();
+        mu::log::Get("ui")->info("[MuEmu] H: horarios de eventos");
+        Toggle("events", Events::Open);
+        return true;
+    }
+    if (mu::ui::window::IsPress('J'))
+    {
+        mu::log::Get("ui")->info("[MuEmu] J: banco de joyas");
+        Toggle("jewel_bank", Bank::OpenJewelBank);
         return true;
     }
     return false;
@@ -83,6 +105,7 @@ bool MuEmu::Ui::HandleKeys()
 
 void MuEmu::Ui::Frame()
 {
+    MenuButton::Show();
     Events::Frame();
     Ranking::Frame();
     Rewards::Frame();
@@ -90,32 +113,31 @@ void MuEmu::Ui::Frame()
 
 void MuEmu::Ui::ShowMenu()
 {
+    if (Panel::IsShown(MenuId))
+    {
+        Panel::Hide();
+        return;
+    }
+
     Panel::Content content;
-    content.title = "MuEmu";
-    content.lines = { "N: este menu - H: eventos" };
+    content.title = "Menu";
 
     const struct
     {
         const char* label;
         int action;
     } entries[] = {
-        { "Eventos", MenuEvents },
+        { "Eventos (H)", MenuEvents },
         { "Comandos", MenuCommands },
-        { "Banco de joyas", MenuJewelBank },
-        { "Cambiar baul", MenuWarehouse },
         { "Rankings", MenuRanking },
-        { "Medidor de dano", MenuDps },
+        { "Banco de joyas (J)", MenuJewelBank },
         { "Recompensa diaria", MenuDaily },
         { "Invasiones", MenuInvasion },
-        { "Buscar party", MenuPartySearch },
+        { "Cambiar baul", MenuWarehouse },
+        { "Medidor de dano", MenuDps },
     };
     for (const auto& entry : entries)
-    {
-        Panel::Row row;
-        row.cells = { entry.label };
-        row.buttons = { { "Abrir", entry.action } };
-        content.rows.push_back(std::move(row));
-    }
+        content.buttons.push_back({ entry.label, entry.action });
 
     Panel::Show(MenuId, std::move(content), [](int action)
     {
@@ -123,13 +145,30 @@ void MuEmu::Ui::ShowMenu()
         {
         case MenuEvents: Events::Open(); break;
         case MenuCommands: Events::OpenCommands(); break;
-        case MenuJewelBank: Bank::OpenJewelBank(); break;
-        case MenuWarehouse: Bank::OpenWarehouse(); break;
         case MenuRanking: Ranking::Open(); break;
-        case MenuDps: Ranking::ToggleDps(); break;
+        case MenuJewelBank: Bank::OpenJewelBank(); break;
         case MenuDaily: Rewards::OpenDaily(); break;
         case MenuInvasion: Rewards::OpenInvasion(); break;
-        case MenuPartySearch: Rewards::OpenPartySearch(); break;
+        case MenuWarehouse: Bank::OpenWarehouse(); break;
+        case MenuDps: Ranking::ToggleDps(); break;
+        default: break;
+        }
+    });
+}
+
+void MuEmu::Ui::ShowPartyMenu()
+{
+    Panel::Content content;
+    content.title = "Party";
+    content.buttons = { { "Publicar party", PartyPublish }, { "Quitar publicacion", PartyRemove },
+                        { "Buscar party", PartySearch } };
+    Panel::Show(PartyMenuId, std::move(content), [](int action)
+    {
+        switch (action)
+        {
+        case PartyPublish: Rewards::PublishParty(true); break;
+        case PartyRemove: Rewards::PublishParty(false); break;
+        case PartySearch: Rewards::OpenPartySearch(); break;
         default: break;
         }
     });

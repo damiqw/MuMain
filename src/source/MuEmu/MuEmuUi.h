@@ -6,7 +6,7 @@
 
 // Ventanas de las funciones custom del servidor (las de Main.dll): eventos, comandos, banco de joyas, baul,
 // rankings, medidor de dano, recompensa diaria, recompensas de guild, invasiones y busqueda de party.
-// Tecla N: menu MuEmu; tecla H: horarios de eventos (como en Main.dll).
+// Como en Main.dll: N party, H horarios de eventos, J banco de joyas y el boton Menu de la pantalla para el resto.
 namespace MuEmu::Ui
 {
 // Paquetes del servidor que maneja MuEmu; verdadero si el paquete era suyo.
@@ -18,8 +18,11 @@ bool HandleKeys();
 // Cada frame de la escena del juego, en la pasada 2D: textos sobre los personajes y relojes.
 void Frame();
 
-// Menu con todas las ventanas.
+// El menu del boton Menu (eventos, comandos, rankings, recompensas...); si esta abierto lo cierra.
 void ShowMenu();
+
+// La ventana de la N: publicar o quitar la party y buscar partys.
+void ShowPartyMenu();
 
 // --- Ayudas para los modulos de cada ventana ---
 

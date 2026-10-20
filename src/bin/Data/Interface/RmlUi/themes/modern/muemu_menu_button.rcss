@@ -1,0 +1,23 @@
+/* MuEmu (fork): the on-screen Menu button (MuEmuMenuButton.cpp). The same sheet is in both themes. */
+
+.muemu-menu-button {
+	position: absolute;
+	left: 50%;
+	top: 2dp;
+	width: 46dp;
+	margin-left: -23dp;
+	height: 16dp;
+	line-height: 16dp;
+	text-align: center;
+	font-family: "token(font-body)";
+	font-size: 1rem;
+	font-weight: bold;
+	color: #ffd23c;
+	background-color: rgba(0, 0, 0, 170);
+	border-width: 1dp;
+	border-color: #8a7444;
+	border-radius: 3dp;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.muemu-menu-button:hover { color: #ffffff; background-color: rgba(70, 60, 30, 220); }
