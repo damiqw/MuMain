@@ -293,6 +293,56 @@ bool ImportModels(const std::filesystem::path& customFolder)
         ++positions;
     }
 
+    // CustomPet.txt: Index IndexInv Type "Model" Fenrir ScaleInv ScaleDrop ScaleView. Como Main.dll, la mascota
+    // se ve en el inventario con su modelo completo, a ScaleInv de la escala normal y un poco corrida.
+    std::ifstream petStream(customFolder / "CustomPet.txt");
+    for (std::string line; std::getline(petStream, line);)
+    {
+        const auto comment = line.find("//");
+        if (comment != std::string::npos)
+        {
+            line.erase(comment);
+        }
+
+        const auto open = line.find('"');
+        const auto close = open == std::string::npos ? std::string::npos : line.find('"', open + 1);
+        if (close == std::string::npos)
+        {
+            continue;
+        }
+
+        std::istringstream head(line.substr(0, open));
+        std::istringstream tail(line.substr(close + 1));
+        int itemIndex = 0;
+        int fenrir = 0;
+        double scaleInventory = 0, scaleDrop = 0;
+        if (!(head >> itemIndex) || !(tail >> fenrir >> scaleInventory >> scaleDrop))
+        {
+            continue;
+        }
+
+        const int group = itemIndex / MaxItemIndex;
+        const int number = itemIndex % MaxItemIndex;
+        auto model = std::find_if(models.begin(), models.end(), [&](const Data::Items::ItemModelDefinition& m)
+                                  { return m.group == group && m.number == number; });
+        if (model == models.end())
+        {
+            continue;
+        }
+
+        if (scaleInventory > 0)
+        {
+            model->inventory.scale = Data::Items::ItemInventoryDisplay::DefaultScale * scaleInventory;
+            model->inventory.offset = {0.01, -0.05, 0.0};
+        }
+        if (scaleDrop > 0)
+        {
+            model->ground.scale = scaleDrop;
+        }
+        changedGroups.insert(group);
+        ++positions;
+    }
+
     for (const int group : changedGroups)
     {
         const std::filesystem::path file =

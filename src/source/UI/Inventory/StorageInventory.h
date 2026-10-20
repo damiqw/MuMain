@@ -49,6 +49,7 @@ namespace mu::ui::window
 
             Rml::String title;
             bool titleLocked = false; // legacy-only red/gray title color toggle -- see SyncRmlModel()
+            bool muemuPages = false;  // MuEmu (fork): the server's warehouses, changed with the title's arrows
 
             Rml::String zenText;
             Rml::String zenTier; // UI::RmlBridge::GoldTierKey() of the amount, legacy only

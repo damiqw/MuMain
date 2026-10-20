@@ -29,6 +29,7 @@ struct Content
     std::vector<std::string> header;
     std::vector<Row> rows;
     std::vector<Button> buttons;
+    bool wide = false; // ventana ancha (tablas de varias columnas)
 };
 
 using ActionHandler = std::function<void(int action)>;

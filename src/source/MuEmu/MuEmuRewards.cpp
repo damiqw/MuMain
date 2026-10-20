@@ -7,6 +7,7 @@
 #include "Engine/Object/ZzzInfomation.h"
 #include "World/MapInfra/MapManager.h"
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <cstring>
@@ -237,16 +238,17 @@ MuEmu::Panel::Content BuildParties()
         return content;
     }
 
-    content.header = { "Lider", "Mapa", "Nivel", "Miembros" };
+    content.wide = true;
+    content.header = { "Lider", "Mapa", "Posicion", "Nivel", "Miembros", "Clave" };
     for (std::size_t n = 0; n < g_parties.size(); ++n)
     {
         const PartyEntry& party = g_parties[n];
         MuEmu::Panel::Row row;
-        const wchar_t* map = gMapManager.GetMapName(party.map);
-        row.cells = { party.leader, MuEmu::Panel::ToUtf8(map) + " " + std::to_string(party.x) + "," + std::to_string(party.y),
-                      std::to_string(party.level), std::to_string(party.members) };
+        row.cells = { party.leader, MuEmu::Panel::ToUtf8(gMapManager.GetMapName(party.map)),
+                      std::to_string(party.x) + ", " + std::to_string(party.y), std::to_string(party.level),
+                      std::to_string(party.members) + "/5", party.password ? "Si" : "No" };
         if (party.password)
-            row.cells.back() += " (clave)";
+            row.color = "#a0a0a0";
         else
             row.buttons = { { "Unirse", static_cast<int>(n) } };
         content.rows.push_back(std::move(row));
@@ -404,6 +406,15 @@ bool MuEmu::Ui::Rewards::Receive(uint8_t head, uint8_t sub, const uint8_t* buffe
             party.members = ReadInt(buffer, at + 40);
             g_parties.push_back(std::move(party));
         }
+        // Primero las que se pueden unir sin clave, despues por mapa y lider.
+        std::stable_sort(g_parties.begin(), g_parties.end(), [](const PartyEntry& a, const PartyEntry& b)
+        {
+            if (a.password != b.password)
+                return !a.password;
+            if (a.map != b.map)
+                return a.map < b.map;
+            return a.leader < b.leader;
+        });
         g_partiesReceived = true;
         MuEmu::Panel::Update(PartyId, BuildParties());
         return true;

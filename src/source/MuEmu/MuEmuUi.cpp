@@ -22,7 +22,6 @@ enum MenuAction
     MenuJewelBank,
     MenuDaily,
     MenuInvasion,
-    MenuWarehouse,
     MenuDps,
 };
 
@@ -127,13 +126,12 @@ void MuEmu::Ui::ShowMenu()
         const char* label;
         int action;
     } entries[] = {
-        { "Eventos (H)", MenuEvents },
-        { "Comandos", MenuCommands },
-        { "Rankings", MenuRanking },
-        { "Banco de joyas (J)", MenuJewelBank },
-        { "Recompensa diaria", MenuDaily },
+        { "Event Timer", MenuEvents },
+        { "Jewel Bank", MenuJewelBank },
+        { "Commands Info", MenuCommands },
+        { "Daily Reward", MenuDaily },
+        { "Custom Ranking", MenuRanking },
         { "Invasiones", MenuInvasion },
-        { "Cambiar baul", MenuWarehouse },
         { "Medidor de dano", MenuDps },
     };
     for (const auto& entry : entries)
@@ -149,7 +147,6 @@ void MuEmu::Ui::ShowMenu()
         case MenuJewelBank: Bank::OpenJewelBank(); break;
         case MenuDaily: Rewards::OpenDaily(); break;
         case MenuInvasion: Rewards::OpenInvasion(); break;
-        case MenuWarehouse: Bank::OpenWarehouse(); break;
         case MenuDps: Ranking::ToggleDps(); break;
         default: break;
         }

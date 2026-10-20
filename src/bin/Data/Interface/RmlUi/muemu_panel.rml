@@ -5,24 +5,29 @@
 	<link type="text/rcss" href="muemu_panel.rcss"/>
 </head>
 <!-- MuEmu (fork): the shared window of the server's custom features (events, commands, jewel bank,
-     rankings, rewards...). MuEmuPanel.cpp fills it: a title, an optional table and buttons. -->
+     rankings, rewards...). MuEmuPanel.cpp fills it: a title, text lines, an optional table (its first
+     column wider, its buttons at the end of the row) and a grid of buttons. -->
+<!-- bound-geometry: the table's button column is as wide as its row with the most buttons, which only C++ knows. -->
 <body class="native-text" data-model="muemu_panel">
-	<div id="panel" class="muemu-panel">
+	<div id="panel" class="muemu-panel" data-class-wide="wide">
 		<div class="muemu-title">{{title}}</div>
-		<div class="muemu-close btn" data-event-click="muemu_close">X</div>
+		<div class="muemu-close" data-event-click="muemu_close">X</div>
 		<div class="muemu-text" data-for="line : lines">{{line}}</div>
-		<div class="muemu-table scroll-pane">
+		<div class="muemu-table" data-if="rows.size > 0">
 			<div class="muemu-row muemu-header" data-if="header.size > 0">
-				<div class="muemu-cell" data-for="cell : header">{{cell}}</div>
+				<div class="muemu-cell" data-for="cell, i : header" data-class-main="i == 0">{{cell}}</div>
+				<div class="muemu-row-buttons" data-if="buttons_width > 0" data-style-width="buttons_width + 'dp'"></div>
 			</div>
 			<div class="muemu-row" data-for="row : rows" data-style-color="row.color == '' ? '#ffffff' : row.color">
-				<div class="muemu-cell" data-for="cell : row.cells">{{cell}}</div>
-				<div class="muemu-row-btn btn" data-for="button : row.buttons"
-				     data-event-click="muemu_action(button.action)">{{button.label}}</div>
+				<div class="muemu-cell" data-for="cell, i : row.cells" data-class-main="i == 0">{{cell}}</div>
+				<div class="muemu-row-buttons" data-if="buttons_width > 0" data-style-width="buttons_width + 'dp'">
+					<div class="muemu-row-btn" data-for="button : row.buttons"
+					     data-event-click="muemu_action(button.action)">{{button.label}}</div>
+				</div>
 			</div>
 		</div>
 		<div class="muemu-buttons">
-			<div class="muemu-btn btn" data-for="button : buttons"
+			<div class="btn muemu-btn" data-for="button : buttons"
 			     data-event-click="muemu_action(button.action)">{{button.label}}</div>
 		</div>
 	</div>

@@ -26,6 +26,7 @@
 #include "UI/Scaling/UITransform.h"
 #include "Core/Utilities/StringUtils.h"
 #include <RmlUi/Core/ElementDocument.h>
+#include "MuEmu/MuEmuUiFeatures.h"
 
 using namespace SEASON3B;
 using namespace mu::ui::window;
@@ -215,6 +216,13 @@ void CStorageInventory::BindRmlModel(Rml::DataModelConstructor& c, StorageRmlMod
 
     c.Bind("title", &model.title);
     c.Bind("title_locked", &model.titleLocked);
+
+    // MuEmu (fork): las flechas de los baules del servidor (como en Main.dll).
+    c.Bind("muemu_pages", &model.muemuPages);
+    c.BindEventCallback("muemu_storage_prev",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { MuEmu::Ui::Bank::ChangeWarehouse(-1); });
+    c.BindEventCallback("muemu_storage_next",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { MuEmu::Ui::Bank::ChangeWarehouse(1); });
 
     c.Bind("zen_text", &model.zenText);
     c.Bind("zen_tier", &model.zenTier);
@@ -475,6 +483,11 @@ void CStorageInventory::SyncRmlModel()
     // "Storage (open/close)" title text, red when locked.
     wchar_t titleBuf[128];
     mu_swprintf(titleBuf, L"%ls (%ls)", I18N::Game::Storage, I18N::Game::Lookup(m_bLock ? 241 : 240));
+    // MuEmu (fork): "Storage [2/20]" con los baules del servidor.
+    const std::wstring warehouseTitle = MuEmu::Ui::Bank::WarehouseTitle(I18N::Game::Storage);
+    if (!warehouseTitle.empty())
+        mu_swprintf(titleBuf, L"%ls", warehouseTitle.c_str());
+    syncBool(&StorageRmlModel::muemuPages, "muemu_pages", !warehouseTitle.empty());
     syncWide(&StorageRmlModel::title, "title", titleBuf);
     syncBool(&StorageRmlModel::titleLocked, "title_locked", m_bLock);
 

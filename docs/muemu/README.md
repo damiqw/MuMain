@@ -206,8 +206,9 @@ Punto de enganche en upstream: `RenderDarkHorseSkill` (`Engine/AI/GOBoid.cpp`).
 Una ventana RmlUi compartida (`muemu_panel.rml`, arrastrable) para las funciones custom de Main.dll, con sus
 mismas teclas: **N** party (publicar, quitar publicacion y buscar), **H** horarios de eventos y **J** banco de
 joyas (reemplaza la lista de comandos de SVEN). El resto sale del boton **Menu** de arriba de la pantalla
-(`muemu_menu_button.rml`): eventos, comandos, rankings, banco de joyas, recompensa diaria, invasiones, baul y
-medidor de dano. Copiar `CustomEventTimeText.txt` y `CustomCommandInfo.txt` de
+(`muemu_menu_button.rml`): Event Timer, Jewel Bank, Commands Info, Daily Reward, Custom Ranking, invasiones y
+medidor de dano. El banco de joyas muestra las 30 joyas de a 10 por pagina. El Storage muestra "Storage [2/20]" y
+flechas para cambiar de baul cuando el servidor manda los baules (C1 FB D5). Copiar `CustomEventTimeText.txt` y `CustomCommandInfo.txt` de
 `MAIN_INFO/Common` a `Data/MuEmu/`.
 
 | Ventana | Paquetes | Archivo |
@@ -215,7 +216,7 @@ medidor de dano. Copiar `CustomEventTimeText.txt` y `CustomCommandInfo.txt` de
 | Eventos (cuenta regresiva y bonus) | pide C1 F3 E8, recibe C2 F3 E8 | `MuEmuEvents.cpp` |
 | Comandos | `CustomCommandInfo.txt` | `MuEmuEvents.cpp` |
 | Banco de joyas (depositar y retirar 1/10/20/30) | C1 F3 F4/F5/F6 | `MuEmuBank.cpp` |
-| Cambiar baul | recibe C1 FB D5, envia C1 F3 F7 | `MuEmuBank.cpp` |
+| Cambiar baul (flechas del Storage) | recibe C1 FB D5, envia C1 F3 F7 | `MuEmuBank.cpp`, `StorageInventory.cpp` |
 | Rankings (anterior/siguiente) | C1 F3 E7, C1/C2 F3 E6 | `MuEmuRanking.cpp` |
 | Rango sobre los jugadores (nivel, resets y VIP del seleccionado) | C1 F3 E5 | `MuEmuRanking.cpp` |
 | Medidor de dano (`[MuEmu] DpsMeter`, 1 por defecto) | C1 F3 F7 | `MuEmuRanking.cpp` |
@@ -226,3 +227,6 @@ medidor de dano. Copiar `CustomEventTimeText.txt` y `CustomCommandInfo.txt` de
 
 Las posiciones de los datos salen de las estructuras del GameServer (empaquetado por defecto de MSVC). Falta:
 elegir clases, nivel y clave al publicar, y unirse a partys con clave.
+
+Los NPC no tienen barra de vida y su nombre se ve siempre (`[MuEmu] NpcNames`, 1 por defecto). Las mascotas de
+`CustomPet.txt` toman la escala de inventario y de piso de sus columnas ScaleInv y ScaleDrop al importar los modelos.

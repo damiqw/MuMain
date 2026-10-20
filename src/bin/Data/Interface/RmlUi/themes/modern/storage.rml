@@ -42,6 +42,9 @@
 			<div class="modern-joint-px"></div>
 			<div class="modern-header-text-px">
 				<div id="title" class="modern-header-title-px">{{title}}</div>
+				<!-- MuEmu (fork): the server's warehouses (Main.dll's arrows), shown once the server sends them. -->
+				<div id="muemu_storage_prev" class="muemu-storage-arrow" data-if="muemu_pages" data-event-click="muemu_storage_prev">&lt;</div>
+				<div id="muemu_storage_next" class="muemu-storage-arrow" data-if="muemu_pages" data-event-click="muemu_storage_next">&gt;</div>
 			</div>
 		</div>
 

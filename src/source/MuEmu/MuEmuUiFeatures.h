@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 // Las ventanas de MuEmu::Ui, cada una en su archivo. Receive() devuelve verdadero si el paquete era suyo.
 namespace MuEmu::Ui::Events
@@ -15,6 +16,10 @@ namespace MuEmu::Ui::Bank
 {
 void OpenJewelBank(); // banco de joyas (C1 F3 F4/F5/F6)
 void OpenWarehouse(); // cambio de baul (C1 F3 F7)
+// Titulo del baul ("Storage [2/20]") o vacio si el servidor no mando los baules (C1 FB D5).
+std::wstring WarehouseTitle(const wchar_t* storage);
+// Pasa al baul anterior (-1) o siguiente (1).
+void ChangeWarehouse(int step);
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Bank
 

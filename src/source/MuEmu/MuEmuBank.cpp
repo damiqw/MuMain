@@ -31,6 +31,12 @@ constexpr int WithdrawCounts[] = { 1, 10, 20, 30 };
 
 // Acciones: deposito = slot, retiro = 100 + slot * 10 + indice de la cantidad.
 constexpr int WithdrawBase = 100;
+constexpr int ActionRefresh = -1;
+constexpr int ActionPreviousPage = -2;
+constexpr int ActionNextPage = -3;
+
+constexpr int JewelsPerPage = 10;
+constexpr int PageCount = (JewelCount + JewelsPerPage - 1) / JewelsPerPage;
 
 struct JewelBank
 {
@@ -49,6 +55,7 @@ struct Warehouse
 
 JewelBank g_bank;
 Warehouse g_warehouse;
+int g_bankPage = 0;
 
 int ItemType(int slot)
 {
@@ -85,7 +92,8 @@ void Withdraw(int slot, int count)
 MuEmu::Panel::Content BuildJewelBank()
 {
     MuEmu::Panel::Content content;
-    content.title = "Banco de joyas";
+    content.title = "Jewel Bank";
+    content.wide = true;
     if (!g_bank.received)
     {
         content.lines = { "Esperando el banco del servidor..." };
@@ -97,28 +105,26 @@ MuEmu::Panel::Content BuildJewelBank()
         return content;
     }
 
+    // Como Main.dll: 10 joyas por pagina, todas aunque esten en cero.
+    const int first = g_bankPage * JewelsPerPage;
     content.header = { "Joya", "Banco", "Inv." };
-    for (int slot = 0; slot < JewelCount; ++slot)
+    for (int slot = first; slot < first + JewelsPerPage && slot < JewelCount; ++slot)
     {
         const int inventory = g_pMyInventory->GetNumItemByType(static_cast<short>(ItemType(slot)));
-        if (g_bank.counts[slot] == 0 && inventory == 0)
-            continue;
-
         MuEmu::Panel::Row row;
         row.cells = { ItemName(ItemType(slot)), MuEmu::Ui::FormatNumber(g_bank.counts[slot]), std::to_string(inventory) };
-        if (inventory > 0)
-            row.buttons.push_back({ "Dep.", slot });
+        if (g_bank.counts[slot] == 0 && inventory == 0)
+            row.color = "#909090";
+        row.buttons.push_back({ "Dep.", slot });
         for (int n = 0; n < static_cast<int>(std::size(WithdrawCounts)); ++n)
-        {
-            if (g_bank.counts[slot] >= WithdrawCounts[n])
-                row.buttons.push_back({ std::to_string(WithdrawCounts[n]), WithdrawBase + slot * 10 + n });
-        }
+            row.buttons.push_back({ std::to_string(WithdrawCounts[n]), WithdrawBase + slot * 10 + n });
         content.rows.push_back(std::move(row));
     }
 
-    if (content.rows.empty())
-        content.lines = { "No hay joyas en el banco ni en el inventario." };
-    content.buttons = { { "Actualizar", -1 } };
+    content.lines = { "Pagina " + std::to_string(g_bankPage + 1) + " / " + std::to_string(PageCount) +
+                      " - Dep.: guarda una del inventario; los numeros retiran esa cantidad." };
+    content.buttons = { { "< Anterior", ActionPreviousPage }, { "Siguiente >", ActionNextPage },
+                        { "Actualizar", ActionRefresh } };
     return content;
 }
 
@@ -156,8 +162,13 @@ void MuEmu::Ui::Bank::OpenJewelBank()
     Send(0xF3, 0xF4);
     MuEmu::Panel::Show(JewelBankId, BuildJewelBank(), [](int action)
     {
-        if (action == -1)
+        if (action == ActionRefresh)
             Send(0xF3, 0xF4);
+        else if (action == ActionPreviousPage || action == ActionNextPage)
+        {
+            g_bankPage = (g_bankPage + (action == ActionNextPage ? 1 : PageCount - 1)) % PageCount;
+            MuEmu::Panel::Update(JewelBankId, BuildJewelBank());
+        }
         else if (action >= WithdrawBase)
             Withdraw((action - WithdrawBase) / 10, WithdrawCounts[(action - WithdrawBase) % 10]);
         else if (action >= 0 && action < JewelCount)
@@ -173,6 +184,25 @@ void MuEmu::Ui::Bank::OpenWarehouse()
         WriteInt(payload, action);
         Send(0xF3, 0xF7, payload);
     });
+}
+
+std::wstring MuEmu::Ui::Bank::WarehouseTitle(const wchar_t* storage)
+{
+    if (!g_warehouse.received || g_warehouse.count <= 1)
+        return std::wstring();
+    return std::wstring(storage != nullptr ? storage : L"Storage") + L" [" + std::to_wstring(g_warehouse.current + 1) +
+           L"/" + std::to_wstring(g_warehouse.count) + L"]";
+}
+
+void MuEmu::Ui::Bank::ChangeWarehouse(int step)
+{
+    if (!g_warehouse.received || g_warehouse.count <= 1 || g_warehouse.locked)
+        return;
+
+    const int next = (g_warehouse.current + step + g_warehouse.count) % g_warehouse.count;
+    std::vector<uint8_t> payload;
+    WriteInt(payload, next);
+    Send(0xF3, 0xF7, payload);
 }
 
 bool MuEmu::Ui::Bank::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)

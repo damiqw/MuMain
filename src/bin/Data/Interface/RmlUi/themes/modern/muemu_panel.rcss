@@ -3,12 +3,11 @@
 
 .muemu-panel {
 	position: absolute;
-	left: 220dp;
-	top: 70dp;
-	width: 340dp;
-	max-height: 420dp;
+	left: 200dp;
+	top: 60dp;
+	width: 300dp;
 	padding: 6dp 8dp 8dp 8dp;
-	background-color: rgba(0, 0, 0, 215);
+	background-color: rgba(0, 0, 0, 220);
 	border-width: 1dp;
 	border-color: #6b5a3a;
 	border-radius: 3dp;
@@ -17,6 +16,7 @@
 	font-size: 1rem;
 	pointer-events: auto;
 }
+.muemu-panel.wide { width: 470dp; }
 
 .muemu-title {
 	display: block;
@@ -25,7 +25,7 @@
 	text-align: center;
 	color: #ffd23c;
 	font-weight: bold;
-	margin-right: 18dp;
+	margin: 0dp 20dp 4dp 20dp;
 }
 
 .muemu-close {
@@ -39,28 +39,30 @@
 	color: #e2e2e2;
 	background-color: rgba(120, 40, 40, 200);
 	cursor: pointer;
+	pointer-events: auto;
 }
 .muemu-close:hover { background-color: rgba(170, 60, 60, 230); }
 
 .muemu-text {
 	display: block;
-	margin: 2dp 0dp;
+	margin: 1dp 0dp;
 	color: #e2e2e2;
 }
 
 .muemu-table {
 	display: block;
-	max-height: 340dp;
+	max-height: 330dp;
 	overflow-y: auto;
 	margin-top: 4dp;
 }
 
+/* One table line: the cells share the width (the first one double), the buttons keep a fixed column. */
 .muemu-row {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	min-height: 17dp;
-	padding: 1dp 2dp;
+	height: 19dp;
+	padding: 0dp 2dp;
 	border-bottom: 1dp #2a2418;
 }
 .muemu-row:hover { background-color: rgba(128, 128, 179, 50); }
@@ -68,32 +70,53 @@
 .muemu-header:hover { background-color: transparent; }
 
 .muemu-cell {
-	flex: 1;
+	flex: 1 1 0dp;
+	min-width: 0dp;
+	height: 19dp;
+	line-height: 19dp;
 	white-space: nowrap;
 	overflow: hidden;
 	padding-right: 4dp;
 }
+.muemu-cell.main { flex: 2 1 0dp; }
 
-.muemu-row-btn, .muemu-btn {
-	display: inline-block;
-	min-width: 34dp;
+.muemu-row-buttons {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.muemu-row-btn {
+	flex: 0 0 auto;
+	min-width: 26dp;
 	height: 15dp;
 	line-height: 15dp;
-	padding: 0dp 4dp;
-	margin-left: 3dp;
+	padding: 0dp 3dp;
+	margin-left: 2dp;
 	text-align: center;
 	color: #ffff79;
-	background-color: rgba(70, 60, 30, 230);
+	background-color: rgba(60, 50, 25, 235);
 	border-width: 1dp;
 	border-color: #8a7444;
 	cursor: pointer;
 	pointer-events: auto;
 }
-.muemu-row-btn:hover, .muemu-btn:hover { background-color: rgba(110, 95, 45, 240); color: #ffffff; }
+.muemu-row-btn:hover { background-color: rgba(110, 95, 45, 240); color: #ffffff; }
 
+/* The window's buttons: two per line, with the theme's button art (base.rcss .btn is absolute). */
 .muemu-buttons {
 	display: block;
 	margin-top: 6dp;
 	text-align: center;
 }
-.muemu-btn { margin: 2dp 2dp; height: 18dp; line-height: 18dp; }
+.muemu-btn {
+	position: relative;
+	display: inline-block;
+	width: 47%;
+	height: 26dp;
+	line-height: 26dp;
+	margin: 2dp 1%;
+	color: #ffffff;
+}

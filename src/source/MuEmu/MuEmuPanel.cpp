@@ -9,6 +9,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Event.h>
 
+#include <algorithm>
 #include <memory>
 
 namespace
@@ -24,6 +25,8 @@ struct PanelModel
     std::vector<std::string> header;
     std::vector<Row> rows;
     std::vector<Button> buttons;
+    bool wide = false;
+    int buttonsWidth = 0;
 };
 
 std::string g_shownId;
@@ -53,6 +56,8 @@ void BindModel(Rml::DataModelConstructor& c, PanelModel& model)
     c.Bind("header", &model.header);
     c.Bind("rows", &model.rows);
     c.Bind("buttons", &model.buttons);
+    c.Bind("wide", &model.wide);
+    c.Bind("buttons_width", &model.buttonsWidth);
 
     c.BindEventCallback("muemu_action",
         [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
@@ -98,7 +103,19 @@ void Apply(Content content)
     model.header = std::move(content.header);
     model.rows = std::move(content.rows);
     model.buttons = std::move(content.buttons);
-    for (const char* field : { "title", "lines", "header", "rows", "buttons" })
+    model.wide = content.wide;
+
+    // La columna de botones de la tabla, del ancho de la fila con mas botones (texto aproximado en dp).
+    model.buttonsWidth = 0;
+    for (const Row& row : model.rows)
+    {
+        int width = 0;
+        for (const Button& button : row.buttons)
+            width += 10 + static_cast<int>(button.label.size()) * 6;
+        model.buttonsWidth = std::max(model.buttonsWidth, width);
+    }
+
+    for (const char* field : { "title", "lines", "header", "rows", "buttons", "wide", "buttons_width" })
         View().MarkDirty(field);
 }
 } // namespace

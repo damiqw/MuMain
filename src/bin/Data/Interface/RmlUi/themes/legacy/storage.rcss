@@ -118,3 +118,20 @@
    controls take their own. */
 #panel.slot-placed { pointer-events: none; }
 #panel { font-size: calc(var(--text-px, 12px) / var(--root-scale)); }
+
+/* MuEmu (fork): the arrows that change the server's warehouse, at both ends of the title. */
+.muemu-storage-arrow {
+	position: absolute;
+	top: 9px;
+	width: 16px;
+	height: 16px;
+	line-height: 16px;
+	text-align: center;
+	font-weight: bold;
+	color: #ffd23c;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.muemu-storage-arrow:hover { color: #ffffff; }
+#muemu_storage_prev { left: 18px; }
+#muemu_storage_next { right: 18px; }

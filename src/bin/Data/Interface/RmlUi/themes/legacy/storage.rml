@@ -35,6 +35,9 @@
 			     data-style-font-size="text_px + 'px'">{{c.count}}</span></div>
 		</div>
 		<span class="sharp-text" id="title" data-class-locked="title_locked" data-style-font-size="text_px + 'px'">{{title}}</span>
+		<!-- MuEmu (fork): the server's warehouses (Main.dll's arrows), shown once the server sends them. -->
+		<div id="muemu_storage_prev" class="muemu-storage-arrow" data-if="muemu_pages" data-event-click="muemu_storage_prev">&lt;</div>
+		<div id="muemu_storage_next" class="muemu-storage-arrow" data-if="muemu_pages" data-event-click="muemu_storage_next">&gt;</div>
 
 		<div id="money_bg"></div>
 		<span id="zen_text" class="sharp-text sharp-right gold-amount" data-style-font-size="text_px + 'px'"
