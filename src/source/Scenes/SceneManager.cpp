@@ -67,6 +67,7 @@ FrameTimingState g_frameTiming;
 #include "Scenes/SceneNames.h"
 #include "Render/Lighting/LightMoodSetting.h"
 #include "MuEmu/MuEmuMap.h"
+#include "MuEmu/MuEmuUi.h"
 
 #ifdef _EDITOR
 #include "../MuEditor/Core/MuEditorCore.h"
@@ -756,7 +757,9 @@ static void CheckServerConnection()
 
     // Auto-reconnect only makes sense in-game, where the server restores the
     // character's saved position. Other scenes keep the original behaviour.
-    if (SceneFlag == MAIN_SCENE && ReconnectManager::Instance().HasSession())
+    // MuEmu (fork): the offline shop and /offhelper close the connection on purpose and leave the character in
+    // the game; reconnecting would log it back in and end them.
+    if (SceneFlag == MAIN_SCENE && ReconnectManager::Instance().HasSession() && !MuEmu::Ui::IsOfflineDisconnect())
     {
         g_ErrorReport.Write(L"> Connection lost in game - starting auto-reconnect. ");
         g_ErrorReport.WriteCurrentTime();

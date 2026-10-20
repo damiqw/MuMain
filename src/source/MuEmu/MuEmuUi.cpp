@@ -174,6 +174,22 @@ void MuEmu::Ui::ShowPartyMenu()
     });
 }
 
+namespace
+{
+ULONGLONG g_offlineTick = 0;
+constexpr ULONGLONG OfflineWindowMs = 15000;
+} // namespace
+
+void MuEmu::Ui::MarkOfflineDisconnect()
+{
+    g_offlineTick = GetTickCount64();
+}
+
+bool MuEmu::Ui::IsOfflineDisconnect()
+{
+    return g_offlineTick != 0 && GetTickCount64() - g_offlineTick < OfflineWindowMs;
+}
+
 void MuEmu::Ui::Send(uint8_t head, uint8_t sub, const std::vector<uint8_t>& payload)
 {
     if (SocketClient == nullptr)

@@ -91,6 +91,7 @@ void SendOffHelperConfiguration()
     packet[52] = static_cast<uint8_t>(extraCount);
 
     MuEmu::Ui::SendRaw(packet);
+    MuEmu::Ui::MarkOfflineDisconnect();
 }
 } // namespace
 

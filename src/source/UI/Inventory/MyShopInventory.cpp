@@ -323,6 +323,8 @@ void mu::ui::window::CMyShopInventory::BindRmlModel(Rml::DataModelConstructor& c
             std::vector<uint8_t> payload;
             MuEmu::Ui::WriteInt(payload, args[0].Get<int>());
             MuEmu::Ui::Send(0xF3, 0xEB, payload);
+            if (args[0].Get<int>() == 6) // offline: the server closes the connection on purpose
+                MuEmu::Ui::MarkOfflineDisconnect();
             PlayBuffer(SOUND_CLICK01);
         });
     c.Bind("exit_tooltip", &model.exitTooltip);

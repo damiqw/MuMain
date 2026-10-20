@@ -24,6 +24,12 @@ void ShowMenu();
 // La ventana de la N: publicar o quitar la party y buscar partys.
 void ShowPartyMenu();
 
+// Tienda offline y /offhelper: el servidor cierra la conexion a proposito y el personaje queda en el juego, asi
+// que esa desconexion no tiene que reconectar (si no, el personaje vuelve a entrar y saca la tienda o el helper).
+void MarkOfflineDisconnect();
+// Verdadero durante unos segundos despues de pedir quedar offline.
+bool IsOfflineDisconnect();
+
 // --- Ayudas para los modulos de cada ventana ---
 
 // Envia un paquete C1 (cabecera, subcodigo y datos).
