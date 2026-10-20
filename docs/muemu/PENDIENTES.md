@@ -25,15 +25,13 @@ lo resuelve SVEN de otra forma.
 | MuHelper (offhelper) | `MuEmuOffHelper` |
 | LoginBox (conexion rapida) | `MuEmuQuickConnect` |
 | Stats de mas de 65.000, OffTrade (tienda offline), ver equipo (ranking), post_item | `MuEmuStats`, `MyShopInventory`, `MuEmuRanking`, `MuEmuPostItem` |
+| HWID (limites y baneos por PC), set ancient completo, cartas con equipo | `MuEmuHwid` + GameServer (`HwidManager`, `SvenProtocol`) |
 
 ## Prioridad A: juego diario o pedido por el servidor
 
 | Funcion | Main.dll | Paquetes | Nota |
 |---|---|---|---|
 | Slots de equipo custom (aros, 12-14) | NewUIMyInventory | C1 A9 | Los items se importan sin slot: no se pueden equipar. Hoy no se usan en el servidor. |
-| HWID | HWID | login | El servidor no lo recibe del cliente SVEN (limites por PC). |
-| Bandera de set ancient completo | (protocolo) | apariencia | No se manda: el brillo del set completo no se ve. |
-| Cartas (letters) | (protocolo) | OpenLetterExtended | Muestran la clase sin equipo. |
 
 ## Prioridad B: contenido custom
 

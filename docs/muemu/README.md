@@ -261,3 +261,8 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
   equipo) abre una ventana con un mensaje opcional y "Publicar" (C1 78 con la posicion del item). Los items publicados
   (C1 78 del servidor, para todos los jugadores) salen en el chat como `[Item] Personaje: mensaje [item +9 +Skill]` y
   los ultimos 20 se ven en Menu > Items publicados. Con el cursor sobre la linea del chat se ve el tooltip completo del item. El servidor cobra y limita segun `CommandPostItem` de su configuracion.
+- **HWID** (`MuEmuHwid.cpp`, como HWID.cpp de Main.dll): despues de cada saludo del GameServer el cliente manda C1 F3 E9 con
+  el mismo identificador de PC que Main.dll y la version `SVEN` (sin CRC). El GameServer aplica los baneos y el limite
+  por PC y en el login confirma que es el cliente SVEN. `[MuEmu] SendHwid = 0` lo apaga.
+- **Set ancient completo y cartas**: el GameServer marca el set completo en la apariencia (brillo violeta) y arma la
+  apariencia de la foto de las cartas desde el CharSet guardado (antes se veia la clase sin equipo).
