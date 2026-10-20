@@ -165,3 +165,23 @@ La escala es la columna View (+0.3 en la seleccion de personaje). La columna Fen
 Puntos de enganche en upstream: `CreateMount` de las mascotas en `ReadEquipmentExtended` y `SetCharacterClass`
 (`Engine/Object/ZzzCharacter.cpp`) y en `ReceiveChangePlayer` (`Network/Server/WSclient.cpp`); movimiento y escala
 en `MoveMount` y `RenderMount` (`Engine/AI/GOBoid.cpp`).
+
+## Efectos de mascotas custom (`src/source/MuEmu/MuEmuPetEffect.cpp`)
+
+Copiar `CustomPetEffectStatic.txt` y `CustomPetGlow.txt` a `Data/MuEmu/`. Se dibujan sobre la montura (o la mascota
+que camina) despues de su modelo, como CustomPetEffect.cpp de Main.dll:
+
+- `CustomPetEffectStatic`: sprites sobre los huesos (mismas columnas que `CustomEffectStatic`: item, textura, hueso,
+  nivel, R G B, tamano, rotacion y subtipo).
+- `CustomPetGlow`: la malla indicada se dibuja otra vez (dos veces, como Main.dll) con el tipo de render de 1.04E
+  (los mismos flags `RENDER_*` del cliente: 2 textura, 68 brillo + cromo, 70 brillo + cromo + textura) y el color
+  R G B de 0 a 255.
+
+### Numeros de textura (`src/source/MuEmu/MuEmuTexture.cpp`)
+
+Los numeros de textura de 1.04E coinciden con los del cliente solo hasta 32274. Desde ahi se corren (por ejemplo
+`Effect\ShockWave.jpg` es 32279 en 1.04E y `BITMAP_SHOCK_WAVE` = 32278 aca; `Effect\lightmarks.jpg` es 32380 y
+`BITMAP_LIGHT_MARKS` = 32356). `MuEmu::Texture::From104E` usa una tabla generada comparando el archivo que carga cada
+numero en `main.exe` 1.04E con los `LoadBitmap` del cliente; los numeros que el cliente no tiene se omiten.
+
+Punto de enganche en upstream: `RenderMount` (`Engine/AI/GOBoid.cpp`).

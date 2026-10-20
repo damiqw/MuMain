@@ -25,6 +25,7 @@
 #include "GameLogic/Items/ItemCategories.h"
 #include "Render/Renderer/MuRenderer.h"
 #include "MuEmu/MuEmuPet.h"
+#include "MuEmu/MuEmuPetEffect.h"
 
 int EnableEvent = 0;
 
@@ -713,6 +714,7 @@ bool RenderMount(OBJECT* o, bool bForceRender)
             }
 
             RenderObject(o, false, 0, State);
+            MuEmu::PetEffect::Render(o);
 
             vec3_t Light;
             float  Luminosity = (float)(rand() % 30 + 70) * 0.01f;
