@@ -131,6 +131,7 @@ namespace
 #include "GameLogic/Social/MonkSystem.h"
 #include "UI/Core/WindowSystem.h"
 #include "Render/Lighting/LightMoodSetting.h"
+#include "MuEmu/MuEmuMonster.h"
 
 CHARACTER* CharactersClient;
 CHARACTER CharacterView;
@@ -13225,6 +13226,7 @@ void Setting_Monster(CHARACTER* c, EMonsterType Type, int PositionX, int Positio
         c->Object.ExtState = 0;
         c->TargetCharacter = HeroIndex;
         o->Kind = DetermineMonsterObjectKind(Type);
+        MuEmu::Monster::Apply(c, Type, PositionX, PositionY); // MuEmu (fork): monstruos y NPC custom
     }
 }
 
@@ -13233,6 +13235,14 @@ CHARACTER* CreateMonster(EMonsterType Type, int PositionX, int PositionY, int Ke
     CHARACTER* c = NULL;
     OBJECT* o;
     int Level;
+
+    // MuEmu (fork): monstruos y NPC custom del servidor (CustomMonster.txt).
+    c = MuEmu::Monster::Create(Type, PositionX, PositionY, Key);
+    if (c != NULL)
+    {
+        Setting_Monster(c, Type, PositionX, PositionY);
+        return c;
+    }
 
     c = g_CursedTemple->CreateCharacters(Type, PositionX, PositionY, Key);
     if (c != NULL)

@@ -99,3 +99,10 @@ Copiar `CustomJewel.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/`. De la seccion 0 
 slots habilitados (armas, armaduras, alas y accesorios) y el SalePrice. Soltar la joya sobre un item permitido
 envia el uso al servidor (que valida niveles, opciones y probabilidad), marca la celda en verde, y la joya se ve
 en amarillo y con su precio en el NPC, como en Main.dll.
+
+## Monstruos y NPC custom (`src/source/MuEmu/MuEmuMonster.cpp`)
+
+Copiar `CustomMonster.txt` y `CustomNPCName.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/` (los .bmd y texturas
+quedan donde dice cada linea, por ejemplo `Data/Custom/Monster/`). Cada clase custom usa uno de los modelos de
+monstruo que el cliente deja libres (183), con su nombre, tamano y tipo (0 NPC, 1 monstruo). CustomNPCName cambia
+el nombre del NPC que aparece en ese mapa y posicion.
