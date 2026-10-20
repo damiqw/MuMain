@@ -35,6 +35,9 @@ void RequestReturnToLogin();
 // Entre frames (Winmain, junto a la reconexion): hace la vuelta al login pedida.
 void ProcessReturnToLogin();
 
+// HWID para los limites y baneos por PC (C1 F3 E9, como Main.dll): despues de cada saludo del GameServer.
+void SendHwid();
+
 // --- Ayudas para los modulos de cada ventana ---
 
 // Envia un paquete C1 (cabecera, subcodigo y datos).

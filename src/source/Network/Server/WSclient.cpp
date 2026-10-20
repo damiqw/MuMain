@@ -569,6 +569,9 @@ void ReceiveJoinServer(const BYTE* ReceiveBuffer)
     auto Data2 = (LPPRECEIVE_JOIN_SERVER)ReceiveBuffer;
     mu::log::Get("network")->info("NET: Login response result=0x{:02X}", Data2->Result);
 
+    // MuEmu (fork): the hardware id for the server's per-PC limits and bans, like Main.dll on every hello.
+    MuEmu::Ui::SendHwid();
+
     if (LogIn != 0)
     {
         HeroKey = ((int)(Data2->NumberH) << 8) + Data2->NumberL;
