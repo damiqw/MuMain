@@ -29,6 +29,8 @@ void Open();       // rankings (C1 F3 E6/E7)
 void ToggleDps();  // medidor de dano (C1 F3 F7)
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 void Frame();      // rango sobre los jugadores y medidor de dano
+// Equipo de un personaje del ranking (C2 D3 40), pedido con el boton Ver.
+bool ReceiveCharacter(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Ranking
 
 namespace MuEmu::Ui::Rewards

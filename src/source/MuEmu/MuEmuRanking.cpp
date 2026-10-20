@@ -9,11 +9,14 @@
 #include "Camera/CameraState.h"
 #include "Core/Utilities/StringUtils.h"
 #include "Engine/Object/ZzzCharacter.h"
+#include "Engine/Object/ZzzInfomation.h"
 #include "Engine/Object/ZzzInterface.h"
 #include "Render/Text/CUIRenderText.h"
 #include "Render/Textures/ZzzOpenglUtil.h"
 
+#include <algorithm>
 #include <chrono>
+#include <cstring>
 #include <map>
 #include <string>
 #include <vector>
@@ -25,6 +28,7 @@ constexpr const char* RankingId = "ranking";
 struct RankingEntry
 {
     std::string name;
+    std::string rawName; // como lo manda el servidor, para pedir su equipo
     std::string value;
     bool online = false;
 };
@@ -71,7 +75,15 @@ enum RankingAction
 {
     ActionPrevious = 1,
     ActionNext,
+    ActionBack,
+    ActionViewFirst = 1000, // + fila del ranking: ver el equipo del personaje
 };
+
+constexpr const char* CharacterId = "ranking_character";
+
+// Los 12 lugares del equipo, en el orden del servidor.
+constexpr const char* SlotNames[12] = { "Arma derecha", "Arma izquierda", "Casco", "Armadura", "Pantalones", "Guantes",
+                                        "Botas", "Alas", "Mascota", "Collar", "Anillo derecho", "Anillo izquierdo" };
 
 // El medidor se oculta si el servidor deja de mandarlo.
 constexpr auto DpsTimeout = std::chrono::seconds(10);
@@ -98,6 +110,7 @@ MuEmu::Panel::Content BuildRanking()
         return content;
     }
 
+    content.wide = true;
     content.header = { "#", g_ranking.column1.empty() ? "Nombre" : g_ranking.column1,
                        g_ranking.column2.empty() ? "Valor" : g_ranking.column2 };
     for (std::size_t n = 0; n < g_ranking.entries.size(); ++n)
@@ -105,6 +118,7 @@ MuEmu::Panel::Content BuildRanking()
         const RankingEntry& entry = g_ranking.entries[n];
         MuEmu::Panel::Row row;
         row.cells = { std::to_string(n + 1), entry.name, entry.value };
+        row.buttons = { { "Ver", ActionViewFirst + static_cast<int>(n) } };
         if (entry.online)
             row.color = "#60e060";
         else if (n < 3)
@@ -225,6 +239,89 @@ void RenderDps()
         y += LineHeight;
     }
 }
+
+// C1 D3 40: nombre del personaje (11) y un indice (int, 0), como GetInfoCharTop de Main.dll.
+void RequestCharacter(int row)
+{
+    if (row < 0 || row >= static_cast<int>(g_ranking.entries.size()))
+        return;
+
+    const std::string& name = g_ranking.entries[static_cast<std::size_t>(row)].rawName;
+    std::vector<uint8_t> payload(11 + 1 + 4, 0); // nombre, relleno y el indice en 16
+    std::memcpy(payload.data(), name.c_str(), std::min<std::size_t>(name.size(), 10));
+    MuEmu::Ui::Send(0xD3, 0x40, payload);
+}
+
+// Item de 12 bytes del servidor: el nombre con su nivel y opciones, o vacio.
+std::string DescribeItem(const uint8_t* item)
+{
+    bool empty = true;
+    for (int n = 0; n < 6; ++n)
+        empty = empty && item[n] == 0xFF;
+    if (empty)
+        return std::string();
+
+    const int type = item[0] | ((item[3] & 0x80) << 1) | ((item[5] & 0xF0) << 5);
+    const int level = (item[1] >> 3) & 15;
+    const int option = (item[1] & 3) + ((item[3] & 0x40) ? 4 : 0);
+    const bool skill = (item[1] & 0x80) != 0;
+    const bool luck = (item[1] & 0x04) != 0;
+    const bool excellent = (item[3] & 0x3F) != 0;
+    const bool ancient = (item[4] & 0x0F) != 0;
+
+    std::string text;
+    if (excellent)
+        text += "Exc ";
+    if (ancient)
+        text += "Anc ";
+    if (type >= 0 && type < MAX_ITEM && ItemAttribute[type].Name[0] != 0)
+        text += StringUtils::WideToNarrow(ItemAttribute[type].Name);
+    else
+        text += "Item " + std::to_string(type / MAX_ITEM_INDEX) + "," + std::to_string(type % MAX_ITEM_INDEX);
+    if (level > 0)
+        text += " +" + std::to_string(level);
+    if (skill)
+        text += " +Skill";
+    if (luck)
+        text += " +Luck";
+    if (option > 0)
+        text += " +" + std::to_string(option * 4);
+    return text;
+}
+
+// C2 D3 40: nombre (5), guild (16), marca (27), resets (64), nivel (68), master (72) y 12 items de 16 bytes (76).
+void ShowCharacter(const uint8_t* buffer, int size)
+{
+    MuEmu::Panel::Content content;
+    content.title = "Equipo de " + MuEmu::Ui::ReadText(buffer, 5, 11);
+    content.wide = true;
+
+    const std::string guild = MuEmu::Ui::ReadText(buffer, 16, 11);
+    content.lines = { "Nivel " + std::to_string(MuEmu::Ui::ReadInt(buffer, 68)) + " - Master " +
+                          std::to_string(MuEmu::Ui::ReadInt(buffer, 72)) + " - Resets " +
+                          std::to_string(MuEmu::Ui::ReadInt(buffer, 64)),
+                      guild.empty() ? "Sin guild" : "Guild: " + guild };
+
+    content.header = { "Lugar", "Item" };
+    for (int n = 0; n < 12 && 76 + (n + 1) * 16 <= size; ++n)
+    {
+        const std::string item = DescribeItem(buffer + 76 + n * 16);
+        MuEmu::Panel::Row row;
+        row.cells = { SlotNames[n], item.empty() ? "-" : item };
+        if (item.rfind("Exc", 0) == 0 || item.rfind("Anc", 0) == 0)
+            row.color = item.rfind("Anc", 0) == 0 || item.find(" Anc ") != std::string::npos ? "#60e060" : "#80ff80";
+        if (item.empty())
+            row.color = "#808080";
+        content.rows.push_back(std::move(row));
+    }
+    content.buttons = { { "Volver al ranking", ActionBack } };
+
+    MuEmu::Panel::Show(CharacterId, std::move(content), [](int action)
+    {
+        if (action == ActionBack)
+            MuEmu::Ui::Ranking::Open();
+    });
+}
 } // namespace
 
 void MuEmu::Ui::Ranking::Open()
@@ -233,6 +330,11 @@ void MuEmu::Ui::Ranking::Open()
     RequestRanking(g_ranking.type);
     MuEmu::Panel::Show(RankingId, BuildRanking(), [](int action)
     {
+        if (action >= ActionViewFirst)
+        {
+            RequestCharacter(action - ActionViewFirst);
+            return;
+        }
         if (g_ranking.typeCount <= 1)
             return;
         const int step = action == ActionNext ? 1 : -1;
@@ -281,6 +383,7 @@ bool MuEmu::Ui::Ranking::Receive(uint8_t head, uint8_t sub, const uint8_t* buffe
             const int at = HeaderSize + n * EntrySize;
             RankingEntry entry;
             entry.name = ReadText(buffer, at, 20);
+            entry.rawName.assign(reinterpret_cast<const char*>(buffer + at), strnlen(reinterpret_cast<const char*>(buffer + at), 20));
             entry.value = ReadText(buffer, at + 20, 60);
             entry.online = buffer[at + 80] != 0;
             g_ranking.entries.push_back(std::move(entry));
@@ -333,6 +436,15 @@ bool MuEmu::Ui::Ranking::Receive(uint8_t head, uint8_t sub, const uint8_t* buffe
     default:
         return false;
     }
+}
+
+bool MuEmu::Ui::Ranking::ReceiveCharacter(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)
+{
+    if (head != 0xD3 || sub != 0x40 || buffer[0] != 0xC2)
+        return false;
+    if (size >= 76 + 12 * 16)
+        ShowCharacter(buffer, size);
+    return true;
 }
 
 void MuEmu::Ui::Ranking::Frame()

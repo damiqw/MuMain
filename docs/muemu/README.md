@@ -255,3 +255,5 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
 - **Tienda offline y tiendas en joyas/monedas** (OffTrade de Main.dll): debajo de la tienda personal hay botones para
   abrirla cobrando en Bless, Soul, Chaos, WCoinC, WCoinP o Goblin (C1 F3 EB tipo 0 a 5) y, con la tienda abierta,
   "Tienda offline" (tipo 6). El GameServer manda el precio de esas tiendas con su moneda (PriceItemType de OpenMU).
+- **Ver el equipo de otro jugador** (como el ranking de Main.dll): cada fila del Custom Ranking tiene "Ver", que pide el
+  personaje (C1 D3 40) y muestra su nivel, resets, guild y los 12 items equipados con nivel y opciones (C2 D3 40).

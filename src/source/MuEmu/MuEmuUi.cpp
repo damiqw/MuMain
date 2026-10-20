@@ -73,7 +73,7 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
     const uint8_t sub = shortHeader ? buffer[3] : (size > 4 ? buffer[4] : 0);
 
     return Events::Receive(head, sub, buffer, size) || Bank::Receive(head, sub, buffer, size) ||
-           Ranking::Receive(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
+           Ranking::Receive(head, sub, buffer, size) || Ranking::ReceiveCharacter(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
            GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size) ||
            Stats::Receive(head, sub, buffer, size);
 }
