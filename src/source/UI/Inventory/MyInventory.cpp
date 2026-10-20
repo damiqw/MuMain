@@ -418,11 +418,11 @@ bool CMyInventory::IsEquipable(int iIndex, ITEM* pItem) const
     if (bEquipable == false)
         return false;
 
-    const WORD wStrength = CharacterAttribute->Strength + CharacterAttribute->AddStrength;
-    const WORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
-    const WORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
-    const WORD wVitality = CharacterAttribute->Vitality + CharacterAttribute->AddVitality;
-    const WORD wCharisma = CharacterAttribute->Charisma + CharacterAttribute->AddCharisma;
+    const DWORD wStrength = CharacterAttribute->Strength + CharacterAttribute->AddStrength;
+    const DWORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
+    const DWORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
+    const DWORD wVitality = CharacterAttribute->Vitality + CharacterAttribute->AddVitality;
+    const DWORD wCharisma = CharacterAttribute->Charisma + CharacterAttribute->AddCharisma;
     const WORD wLevel = CharacterAttribute->Level;
 
     const int iItemLevel = pItem->Level;

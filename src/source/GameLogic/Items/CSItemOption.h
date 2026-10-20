@@ -121,9 +121,9 @@ private:
     void	checkItemType(SET_SEARCH_RESULT* optionList, const int iType, const int ancientDiscriminator) const;
     void	calcSetOptionList(const SET_SEARCH_RESULT* optionList);
     
-    void    getAllAddState(std::uint16_t* Strength, std::uint16_t* Dexterity, std::uint16_t* Energy, std::uint16_t* Vitality, std::uint16_t* Charisma) const;
+    void    getAllAddState(DWORD* Strength, DWORD* Dexterity, DWORD* Energy, DWORD* Vitality, DWORD* Charisma) const;
 
-    void    AddStatsBySetOptions(std::uint16_t* Strength, std::uint16_t* Dexterity, std::uint16_t* Energy, std::uint16_t* Vitality, std::uint16_t* Charisma) const; //Adds the stats of the active ancient set options to the given pointers, without bonus options
+    void    AddStatsBySetOptions(DWORD* Strength, DWORD* Dexterity, DWORD* Energy, DWORD* Vitality, DWORD* Charisma) const; //Adds the stats of the active ancient set options to the given pointers, without bonus options
 
     int AggregateOptionValue(int optionNumber) const;
 
@@ -145,9 +145,9 @@ public:
     std::uint16_t    GetMixItemLevel(const int Type) const;
     bool	GetSetItemName(wchar_t* strName, const int iType, const int setType) const;
 
-    void	PlusSpecial(std::uint16_t* Value, int Special) const;
-    void	PlusSpecialPercent(std::uint16_t* Value, int Special) const;
-    void	PlusSpecialLevel(std::uint16_t* Value, std::uint16_t SrcValue, int Special) const;
+    void	PlusSpecial(DWORD* Value, int Special) const;
+    void	PlusSpecialPercent(DWORD* Value, int Special) const;
+    void	PlusSpecialLevel(DWORD* Value, DWORD SrcValue, int Special) const;
     void    PlusMastery(int* Value, std::uint8_t MasteryType) const;
 
     
@@ -184,9 +184,9 @@ public:
     void SetViewOptionList(bool bView);
     bool IsViewOptionList();
 
-    void	getAllAddOptionStatesbyCompare(std::uint16_t* Strength, std::uint16_t* Dexterity, std::uint16_t* Energy, std::uint16_t* Vitality, std::uint16_t* Charisma, std::uint16_t iCompareStrength, std::uint16_t iCompareDexterity, std::uint16_t iCompareEnergy, std::uint16_t iCompareVitality, std::uint16_t iC);
+    void	getAllAddOptionStatesbyCompare(DWORD* Strength, DWORD* Dexterity, DWORD* Energy, DWORD* Vitality, DWORD* Charisma, DWORD iCompareStrength, DWORD iCompareDexterity, DWORD iCompareEnergy, DWORD iCompareVitality, DWORD iC);
 
-    void	getAllAddStateOnlyAddValue(std::uint16_t* AddStrength, std::uint16_t* AddDexterity, std::uint16_t* AddEnergy, std::uint16_t* AddVitality, std::uint16_t* AddCharisma) const; // Gets only the added stats of the active ancient set options plus bonus options
+    void	getAllAddStateOnlyAddValue(DWORD* AddStrength, DWORD* AddDexterity, DWORD* AddEnergy, DWORD* AddVitality, DWORD* AddCharisma) const; // Gets only the added stats of the active ancient set options plus bonus options
 };
 
 #define g_csItemOption CSItemOption::GetSingleton ()

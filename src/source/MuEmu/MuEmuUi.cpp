@@ -74,7 +74,8 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
 
     return Events::Receive(head, sub, buffer, size) || Bank::Receive(head, sub, buffer, size) ||
            Ranking::Receive(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
-           GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size);
+           GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size) ||
+           Stats::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()

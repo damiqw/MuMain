@@ -344,12 +344,13 @@ typedef struct
     BYTE IsVaultExtended;
     WORD Level;
     DWORD Resets;
+    // MuEmu (fork): stats, points, damage and defense are 32-bit, like the MuEmu servers (more than 65,535).
 
-    WORD Strength;
-    WORD Dexterity;
-    WORD Vitality;
-    WORD Energy;
-    WORD Charisma;
+    DWORD Strength;
+    DWORD Dexterity;
+    DWORD Vitality;
+    DWORD Energy;
+    DWORD Charisma;
     DWORD Life;
     DWORD Mana;
     DWORD LifeMax;
@@ -358,15 +359,15 @@ typedef struct
     DWORD ShieldMax;
     DWORD SkillMana;
     DWORD SkillManaMax;
-    WORD AttackRatingPK;
-    WORD SuccessfulBlockingPK;
-    WORD AddStrength;
-    WORD AddDexterity;
-    WORD AddVitality;
-    WORD AddEnergy;
+    DWORD AttackRatingPK;
+    DWORD SuccessfulBlockingPK;
+    DWORD AddStrength;
+    DWORD AddDexterity;
+    DWORD AddVitality;
+    DWORD AddEnergy;
     WORD AddLifeMax;
     WORD AddManaMax;
-    WORD AddCharisma;
+    DWORD AddCharisma;
     BYTE Ability;
     float AbilityTime[3]; // Number of reference frames
 
@@ -376,22 +377,22 @@ typedef struct
     WORD wMaxMinusPoint;
     WORD AttackSpeed;
     WORD MaxAttackSpeed; // Maximum attack speed which can be reached on the server.
-    WORD AttackRating;
-    WORD AttackDamageMinRight;
-    WORD AttackDamageMaxRight;
-    WORD AttackDamageMinLeft;
-    WORD AttackDamageMaxLeft;
+    DWORD AttackRating;
+    DWORD AttackDamageMinRight;
+    DWORD AttackDamageMaxRight;
+    DWORD AttackDamageMinLeft;
+    DWORD AttackDamageMaxLeft;
     WORD MagicSpeed;
-    WORD MagicDamageMin;
-    WORD MagicDamageMax;
-    WORD CurseDamageMin;
-    WORD CurseDamageMax;
-    WORD CriticalDamage;
-    WORD SuccessfulBlocking;
-    WORD Defense;
-    WORD MagicDefense;
+    DWORD MagicDamageMin;
+    DWORD MagicDamageMax;
+    DWORD CurseDamageMin;
+    DWORD CurseDamageMax;
+    DWORD CriticalDamage;
+    DWORD SuccessfulBlocking;
+    DWORD Defense;
+    DWORD MagicDefense;
     WORD WalkSpeed;
-    WORD LevelUpPoint;
+    DWORD LevelUpPoint;
     BYTE SkillNumber;
     BYTE SkillMasterNumber;
 

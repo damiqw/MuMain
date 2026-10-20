@@ -52,3 +52,9 @@ namespace MuEmu::Ui::OffHelper
 // /offhelper: el servidor pide la configuracion del MU Helper (C1 FB 3E) y se le manda (C1 FB 3D).
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::OffHelper
+
+namespace MuEmu::Ui::Stats
+{
+// Stats de 32 bits de los servidores MuEmu (C1 F3 E0 y E1).
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Stats

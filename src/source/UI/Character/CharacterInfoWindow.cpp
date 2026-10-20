@@ -609,7 +609,7 @@ void mu::ui::window::CCharacterInfoWindow::BuildAttributeLines()
 
     if (g_isCharacterBuff((&Hero->Object), eBuff_AddAG))
     {
-        WORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
+        DWORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
         iAttackRating += wDexterity;
         iAttackRatingPK += wDexterity;
         if (PartyNumber >= 3)
@@ -889,7 +889,7 @@ void mu::ui::window::CCharacterInfoWindow::BuildAttributeLines()
                                                   CharacterAttribute->AddDexterity != 0);
 
     wchar_t strDexterity[32];
-    WORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
+    DWORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
     mu_swprintf(strDexterity, L"%d", wDexterity);
     SyncField(m_RmlView.Binder(), &CharacterInfoRmlModel::agiValueText, "agi_value_text",
               StringUtils::WideToNarrow(strDexterity));
@@ -1139,7 +1139,7 @@ void mu::ui::window::CCharacterInfoWindow::BuildAttributeLines()
     model.agiLines.push_back({ StringUtils::WideToNarrow(strBlocking), "base" });
     m_RmlView.MarkDirty("agi_lines");
 
-    WORD wVitality = CharacterAttribute->Vitality + CharacterAttribute->AddVitality;
+    DWORD wVitality = CharacterAttribute->Vitality + CharacterAttribute->AddVitality;
 
     // The Our-Forces HP buff counts as boosted like an item bonus does, but it also has to
     // recompute the total first, so this one keeps its branches rather than folding into
@@ -1209,7 +1209,7 @@ void mu::ui::window::CCharacterInfoWindow::BuildAttributeLines()
     }
     m_RmlView.MarkDirty("vit_lines");
 
-    WORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
+    DWORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
 
     const char* energySource = AttributeSource(g_isCharacterBuff((&Hero->Object), eBuff_SecretPotion4),
                                                CharacterAttribute->AddEnergy != 0);

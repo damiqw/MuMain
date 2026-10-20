@@ -492,7 +492,7 @@ int CSItemOption::AggregateOptionValue(int optionNumber) const
     return result;
 }
 
-void CSItemOption::PlusSpecial(std::uint16_t* Value, int Special) const
+void CSItemOption::PlusSpecial(DWORD* Value, int Special) const
 {
     Special -= AT_SET_OPTION_IMPROVE_STRENGTH;
 
@@ -502,7 +502,7 @@ void CSItemOption::PlusSpecial(std::uint16_t* Value, int Special) const
     }
 }
 
-void CSItemOption::PlusSpecialPercent(std::uint16_t* Value, int Special) const
+void CSItemOption::PlusSpecialPercent(DWORD* Value, int Special) const
 {
     Special -= AT_SET_OPTION_IMPROVE_STRENGTH;
 
@@ -512,7 +512,7 @@ void CSItemOption::PlusSpecialPercent(std::uint16_t* Value, int Special) const
     }
 }
 
-void CSItemOption::PlusSpecialLevel(std::uint16_t* Value, std::uint16_t SrcValue, int Special) const
+void CSItemOption::PlusSpecialLevel(DWORD* Value, DWORD SrcValue, int Special) const
 {
     Special -= AT_SET_OPTION_IMPROVE_STRENGTH;
     int optionValue = 0;
@@ -681,7 +681,7 @@ int CSItemOption::RenderDefaultOptionText(const ITEM* ip, int TextNum)
     return TNum;
 }
 
-void CSItemOption::getAllAddState(std::uint16_t* Strength, std::uint16_t* Dexterity, std::uint16_t* Energy, std::uint16_t* Vitality, std::uint16_t* Charisma) const
+void CSItemOption::getAllAddState(DWORD* Strength, DWORD* Dexterity, DWORD* Energy, DWORD* Vitality, DWORD* Charisma) const
 {
     for (int i = EQUIPMENT_WEAPON_RIGHT; i < MAX_EQUIPMENT; ++i)
     {
@@ -716,7 +716,7 @@ void CSItemOption::getAllAddState(std::uint16_t* Strength, std::uint16_t* Dexter
     AddStatsBySetOptions(Strength, Dexterity, Energy, Vitality, Charisma);
 }
 
-void    CSItemOption::AddStatsBySetOptions(std::uint16_t* Strength, std::uint16_t* Dexterity, std::uint16_t* Energy, std::uint16_t* Vitality, std::uint16_t* Charisma) const
+void    CSItemOption::AddStatsBySetOptions(DWORD* Strength, DWORD* Dexterity, DWORD* Energy, DWORD* Vitality, DWORD* Charisma) const
 {
     for (int i = 0; i < m_SetSearchResultCount; i++)
     {
@@ -758,13 +758,13 @@ void    CSItemOption::AddStatsBySetOptions(std::uint16_t* Strength, std::uint16_
     }
 }
 
-void CSItemOption::getAllAddStateOnlyAddValue(std::uint16_t* AddStrength, std::uint16_t* AddDexterity, std::uint16_t* AddEnergy, std::uint16_t* AddVitality, std::uint16_t* AddCharisma) const
+void CSItemOption::getAllAddStateOnlyAddValue(DWORD* AddStrength, DWORD* AddDexterity, DWORD* AddEnergy, DWORD* AddVitality, DWORD* AddCharisma) const
 {
     *AddStrength = *AddDexterity = *AddEnergy = *AddVitality = *AddCharisma = 0;
     getAllAddState(AddStrength, AddDexterity, AddEnergy, AddVitality, AddCharisma);
 }
 
-void CSItemOption::getAllAddOptionStatesbyCompare(std::uint16_t* Strength, std::uint16_t* Dexterity, std::uint16_t* Energy, std::uint16_t* Vitality, std::uint16_t* Charisma, std::uint16_t iCompareStrength, std::uint16_t iCompareDexterity, std::uint16_t iCompareEnergy, std::uint16_t iCompareVitality, std::uint16_t iCompareCharisma)
+void CSItemOption::getAllAddOptionStatesbyCompare(DWORD* Strength, DWORD* Dexterity, DWORD* Energy, DWORD* Vitality, DWORD* Charisma, DWORD iCompareStrength, DWORD iCompareDexterity, DWORD iCompareEnergy, DWORD iCompareVitality, DWORD iCompareCharisma)
 {
     for (int i = EQUIPMENT_WEAPON_RIGHT; i < MAX_EQUIPMENT; ++i)
     {

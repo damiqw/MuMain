@@ -249,3 +249,6 @@ ve siempre, con el mismo cartel que al pasar el cursor (`[MuEmu] PlayerNames` y 
 Como Main.dll: 5 lugares debajo del cuadro de login. Un lugar con cuenta llena usuario y clave (la X la borra); un
 lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll (registro de Windows,
 `HKCU\Software\Webzen\Mu\Config`, ID/PW e ID_2..ID_5/PW_2..PW_5), asi aparecen las cuentas ya guardadas.
+- **Stats de mas de 65.535**: los stats, puntos libres, dano y defensa del personaje pasan a 32 bits en el cliente
+  (`CHARACTER_ATTRIBUTE` y las cuentas que los usan) y se toman de los paquetes propios de MuEmu (C1 F3 E0 y E1,
+  `MuEmuStats.cpp`), porque el formato de OpenMU los manda en 16 bits.

@@ -917,8 +917,8 @@ bool CInventoryActionController::TryConsumeItem(CInventoryCtrl* targetControl, I
 
         if (bReadBookGem)
         {
-            const WORD wStrength = CharacterAttribute->Strength + CharacterAttribute->AddStrength;
-            const WORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
+            const DWORD wStrength = CharacterAttribute->Strength + CharacterAttribute->AddStrength;
+            const DWORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
 
             if (CharacterAttribute->Level >= ItemAttribute[pItem->Type].RequireLevel &&
                 wEnergy >= pItem->RequireEnergy && wStrength >= pItem->RequireStrength)

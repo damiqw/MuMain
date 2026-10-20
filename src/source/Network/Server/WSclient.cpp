@@ -10620,7 +10620,7 @@ namespace
 // The stat a fruit changes and the text id which names it.
 struct FruitStat
 {
-    WORD* Value;
+    DWORD* Value;
     int TextIndex;
 };
 

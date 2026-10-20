@@ -2142,11 +2142,11 @@ bool IsRequireEquipItem(ITEM* pItem)
     if (bEquipable == false)
         return false;
 
-    WORD wStrength = CharacterAttribute->Strength + CharacterAttribute->AddStrength;
-    WORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
-    WORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
-    WORD wVitality = CharacterAttribute->Vitality + CharacterAttribute->AddVitality;
-    WORD wCharisma = CharacterAttribute->Charisma + CharacterAttribute->AddCharisma;
+    DWORD wStrength = CharacterAttribute->Strength + CharacterAttribute->AddStrength;
+    DWORD wDexterity = CharacterAttribute->Dexterity + CharacterAttribute->AddDexterity;
+    DWORD wEnergy = CharacterAttribute->Energy + CharacterAttribute->AddEnergy;
+    DWORD wVitality = CharacterAttribute->Vitality + CharacterAttribute->AddVitality;
+    DWORD wCharisma = CharacterAttribute->Charisma + CharacterAttribute->AddCharisma;
     WORD wLevel = CharacterAttribute->Level;
 
     int iItemLevel = pItem->Level;
@@ -2191,7 +2191,8 @@ bool IsRequireEquipItem(ITEM* pItem)
     return bEquipable;
 }
 
-void PlusSpecial(WORD* Value, int Special, ITEM* Item)
+// MuEmu (fork): templates, the character's values are 32-bit and some locals 16-bit.
+template <typename T> void PlusSpecial(T* Value, int Special, ITEM* Item)
 {
     if (Item->Type == -1) {
         return;
@@ -2207,7 +2208,7 @@ void PlusSpecial(WORD* Value, int Special, ITEM* Item)
     }
 }
 
-void PlusSpecialPercent(WORD* Value, int Special, ITEM* Item, WORD Percent)
+template <typename T> void PlusSpecialPercent(T* Value, int Special, ITEM* Item, WORD Percent)
 {
     if (Item->Type == -1) return;
 
@@ -2221,7 +2222,7 @@ void PlusSpecialPercent(WORD* Value, int Special, ITEM* Item, WORD Percent)
     }
 }
 
-void PlusSpecialPercent2(WORD* Value, int Special, ITEM* Item)
+template <typename T> void PlusSpecialPercent2(T* Value, int Special, ITEM* Item)
 {
     if (Item->Type == -1) return;
 
@@ -2230,7 +2231,7 @@ void PlusSpecialPercent2(WORD* Value, int Special, ITEM* Item)
         for (int i = 0; i < Item->SpecialNum; i++)
         {
             if (Item->Special[i] == Special && Item->Durability != 0)
-                *Value += (unsigned short)(*Value * (Item->SpecialValue[i] / 100.f));
+                *Value += static_cast<T>(*Value * (Item->SpecialValue[i] / 100.f));
         }
     }
 }
@@ -2455,10 +2456,10 @@ void CHARACTER_MACHINE::CalculateDamage()
     ITEM* RRing = &Equipment[EQUIPMENT_RING_RIGHT];
     ITEM* LRing = &Equipment[EQUIPMENT_RING_LEFT];
 
-    WORD Strength = Character.Strength + Character.AddStrength;
-    WORD Dexterity = Character.Dexterity + Character.AddDexterity;
-    WORD Energy = Character.Energy + Character.AddEnergy;
-    WORD Vitality = Character.Vitality + Character.AddVitality;
+    DWORD Strength = Character.Strength + Character.AddStrength;
+    DWORD Dexterity = Character.Dexterity + Character.AddDexterity;
+    DWORD Energy = Character.Energy + Character.AddEnergy;
+    DWORD Vitality = Character.Vitality + Character.AddVitality;
 
     int CharacterClass = gCharacterManager.GetBaseClass(Character.Class);
 
@@ -2639,7 +2640,7 @@ void CHARACTER_MACHINE::CalculateDamage()
         PlusSpecialPercent(&Character.AttackDamageMaxLeft, AT_IMPROVE_DAMAGE_PERCENT, LRing, LRing->SpecialValue[1]);
     }
 
-    WORD    Damage = 0;
+    DWORD   Damage = 0;
 
 
     g_csItemOption.PlusSpecial(&Damage, AT_SET_OPTION_IMPROVE_ATTACK_MIN);
@@ -2894,7 +2895,7 @@ void CHARACTER_MACHINE::CalculateMagicDamage()
         PlusSpecialPercent(&Character.MagicDamageMax, AT_IMPROVE_MAGIC_PERCENT, LRing, LRing->SpecialValue[0]);
     }
 
-    WORD MagicDamage = 0;
+    DWORD MagicDamage = 0;
 
     MagicDamage = 0;
     g_csItemOption.PlusSpecialLevel(&MagicDamage, Energy, AT_SET_OPTION_IMPROVE_MAGIC);
@@ -2943,7 +2944,7 @@ void CHARACTER_MACHINE::CalculateCurseDamage()
     if (CLASS_SUMMONER != gCharacterManager.GetBaseClass(Character.Class))
         return;
 
-    WORD wEnergy = Character.Energy + Character.AddEnergy;
+    DWORD wEnergy = Character.Energy + Character.AddEnergy;
     Character.CurseDamageMin = wEnergy / 9;
     Character.CurseDamageMax = wEnergy / 4;
 
@@ -3000,9 +3001,9 @@ void CHARACTER_MACHINE::CalculateCurseDamage()
 
 void CHARACTER_MACHINE::CalculateAttackRating()
 {
-    WORD Strength = Character.Strength + Character.AddStrength;
-    WORD Dexterity = Character.Dexterity + Character.AddDexterity;
-    WORD Charisma = Character.Charisma + Character.AddCharisma;
+    DWORD Strength = Character.Strength + Character.AddStrength;
+    DWORD Dexterity = Character.Dexterity + Character.AddDexterity;
+    DWORD Charisma = Character.Charisma + Character.AddCharisma;
 
     if (gCharacterManager.GetBaseClass(Character.Class) == CLASS_DARK_LORD)
     {
@@ -3093,7 +3094,7 @@ void CHARACTER_MACHINE::CalculateSuccessfulBlockingPK()
 
 void CHARACTER_MACHINE::CalculateSuccessfulBlocking()
 {
-    WORD Dexterity = Character.Dexterity + Character.AddDexterity;
+    DWORD Dexterity = Character.Dexterity + Character.AddDexterity;
 
     int CharacterClass = gCharacterManager.GetBaseClass(Character.Class);
 
@@ -3447,7 +3448,7 @@ void CHARACTER_MACHINE::CalculateAll()
 
     CalculateBasicState();
 
-    WORD wAddStrength = 0, wAddDexterity = 0, wAddEnergy = 0, wAddVitality = 0, wStrengthResult = 0, wDexterityResult = 0, wEnergyResult = 0, wVitalityResult = 0, wAddCharisma = 0, wCharismaResult = 0;
+    DWORD wAddStrength = 0, wAddDexterity = 0, wAddEnergy = 0, wAddVitality = 0, wStrengthResult = 0, wDexterityResult = 0, wEnergyResult = 0, wVitalityResult = 0, wAddCharisma = 0, wCharismaResult = 0;
 
     g_csItemOption.getAllAddStateOnlyAddValue(&wAddStrength, &wAddDexterity, &wAddEnergy, &wAddVitality, &wAddCharisma);
 

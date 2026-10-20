@@ -288,7 +288,7 @@ void CCharacterManager::GetMagicSkillDamage(int iType, int* piMinDamage, int* pi
     *piMaxDamage = CharacterMachine->Character.MagicDamageMax + Damage + Damage / 2;
 
     Damage = 0;
-    g_csItemOption.PlusSpecial((WORD*)&Damage, AT_SET_OPTION_IMPROVE_MAGIC_POWER);
+    g_csItemOption.PlusSpecial((DWORD*)&Damage, AT_SET_OPTION_IMPROVE_MAGIC_POWER);
     if (Damage != 0)
     {
         float fratio = 1.f + (float)Damage / 100.f;
@@ -298,7 +298,7 @@ void CCharacterManager::GetMagicSkillDamage(int iType, int* piMinDamage, int* pi
 
     Damage = 0;
     g_csItemOption.PlusMastery(&Damage, p->MasteryType);
-    g_csItemOption.PlusSpecial((WORD*)&Damage, AT_SET_OPTION_IMPROVE_SKILL_ATTACK);
+    g_csItemOption.PlusSpecial((DWORD*)&Damage, AT_SET_OPTION_IMPROVE_SKILL_ATTACK);
     *piMinDamage += Damage;
     *piMaxDamage += Damage;
 }
@@ -332,7 +332,7 @@ void CCharacterManager::GetSkillDamage(int iType, int* piMinDamage, int* piMaxDa
 
     Damage = 0;
     g_csItemOption.PlusMastery(&Damage, p->MasteryType);
-    g_csItemOption.PlusSpecial((WORD*)&Damage, AT_SET_OPTION_IMPROVE_SKILL_ATTACK);
+    g_csItemOption.PlusSpecial((DWORD*)&Damage, AT_SET_OPTION_IMPROVE_SKILL_ATTACK);
     *piMinDamage += Damage;
     *piMaxDamage += Damage;
 }
