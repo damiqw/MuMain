@@ -26,6 +26,7 @@
 
 #include "MUHelper/MuHelper.h"
 #include "Render/RmlUi/RmlUiRuntime.h"
+#include "MuEmu/MuEmuUi.h"
 
 using namespace SEASON3B;
 using namespace mu::ui::window;
@@ -177,6 +178,13 @@ bool mu::ui::window::CHotKey::UpdateKeyEvent()
     else if (CanUpdateKeyEvent() == false)
     {
         return true;
+    }
+
+    // MuEmu (fork): N abre el menu de las ventanas custom y H los horarios de eventos.
+    if (MuEmu::Ui::HandleKeys())
+    {
+        PlayBuffer(SOUND_CLICK01);
+        return false;
     }
 
     if (mu::ui::window::IsPress('F'))

@@ -48,6 +48,7 @@
 #include "Camera/CameraDebugLog.h"
 #endif
 
+#include "MuEmu/MuEmuUi.h"
 // External declarations
 #ifdef _EDITOR
 extern "C" bool DevEditor_IsDebugVisualizationEnabled();
@@ -679,6 +680,7 @@ static void RenderMainSceneUI()
 
     BeginBitmap();
     RenderInfomation();
+    MuEmu::Ui::Frame(); // MuEmu (fork): rangos, medidor de dano y relojes de las ventanas custom
 
 #ifdef ENABLE_EDIT
     RenderDebugWindow();

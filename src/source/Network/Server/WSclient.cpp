@@ -2,6 +2,7 @@
 #include "MuEmu/MuEmuBuff.h"
 #include "MuEmu/MuEmuEffect.h"
 #include "MuEmu/MuEmuHealthBar.h"
+#include "MuEmu/MuEmuUi.h"
 #include "MuEmu/MuEmuPet.h"
 #include "App/Control/ControlTaps.h"
 #include "Core/Utilities/Log/MuLogger.h"
@@ -13237,6 +13238,13 @@ static void ProcessPacket(const BYTE* ReceiveBuffer, int32_t Size)
     {
         HeadCode = ReceiveBuffer[3];
     }
+
+    // MuEmu (fork): ventanas custom del servidor (eventos, banco de joyas, rankings, recompensas...).
+    if (MuEmu::Ui::Receive(ReceiveBuffer, Size))
+    {
+        return;
+    }
+
     switch (HeadCode)
     {
     case 0xF1:

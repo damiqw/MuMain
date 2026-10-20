@@ -1,0 +1,99 @@
+/* MuEmu (fork): the shared window of the server's custom features (MuEmuPanel.cpp). The same sheet
+   is in both themes. */
+
+.muemu-panel {
+	position: absolute;
+	left: 220dp;
+	top: 70dp;
+	width: 340dp;
+	max-height: 420dp;
+	padding: 6dp 8dp 8dp 8dp;
+	background-color: rgba(0, 0, 0, 215);
+	border-width: 1dp;
+	border-color: #6b5a3a;
+	border-radius: 3dp;
+	color: #ffffff;
+	font-family: "token(font-body)";
+	font-size: 1rem;
+	pointer-events: auto;
+}
+
+.muemu-title {
+	display: block;
+	height: 18dp;
+	line-height: 18dp;
+	text-align: center;
+	color: #ffd23c;
+	font-weight: bold;
+	margin-right: 18dp;
+}
+
+.muemu-close {
+	position: absolute;
+	right: 6dp;
+	top: 5dp;
+	width: 16dp;
+	height: 16dp;
+	line-height: 16dp;
+	text-align: center;
+	color: #e2e2e2;
+	background-color: rgba(120, 40, 40, 200);
+	cursor: pointer;
+}
+.muemu-close:hover { background-color: rgba(170, 60, 60, 230); }
+
+.muemu-text {
+	display: block;
+	margin: 2dp 0dp;
+	color: #e2e2e2;
+}
+
+.muemu-table {
+	display: block;
+	max-height: 340dp;
+	overflow-y: auto;
+	margin-top: 4dp;
+}
+
+.muemu-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	min-height: 17dp;
+	padding: 1dp 2dp;
+	border-bottom: 1dp #2a2418;
+}
+.muemu-row:hover { background-color: rgba(128, 128, 179, 50); }
+.muemu-header { color: #ffd23c; font-weight: bold; }
+.muemu-header:hover { background-color: transparent; }
+
+.muemu-cell {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	padding-right: 4dp;
+}
+
+.muemu-row-btn, .muemu-btn {
+	display: inline-block;
+	min-width: 34dp;
+	height: 15dp;
+	line-height: 15dp;
+	padding: 0dp 4dp;
+	margin-left: 3dp;
+	text-align: center;
+	color: #ffff79;
+	background-color: rgba(70, 60, 30, 230);
+	border-width: 1dp;
+	border-color: #8a7444;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.muemu-row-btn:hover, .muemu-btn:hover { background-color: rgba(110, 95, 45, 240); color: #ffffff; }
+
+.muemu-buttons {
+	display: block;
+	margin-top: 6dp;
+	text-align: center;
+}
+.muemu-btn { margin: 2dp 2dp; height: 18dp; line-height: 18dp; }
