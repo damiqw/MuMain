@@ -144,6 +144,15 @@ private:
         // and the edit-detection snapshot read.
         Rml::String username;
         Rml::String password;
+
+        // MuEmu (fork): the quick connect of Main.dll, five saved accounts under the panel.
+        struct QuickSlot
+        {
+            Rml::String label;
+            bool filled = false;
+            int index = 0;
+        };
+        std::vector<QuickSlot> quickSlots;
     };
     UI::RmlBridge::ThemedView<LoginRmlModel> m_RmlView{"login",
         [this](Rml::DataModelConstructor& c, LoginRmlModel& model) { BindRmlModel(c, model); },
@@ -152,6 +161,11 @@ private:
 
     void SyncRmlModel();
     void BindRmlModel(Rml::DataModelConstructor& c, LoginRmlModel& model);
+    // MuEmu (fork): the quick connect slots from the saved accounts; a click fills or saves one.
+    static void FillQuickSlots(std::vector<LoginRmlModel::QuickSlot>& slots);
+    void RefreshQuickSlots();
+    void RmlQuickSlot(int slot);
+    void RmlQuickRemove(int slot);
     void OnRmlReloaded();
     // Pushes MAX_USERNAME_SIZE/MAX_PASSWORD_SIZE onto the two fields, so the caps stay one C++ rule
     // rather than a literal duplicated per theme.

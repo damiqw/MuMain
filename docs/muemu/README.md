@@ -243,3 +243,9 @@ ve siempre, con el mismo cartel que al pasar el cursor (`[MuEmu] PlayerNames` y 
   contesta con ella (C1 FB 3D, 248 bytes), como `cMuOffHelper::RunningOffHelper` de Main.dll.
 - Las skills de area (Evil Spirit, Twister, Flame...) se resuelven en el GameServer (`SvenAreaSkillHit`), porque el
   cliente SVEN no manda el paquete de golpes (C3 DB).
+
+## Conexion rapida del login (`src/source/MuEmu/MuEmuQuickConnect.cpp`)
+
+Como Main.dll: 5 lugares debajo del cuadro de login. Un lugar con cuenta llena usuario y clave (la X la borra); un
+lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll (registro de Windows,
+`HKCU\Software\Webzen\Mu\Config`, ID/PW e ID_2..ID_5/PW_2..PW_5), asi aparecen las cuentas ya guardadas.

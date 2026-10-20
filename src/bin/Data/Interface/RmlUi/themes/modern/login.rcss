@@ -271,3 +271,55 @@ body {
 	color: token(semantic-warning);
 	font-family: "token(font-body)";
 }
+
+/* MuEmu (fork): the quick connect row under the panel (five saved accounts, Main.dll's layout). */
+.quick-connect {
+	position: absolute;
+	left: -58rem;
+	top: 252rem;
+	width: 445rem;
+	height: 24rem;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	pointer-events: auto;
+}
+.quick-slot {
+	position: relative;
+	width: 85rem;
+	height: 24rem;
+	background-color: rgba(0, 0, 0, 190);
+	border-width: 1rem;
+	border-color: #6b5a3a;
+	border-radius: 3rem;
+}
+.quick-slot:hover { background-color: rgba(70, 60, 30, 220); }
+.quick-slot-name {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 18rem;
+	height: 22rem;
+	line-height: 22rem;
+	padding-left: 4rem;
+	white-space: nowrap;
+	overflow: hidden;
+	color: #ffffd1;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.quick-slot-name.empty { right: 0; padding-left: 0; text-align: center; color: #808080; }
+.quick-slot-remove {
+	position: absolute;
+	right: 2rem;
+	top: 3rem;
+	width: 15rem;
+	height: 15rem;
+	line-height: 14rem;
+	text-align: center;
+	color: #e2e2e2;
+	background-color: rgba(120, 40, 40, 200);
+	cursor: pointer;
+	pointer-events: auto;
+}
+.quick-slot-remove:hover { background-color: rgba(180, 60, 60, 230); }

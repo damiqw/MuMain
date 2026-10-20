@@ -38,6 +38,7 @@
 #include "UI/RmlBridge/RmlNativeText.h"
 #include "UI/RmlBridge/RmlTheme.h"
 #include "Core/Utilities/StringUtils.h"
+#include "MuEmu/MuEmuQuickConnect.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/Context.h>
@@ -161,6 +162,79 @@ void CLoginWin::BindRmlModel(Rml::DataModelConstructor& c, LoginRmlModel& model)
         [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { RmlToggleRememberMe(); });
     c.BindEventCallback("login_toggle_save_password",
         [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { RmlToggleSavePassword(); });
+
+    // MuEmu (fork): quick connect.
+    if (auto slot = c.RegisterStruct<LoginRmlModel::QuickSlot>())
+    {
+        slot.RegisterMember("label", &LoginRmlModel::QuickSlot::label);
+        slot.RegisterMember("filled", &LoginRmlModel::QuickSlot::filled);
+        slot.RegisterMember("index", &LoginRmlModel::QuickSlot::index);
+    }
+    c.RegisterArray<std::vector<LoginRmlModel::QuickSlot>>();
+    c.Bind("quick_slots", &model.quickSlots);
+    c.BindEventCallback("login_quick_slot",
+        [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+        {
+            if (!args.empty())
+                RmlQuickSlot(args[0].Get<int>());
+        });
+    c.BindEventCallback("login_quick_remove",
+        [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+        {
+            if (!args.empty())
+                RmlQuickRemove(args[0].Get<int>());
+        });
+    FillQuickSlots(model.quickSlots);
+}
+
+void CLoginWin::FillQuickSlots(std::vector<LoginRmlModel::QuickSlot>& slots)
+{
+    slots.clear();
+    const auto& accounts = MuEmu::QuickConnect::Accounts();
+    for (int n = 0; n < MuEmu::QuickConnect::SlotCount; ++n)
+    {
+        LoginRmlModel::QuickSlot slot;
+        slot.index = n;
+        slot.filled = !accounts[n].id.empty();
+        slot.label = slot.filled ? accounts[n].id : "Vacio";
+        slots.push_back(slot);
+    }
+}
+
+void CLoginWin::RefreshQuickSlots()
+{
+    FillQuickSlots(m_RmlView.GetModel().quickSlots);
+    m_RmlView.MarkDirty("quick_slots");
+}
+
+// A saved account fills the fields (Main.dll did not log in on its own); an empty slot saves what is typed.
+void CLoginWin::RmlQuickSlot(int slot)
+{
+    const auto& accounts = MuEmu::QuickConnect::Accounts();
+    if (slot < 0 || slot >= MuEmu::QuickConnect::SlotCount)
+        return;
+
+    LoginRmlModel& model = m_RmlView.GetModel();
+    if (!accounts[slot].id.empty())
+    {
+        model.username = accounts[slot].id;
+        model.password = accounts[slot].password;
+        m_RmlView.MarkDirty("username");
+        m_RmlView.MarkDirty("password");
+    }
+    else if (!model.username.empty())
+    {
+        MuEmu::QuickConnect::Save(slot, model.username, model.password);
+        RefreshQuickSlots();
+    }
+    PlayBuffer(SOUND_CLICK01);
+}
+
+void CLoginWin::RmlQuickRemove(int slot)
+{
+    MuEmu::QuickConnect::Remove(slot);
+    RefreshQuickSlots();
+    PlayBuffer(SOUND_CLICK01);
 }
 
 void CLoginWin::OnRmlReloaded()

@@ -62,6 +62,16 @@
 		<div class="btn btn-cancel" data-event-click="login_cancel_click">{{cancel_label}}</div>
 
 		<span class="trust-warning">{{trust_warning}}</span>
+		<!-- MuEmu (fork): the quick connect of Main.dll, five saved accounts under the panel
+		     (LoginWin.cpp, RmlQuickSlot()). -->
+		<div class="quick-connect">
+			<div class="quick-slot" data-for="slot : quick_slots">
+				<div class="quick-slot-name" data-class-empty="!slot.filled"
+				     data-event-click="login_quick_slot(slot.index)">{{slot.label}}</div>
+				<div class="quick-slot-remove" data-if="slot.filled"
+				     data-event-click="login_quick_remove(slot.index)">x</div>
+			</div>
+		</div>
 	</div>
 </body>
 </rml>
