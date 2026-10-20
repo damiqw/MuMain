@@ -18,6 +18,7 @@
 #include "GameLogic/Items/ItemCategories.h"
 #include "Data/GameData/ItemData/ItemModelSlots.h"
 #include "Data/GameData/ItemData/ItemType.h"
+#include "MuEmu/MuEmuTools.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -543,6 +544,7 @@ bool CMonkSystem::RageFighterEffect(OBJECT* _pObj, int _Type)
 
 void CMonkSystem::SetDarksideTargetIndex(WORD* _pTargetIndex, ActionSkillType skill)
 {
+    m_nDarksideSkill = skill;
     for (int i = 0; i < DARKSIDE_TARGET_MAX; ++i)
     {
         m_DarksideIndex.push_back(_pTargetIndex[i]);
@@ -617,6 +619,13 @@ bool CMonkSystem::SendDarksideAtt(OBJECT* _pObj)
     }
 
     // SendRequestMagic(AT_SKILL_DARKSIDE, _DarksideTargetIndex);
+    // MuEmu (fork): los servidores MuEmu hacen el dano del Dark Side con un pedido por objetivo, como el
+    // cliente original (OpenMU lo calcula solo).
+    static const bool muEmu = MuEmu::GetConfigInt("Enabled", 0) != 0;
+    if (muEmu)
+    {
+        SendRequestMagic(m_nDarksideSkill != 0 ? m_nDarksideSkill : AT_SKILL_DARKSIDE, _DarksideTargetIndex);
+    }
     m_nDarksideCnt++;
     return true;
 }

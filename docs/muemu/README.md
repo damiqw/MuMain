@@ -231,3 +231,15 @@ joyas cuenta y deposita tambien los paquetes de 10 (10 x (nivel + 1)) y retira 1
 Los NPC no tienen barra de vida. Como en Main.dll, el nombre de los jugadores (con su guild y logo) y de los NPC se
 ve siempre, con el mismo cartel que al pasar el cursor (`[MuEmu] PlayerNames` y `NpcNames`, 1 por defecto). Las mascotas de
 `CustomPet.txt` toman la escala de inventario y de piso de sus columnas ScaleInv y ScaleDrop al importar los modelos.
+
+## Arreglos de juego
+
+- **Q/W/E/R**: la importacion de items conserva las etiquetas del cliente (pocion de vida, de mana, de SD...) y la
+  prioridad de uso, tomadas de `Data/Items.sven` (los items originales, que se guardan antes de la primera
+  importacion). Sin eso las teclas no encontraban las pociones.
+- **Dark Side (RF)**: con MuEmu activo el cliente pide el golpe de cada objetivo, como el cliente original (OpenMU
+  lo calcula solo y SVEN lo tenia comentado).
+- **/offhelper** (`MuEmuOffHelper.cpp`): el servidor pide la configuracion del MU Helper (C1 FB 3E) y el cliente
+  contesta con ella (C1 FB 3D, 248 bytes), como `cMuOffHelper::RunningOffHelper` de Main.dll.
+- Las skills de area (Evil Spirit, Twister, Flame...) se resuelven en el GameServer (`SvenAreaSkillHit`), porque el
+  cliente SVEN no manda el paquete de golpes (C3 DB).

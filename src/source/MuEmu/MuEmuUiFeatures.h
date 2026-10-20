@@ -46,3 +46,9 @@ namespace MuEmu::Ui::GuildRewards
 // Misiones (C2 FF 30) y cofre (C2 FF 32) del guild: el servidor los manda desde su NPC.
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::GuildRewards
+
+namespace MuEmu::Ui::OffHelper
+{
+// /offhelper: el servidor pide la configuracion del MU Helper (C1 FB 3E) y se le manda (C1 FB 3D).
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::OffHelper

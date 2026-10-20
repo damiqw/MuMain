@@ -98,6 +98,8 @@ private:
     list_ItemType m_listGloveformSword;
 
     int m_nDarksideCnt;
+
+    int m_nDarksideSkill = 0; // MuEmu (fork): la skill del Dark Side, para pedir el golpe de cada objetivo
     vec_DarkIndex m_DarksideIndex;
     vec_DarkTargetIndex m_DarkTargetIndex;
 

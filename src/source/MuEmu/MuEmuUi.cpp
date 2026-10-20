@@ -74,7 +74,7 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
 
     return Events::Receive(head, sub, buffer, size) || Bank::Receive(head, sub, buffer, size) ||
            Ranking::Receive(head, sub, buffer, size) || Rewards::Receive(head, sub, buffer, size) ||
-           GuildRewards::Receive(head, sub, buffer, size);
+           GuildRewards::Receive(head, sub, buffer, size) || OffHelper::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()
@@ -177,6 +177,12 @@ void MuEmu::Ui::Send(uint8_t head, uint8_t sub, const std::vector<uint8_t>& payl
     packet.insert(packet.end(), payload.begin(), payload.end());
     packet[1] = static_cast<uint8_t>(packet.size());
     SocketClient->Send(packet.data(), static_cast<int32_t>(packet.size()));
+}
+
+void MuEmu::Ui::SendRaw(const std::vector<uint8_t>& packet)
+{
+    if (SocketClient != nullptr && !packet.empty())
+        SocketClient->Send(packet.data(), static_cast<int32_t>(packet.size()));
 }
 
 int32_t MuEmu::Ui::ReadInt(const uint8_t* buffer, int offset)

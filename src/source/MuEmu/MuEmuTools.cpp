@@ -65,6 +65,32 @@ bool ImportItems()
         }
     }
 
+    // El item.bmd no tiene las etiquetas del cliente (pocion de vida, de mana...) ni la prioridad de uso: se toman
+    // de los items originales del cliente. Antes de la primera importacion se guardan en Data/Items.sven.
+    const std::filesystem::path itemDirectory = Data::Items::GetItemDataDirectory();
+    const std::filesystem::path originalDirectory = itemDirectory.parent_path() / "Items.sven";
+    std::error_code copyError;
+    if (!std::filesystem::exists(originalDirectory))
+    {
+        std::filesystem::copy(itemDirectory, originalDirectory, std::filesystem::copy_options::recursive, copyError);
+    }
+    const Data::Items::ItemDataLoadResult original = Data::Items::LoadItemDataDirectory(originalDirectory);
+    int keptTags = 0;
+    for (Data::Items::ItemDefinition& item : result.items)
+    {
+        const auto found = std::find_if(original.items.begin(), original.items.end(),
+                                        [&item](const Data::Items::ItemDefinition& other)
+                                        { return other.group == item.group && other.number == item.number; });
+        if (found != original.items.end())
+        {
+            item.tags = found->tags;
+            item.potionPriority = found->potionPriority;
+            ++keptTags;
+        }
+    }
+    MU_LOG_INFO(mu::log::Get("data"), "MuEmu item import: tags of {} items taken from {}", keptTags,
+                originalDirectory.string());
+
     std::vector<Data::Items::ItemDataIssue> saveIssues;
     const auto saved =
         Data::Items::SaveItemDataDirectory(Data::Items::GetItemDataDirectory(), result.items, saveIssues);

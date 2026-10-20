@@ -28,6 +28,8 @@ void ShowPartyMenu();
 
 // Envia un paquete C1 (cabecera, subcodigo y datos).
 void Send(uint8_t head, uint8_t sub, const std::vector<uint8_t>& payload = {});
+// Envia un paquete ya armado (con su cabecera).
+void SendRaw(const std::vector<uint8_t>& packet);
 
 int32_t ReadInt(const uint8_t* buffer, int offset);
 // Texto del servidor (ANSI o UTF-8) de hasta `length` bytes, en UTF-8.
