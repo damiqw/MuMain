@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ItemModelDatabase.h"
+#include "MuEmu/MuEmuItemGlow.h"
 
 #include <algorithm>
 
@@ -52,6 +53,7 @@ void ItemModelDatabase::Build(std::span<const ItemModelDefinition> models, const
         m_modelCount += slot.Exists() ? 0 : 1;
         slot = model;
         m_glowColors[itemType] = FindColors(glowColors, model.glow);
+        MuEmu::ItemGlow::Apply(itemType, m_glowColors[itemType].color); // MuEmu (fork): brillo de los items custom
     }
 }
 } // namespace Data::Items

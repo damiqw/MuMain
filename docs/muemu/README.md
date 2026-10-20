@@ -142,3 +142,8 @@ Las texturas usan los numeros de 1.04E, que coinciden con los del cliente desde 
 Los efectos de skill con modelos (numeros menores) se omiten porque en este cliente tienen otros numeros. Los
 efectos y el brillo de mascotas custom (CustomPet*, CustomEarthQuakeSkill) quedan para cuando las mascotas custom
 se dibujen como montura.
+
+## Brillo de items custom (`src/source/MuEmu/MuEmuItemGlow.cpp`)
+
+Copiar `CustomItem.txt` y `CustomFlag.txt` a `Data/MuEmu/`. Sus columnas R G B (0 a 255) son el color del brillo
+de los items +7 en adelante, como GetCustomItemColor de Main.dll.
