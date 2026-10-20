@@ -29,6 +29,7 @@ lo resuelve SVEN de otra forma.
 | BuyVip, Antilag, ShowInfoItemDrop (tooltip del item en el piso) | `MuEmuVip`, `MuEmuAntiLag`, `NameWindow` |
 | Lucky Wheel V2 (VongQuay), SPK_xShop, ThueFlag (alquiler de banderas) | `MuEmuShops` |
 | NPCRuud, CustomItemColor (armaduras), CustomStatsAdvance | `MuEmuExtras` |
+| CustomPing, CustomQuickAddStats, CreateAccount | `MuEmuMisc` (+ GameServer: version SVEN al crear cuenta) |
 
 ## Prioridad A: juego diario o pedido por el servidor
 
@@ -40,15 +41,13 @@ lo resuelve SVEN de otra forma.
 
 | Funcion | Main.dll | Paquetes | Nota |
 |---|---|---|---|
-| Sumar puntos rapido | CustomQuickAddStats | (comandos) | Ventanas para sumar N puntos a cada stat. |
 | Party: ayuda de asignacion | PartyAssignHelper | FF 38 | Marca el objetivo del lider. |
 | Buffs de la party | PartyBuffs | 2E | Iconos de buffs de los miembros. |
 | Minimapa con datos del servidor | Minimap, MiniMapInfo | pide F3 37, recibe info y party | SVEN tiene minimapa; faltan NPC/party del servidor. |
-| Ping en pantalla | CustomPing | F3 F1 | Mostrar el ping. |
-| Crear cuenta en el login | CreateAccount | F1 12 | Registro desde el cliente. |
-| Aviso de PK | PKNotice | (cliente) | Cartel del sistema PK. |
 | Ocultar alas | WingInvisible | (cliente) | Opcion para no dibujar alas. |
-| Humo de items | ItemSmoke (CustomSmokeEffect) | (cliente) | El archivo esta vacio en el servidor actual. |
+
+No se portan porque el servidor actual no los usa: PKNotice (el servidor nunca manda el aviso tipo 0xD4) y ItemSmoke
+(CustomSmokeEffect vacio).
 
 ## Prioridad C: cosmetico o SVEN ya lo hace
 

@@ -224,3 +224,22 @@ body {
 	pointer-events: auto;
 }
 .quick-slot-remove:hover { background-color: rgba(180, 60, 60, 230); }
+
+/* MuEmu (fork): the account registration link under the quick connect row. */
+.quick-register {
+	position: absolute;
+	left: 104rem;
+	top: 282rem;
+	width: 120rem;
+	height: 20rem;
+	line-height: 20rem;
+	text-align: center;
+	color: #ffd860;
+	background-color: rgba(0, 0, 0, 190);
+	border-width: 1rem;
+	border-color: #6b5a3a;
+	border-radius: 3rem;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.quick-register:hover { color: #ffffff; background-color: rgba(70, 60, 30, 220); }

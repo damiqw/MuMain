@@ -288,3 +288,10 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
     R G B a mano (C1 EF 10). Los colores de cada jugador (C2 EF 13) tinen casco, armadura, pantalones, guantes y botas
     en el juego. Armas y alas todavia no se tinen.
   - Stats avanzados (Menu): los 52 valores que manda el servidor (C1 F3 F4) en dos columnas.
+- **Ping, sumar puntos y crear cuenta** (`MuEmuMisc.cpp`):
+  - Ping: C1 F3 F1 cada 5 segundos y respuesta C1 F3 F3; "Ping: N ms" arriba a la izquierda (verde, amarillo o
+    rojo). `[MuEmu] Ping = 0` lo apaga.
+  - Sumar puntos (Menu): cantidad a mano o "Todo a ..." por stat (C1 FF 0C); se actualiza con los puntos que quedan.
+  - Crear cuenta: boton "Crear cuenta" debajo de la conexion rapida del login (ambos temas). Pide cuenta, clave,
+    codigo personal y email paso a paso y manda C3 F1 12 con la version del cliente SVEN; el GameServer la acepta
+    cuando `SvenClientSwitch` esta prendido.

@@ -30,6 +30,7 @@ enum MenuAction
     MenuXShop,
     MenuFlag,
     MenuStatsAdvance,
+    MenuQuickStats,
 };
 
 // La N: la party, como en Main.dll.
@@ -86,7 +87,8 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
            Store::Receive(head, sub, buffer, size) || Vip::Receive(head, sub, buffer, size) ||
            Wheel::Receive(head, sub, buffer, size) || XShop::Receive(head, sub, buffer, size) || Flag::Receive(head, sub, buffer, size) ||
            Ruud::Receive(head, sub, buffer, size) || ItemColor::Receive(head, sub, buffer, size) ||
-           StatsAdvance::Receive(head, sub, buffer, size);
+           StatsAdvance::Receive(head, sub, buffer, size) || Ping::Receive(head, sub, buffer, size) ||
+           Register::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()
@@ -120,6 +122,7 @@ void MuEmu::Ui::Frame()
     Ranking::Frame();
     Rewards::Frame();
     PostItem::Frame();
+    Ping::Frame();
 }
 
 void MuEmu::Ui::ShowMenu()
@@ -152,6 +155,7 @@ void MuEmu::Ui::ShowMenu()
         { "XShop", MenuXShop },
         { "Banderas", MenuFlag },
         { "Stats avanzados", MenuStatsAdvance },
+        { "Sumar puntos", MenuQuickStats },
     };
     for (const auto& entry : entries)
         content.buttons.push_back({ entry.label, entry.action });
@@ -174,6 +178,7 @@ void MuEmu::Ui::ShowMenu()
         case MenuXShop: XShop::Open(); break;
         case MenuFlag: Flag::Open(); break;
         case MenuStatsAdvance: StatsAdvance::Open(); break;
+        case MenuQuickStats: QuickStats::Open(); break;
         default: break;
         }
     });

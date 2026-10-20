@@ -46,6 +46,8 @@ bool MuEmu::Ui::Stats::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer,
         CharacterAttribute->Vitality = static_cast<DWORD>(ReadInt(buffer, 108));
         CharacterAttribute->Energy = static_cast<DWORD>(ReadInt(buffer, 112));
         CharacterAttribute->Charisma = static_cast<DWORD>(ReadInt(buffer, 116));
+        if (QuickStats::IsShown())
+            QuickStats::Open(); // los puntos que quedan
     }
     else if (sub == 0xE1 && size >= 56)
     {

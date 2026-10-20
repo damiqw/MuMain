@@ -72,6 +72,8 @@
 				     data-event-click="login_quick_remove(slot.index)">x</div>
 			</div>
 		</div>
+		<!-- MuEmu (fork): Main.dll's account registration (LoginWin.cpp, login_register). -->
+		<div class="quick-register" data-event-click="login_register">Crear cuenta</div>
 	</div>
 </body>
 </rml>

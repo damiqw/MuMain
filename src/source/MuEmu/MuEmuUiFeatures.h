@@ -127,6 +127,27 @@ void Open();
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::StatsAdvance
 
+namespace MuEmu::Ui::Ping
+{
+// Ping en pantalla (CustomPing de Main.dll): C1 F3 F1 cada 5 segundos, respuesta C1 F3 F3. [MuEmu] Ping = 0 lo apaga.
+void Frame();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Ping
+
+namespace MuEmu::Ui::QuickStats
+{
+// Sumar puntos rapido (CustomQuickAddStats de Main.dll): C1 FF 0C.
+void Open();
+bool IsShown();
+} // namespace MuEmu::Ui::QuickStats
+
+namespace MuEmu::Ui::Register
+{
+// Crear cuenta desde el login (CreateAccount de Main.dll): C3 F1 12, respuesta C1 F1 12.
+void Open();
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Register
+
 namespace MuEmu::AntiLag
 {
 // Panel AntiLag (Antilag de Main.dll): apaga efectos y modelos para PCs lentas. Se guarda en config.ini [MuEmu].

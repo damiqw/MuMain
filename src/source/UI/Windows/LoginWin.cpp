@@ -38,6 +38,7 @@
 #include "UI/RmlBridge/RmlNativeText.h"
 #include "UI/RmlBridge/RmlTheme.h"
 #include "Core/Utilities/StringUtils.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include "MuEmu/MuEmuQuickConnect.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Element.h>
@@ -178,6 +179,9 @@ void CLoginWin::BindRmlModel(Rml::DataModelConstructor& c, LoginRmlModel& model)
             if (!args.empty())
                 RmlQuickSlot(args[0].Get<int>());
         });
+    // MuEmu (fork): Main.dll's account registration (MuEmuMisc.cpp).
+    c.BindEventCallback("login_register",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { MuEmu::Ui::Register::Open(); });
     c.BindEventCallback("login_quick_remove",
         [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
         {
