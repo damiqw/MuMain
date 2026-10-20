@@ -92,3 +92,10 @@ Copiar `ItemValue.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/`. Cambia el precio d
 primera linea que coincide por item, nivel, excelente, ancient y 380; `*` es cualquiera). Sin precio de venta se
 usa la tercera parte del de compra, y los items apilables se multiplican por la cantidad, como Main.dll. Los items
 que se pagan con WCoinC, WCoinP, Goblin Point o Ruud muestran esa moneda en el tooltip, sin impuesto.
+
+## Joyas custom (`src/source/MuEmu/MuEmuJewel.cpp`)
+
+Copiar `CustomJewel.txt` de `MAIN_INFO/Custom` a `Data/MuEmu/`. De la seccion 0 se usan el item de la joya, los
+slots habilitados (armas, armaduras, alas y accesorios) y el SalePrice. Soltar la joya sobre un item permitido
+envia el uso al servidor (que valida niveles, opciones y probabilidad), marca la celda en verde, y la joya se ve
+en amarillo y con su precio en el NPC, como en Main.dll.

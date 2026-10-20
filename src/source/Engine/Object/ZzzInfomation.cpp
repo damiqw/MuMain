@@ -14,6 +14,7 @@
 #include "Engine/Object/ZzzCharacter.h"
 #include "Scenes/SceneCore.h"
 #include "MuEmu/MuEmuItemPrice.h"
+#include "MuEmu/MuEmuJewel.h"
 #include "Engine/Object/ZzzInterface.h"
 #include "Core/Utilities/ReadScript.h"
 #include "Engine/Object/ZzzInventory.h"
@@ -1359,6 +1360,10 @@ int64_t ItemValue(ITEM* ip, int goldType)
     // MuEmu (fork): precios custom del servidor (ItemValue.txt).
     if (int64_t customValue = 0; MuEmu::ItemPrice::Find(ip, goldType, customValue))
         return customValue;
+
+    // MuEmu (fork): las joyas custom (CustomJewel.txt) valen su SalePrice, como en Main.dll.
+    if (int64_t salePrice = 0; MuEmu::Jewel::GetSalePrice(ip->Type, salePrice))
+        return goldType == 1 ? salePrice / 3 : salePrice;
 
     ITEM_ATTRIBUTE* p = &ItemAttribute[ip->Type];
 

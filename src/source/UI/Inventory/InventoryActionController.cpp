@@ -25,6 +25,7 @@
 #include "I18N/All.h"
 #include "GameLogic/Items/ShopRestrictions.h"
 #include "GameLogic/Items/TradeRestrictions.h"
+#include "MuEmu/MuEmuJewel.h"
 
 namespace mu::ui::window
 {
@@ -522,6 +523,20 @@ bool CInventoryActionController::RepairItemAtMousePoint(CInventoryCtrl* targetCo
 bool CInventoryActionController::ApplyJewels(CInventoryCtrl* targetControl, CPickedItem* pPickedItem,
                                                   ITEM* pPickItem, int iSourceIndex, int iTargetIndex) const
 {
+    // MuEmu (fork): joyas custom del servidor (CustomJewel.txt); el servidor valida el resto.
+    if (MuEmu::Jewel::IsJewel(pPickItem->Type))
+    {
+        ITEM* pTarget = targetControl->FindItem(iTargetIndex);
+        if (pTarget == nullptr || !MuEmu::Jewel::CanApply(pPickItem->Type, pTarget->Type))
+        {
+            return false;
+        }
+
+        SendRequestUse(iSourceIndex, targetControl->GetIndexByItem(pTarget));
+        PlayBuffer(SOUND_GET_ITEM01);
+        return true;
+    }
+
     const bool bIsJewelType = pPickItem->Type == ITEM_JEWEL_OF_BLESS || pPickItem->Type == ITEM_JEWEL_OF_SOUL ||
                               pPickItem->Type == ITEM_JEWEL_OF_LIFE || pPickItem->Type == ITEM_JEWEL_OF_HARMONY ||
                               GameLogic::Items::IsRefineStone(pPickItem) || pPickItem->Type == ITEM_POTION + 160 ||

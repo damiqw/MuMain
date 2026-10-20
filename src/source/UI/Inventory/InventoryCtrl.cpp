@@ -17,6 +17,7 @@
 #include "GameLogic/Items/ItemCategories.h"
 #include "UI/RmlBridge/RmlTooltip.h"
 #include "UI/Tooltip/LegacyTextListTooltip.h"
+#include "MuEmu/MuEmuJewel.h"
 
 #include <RmlUi/Core/ElementDocument.h>
 
@@ -1068,6 +1069,10 @@ bool mu::ui::window::CInventoryCtrl::DropActsOn(ITEM* pPickItem, ITEM* pTargetIt
     {
         if (pTargetItem->Jewel_Of_Harmony_Option != 0)
             bSuccess = true;
+    }
+    else if (MuEmu::Jewel::IsJewel(pPickItem->Type)) // MuEmu (fork): joyas custom del servidor
+    {
+        bSuccess = MuEmu::Jewel::CanApply(pPickItem->Type, iType);
     }
 
     if (pPickItem->Type == ITEM_JEWEL_OF_BLESS && iType == ITEM_HORN_OF_FENRIR && iDurability != 255)

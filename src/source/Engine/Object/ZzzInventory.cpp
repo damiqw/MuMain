@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "MuEmu/MuEmuItemPrice.h"
+#include "MuEmu/MuEmuJewel.h"
 #include "MuEmu/MuEmuTooltip.h"
 #include "Data/GameConfig/GameConfig.h"
 #include "UI/Placement/WindowPlacement.h"
@@ -1770,7 +1771,8 @@ static void RenderItemInfo(const UI::Scaling::Transform& screen, int sx, int sy,
         (ip->Type >= ITEM_POTION + 141 && ip->Type <= ITEM_POTION + 144) ||
         GameLogic::Items::IsLuckyItemTicket(ip) ||
         (ip->Type == ITEM_POTION + 160 || ip->Type == ITEM_POTION + 161) ||
-        ip->Type == ITEM_JEWEL_OF_LIFE || ip->Type == ITEM_JEWEL_OF_CREATION)
+        ip->Type == ITEM_JEWEL_OF_LIFE || ip->Type == ITEM_JEWEL_OF_CREATION ||
+        MuEmu::Jewel::IsJewel(ip->Type)) // MuEmu (fork): joyas custom del servidor
     {
         Color = TEXT_COLOR_YELLOW;
     }
