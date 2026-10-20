@@ -112,3 +112,8 @@ el nombre del NPC que aparece en ese mapa y posicion.
 Copiar `CustomMap.txt` a `Data/MuEmu/`. El mapa toma el nombre de su linea de texto si el cliente la tiene (si no,
 el de la imagen: `mundioca.tga` es "Mundioca"), la imagen del nombre de `Local/<idioma>/ImgsMapName/` y la musica
 de `Data/Music/` (solo si el archivo esta).
+
+## Lista de servidores (`src/source/MuEmu/MuEmuServerInfo.cpp`)
+
+Copiar `CustomServerInfo.txt` a `Data/MuEmu/`. El servidor N del grupo indicado muestra el texto custom en lugar
+de "Grupo-N" y su estado, como Main.dll.

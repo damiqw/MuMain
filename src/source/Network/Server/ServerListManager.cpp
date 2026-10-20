@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "ServerListManager.h"
 #include "I18N/All.h"
+#include "MuEmu/MuEmuServerInfo.h"
 
 CServerListManager::CServerListManager()
 {
@@ -202,6 +203,12 @@ void CServerListManager::InsertServer(CServerGroup* pServerGroup, int iConnectIn
         mu_swprintf(pServerInfo->m_bName, L"%ls-%d(Gold) %ls", pServerGroup->m_szName,
             pServerInfo->m_iIndex, I18N::Game::Lookup(iTextIndex));
         break;
+    }
+
+    // MuEmu (fork): texto custom del servidor (CustomServerInfo.txt), como en Main.dll.
+    if (const wchar_t* customText = MuEmu::ServerInfo::GetText(pServerGroup->m_szName, pServerInfo->m_iIndex))
+    {
+        mu_swprintf(pServerInfo->m_bName, L"%ls", customText);
     }
 
     pServerGroup->InsertServerInfo(pServerInfo);
