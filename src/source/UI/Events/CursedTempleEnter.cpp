@@ -30,6 +30,7 @@
 #include "Render/Text/CUIRenderText.h"
 
 #include <RmlUi/Core/ElementDocument.h>
+#include "MuEmu/MuEmuEventLevel.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -41,8 +42,8 @@ using namespace mu::ui::window;
 namespace
 {
     const int EnterLevelCount = 5;
-    const int EnterMinLevel[EnterLevelCount] = { 220, 271, 321, 351, 381 };
-    const int EnterMaxLevel[EnterLevelCount] = { 270, 320, 350, 380, 400 };
+    int EnterMinLevel[EnterLevelCount] = { 220, 271, 321, 351, 381 };
+    int EnterMaxLevel[EnterLevelCount] = { 270, 320, 350, 380, 400 };
 
     // RenderText() shrinks a text wider than its box to fit it: the size it drew `text` at.
     float TextPxInBox(UI::Scaling::FontRole role, const wchar_t* text, float boxWidth)
@@ -70,6 +71,12 @@ bool mu::ui::window::CCursedTempleEnter::Create(CManager* pNewUIMng)
 
 mu::ui::window::CCursedTempleEnter::CCursedTempleEnter() : m_pNewUIMng(NULL), m_EnterTime(0), m_EnterCount(0)
 {
+    // MuEmu (fork): niveles del servidor (CustomEventEntryLevel.txt).
+    for (int i = 0; i < EnterLevelCount; ++i)
+    {
+        MuEmu::EventLevel::Get(MuEmu::EventLevel::IllusionTemple, i, false, EnterMinLevel[i], EnterMaxLevel[i]);
+    }
+
     Initialize();
 }
 

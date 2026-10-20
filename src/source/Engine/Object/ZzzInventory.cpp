@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "MuEmu/MuEmuEventLevel.h"
 #include "MuEmu/MuEmuItemPrice.h"
 #include "MuEmu/MuEmuJewel.h"
 #include "MuEmu/MuEmuTooltip.h"
@@ -144,7 +145,7 @@ static  const int DEFAULT_DEVILSQUARELEVEL[6][2] = { {15, 130}, { 131, 180}, { 1
 static  const int DARKCLASS_DEVILSQUARELEVEL[6][2] = { {15, 110}, { 111, 160}, { 161, 210}, {211, 260}, { 261, 310}, { 311, 99999} };
 int g_iDevilSquareLevel[6][2];
 
-static  const int g_iChaosCastleLevel[12][2] = {
+static  int g_iChaosCastleLevel[12][2] = {
                         { 15, 49 }, { 50, 119 }, { 120, 179 }, { 180, 239 }, { 240, 299 }, { 300, 999 },
                         { 15, 29 }, { 30,  99 }, { 100, 159 }, { 160, 219 }, { 220, 279 }, { 280, 999 }
 };
@@ -4121,6 +4122,10 @@ static void RenderItemInfo(const UI::Scaling::Transform& screen, int sx, int sy,
         }
 
         int HeroLevel = CharacterAttribute->Level;
+
+        // MuEmu (fork): niveles del servidor (CustomEventEntryLevel.txt).
+        static const bool chaosCastleLevels = (MuEmu::EventLevel::Apply(MuEmu::EventLevel::ChaosCastle, g_iChaosCastleLevel, 6, 6), true);
+        (void)chaosCastleLevels;
 
         TextListColor[TextNum] = TEXT_COLOR_WHITE;
         mu_swprintf(TextList[TextNum], L"%ls %ls    %ls      %ls    ", I18N::Game::ChaosCastle, I18N::Game::Level, I18N::Game::MinLevel, I18N::Game::Cost); TextListColor[TextNum] = TEXT_COLOR_WHITE; TextBold[TextNum] = false; TextNum++;

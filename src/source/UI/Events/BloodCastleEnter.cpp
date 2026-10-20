@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include "MuEmu/MuEmuEventLevel.h"
 
 using namespace SEASON3B;
 using namespace mu::ui::window;
@@ -39,6 +40,9 @@ CEnterBloodCastle::CEnterBloodCastle() : m_View("blood_castle_enter", "Data/Inte
     m_iBloodCastleLimitLevel[13][0] = 261; m_iBloodCastleLimitLevel[13][1] = 310;
     m_iBloodCastleLimitLevel[14][0] = 311; m_iBloodCastleLimitLevel[14][1] = 400;
     m_iBloodCastleLimitLevel[15][0] = 0;   m_iBloodCastleLimitLevel[15][1] = 0;
+
+    // MuEmu (fork): niveles del servidor (CustomEventEntryLevel.txt).
+    MuEmu::EventLevel::Apply(MuEmu::EventLevel::BloodCastle, m_iBloodCastleLimitLevel, MAX_ENTER_GRADE - 1, MAX_ENTER_GRADE);
 }
 
 CEnterBloodCastle::~CEnterBloodCastle()

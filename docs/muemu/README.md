@@ -123,3 +123,8 @@ de "Grupo-N" y su estado, como Main.dll.
 Copiar `CustomBuffIcon.txt` a `Data/MuEmu/`. Sus lineas reemplazan o agregan buffs sobre `BuffEffect` (el cliente
 acepta buffs hasta el 255). Los buffs desde el 205 usan como icono el de la segunda columna. Los `%d` de la
 descripcion se llenan con los valores del paquete C1 FB 13 del servidor (si no llego, se ve `?`).
+
+## Niveles de eventos (`src/source/MuEmu/MuEmuEventLevel.cpp`)
+
+Copiar `CustomEventEntryLevel.txt` a `Data/MuEmu/`. Cambia los niveles de entrada que muestra y valida el cliente
+para Blood Castle, Devil Square, Chaos Castle, Kalima e Illusion Temple (columnas comunes y de MG/DL/RF).

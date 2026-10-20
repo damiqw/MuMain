@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include "MuEmu/MuEmuEventLevel.h"
 
 using namespace SEASON3B;
 using namespace mu::ui::window;
@@ -37,6 +38,9 @@ CEnterDevilSquare::CEnterDevilSquare() : m_View("devil_square_enter", "Data/Inte
     m_iDevilSquareLimitLevel[11][0] = 261; m_iDevilSquareLimitLevel[11][1] = 310;
     m_iDevilSquareLimitLevel[12][0] = 311; m_iDevilSquareLimitLevel[12][1] = 400;
     m_iDevilSquareLimitLevel[13][0] = 0; m_iDevilSquareLimitLevel[13][1] = 0;
+
+    // MuEmu (fork): niveles del servidor (CustomEventEntryLevel.txt).
+    MuEmu::EventLevel::Apply(MuEmu::EventLevel::DevilSquare, m_iDevilSquareLimitLevel, MAX_ENTER_GRADE - 1, MAX_ENTER_GRADE);
 }
 
 CEnterDevilSquare::~CEnterDevilSquare()

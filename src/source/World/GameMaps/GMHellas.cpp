@@ -22,6 +22,7 @@
 #include "Camera/CameraProjection.h"
 #include "I18N/All.h"
 #include "Render/Text/CUIRenderText.h"
+#include "MuEmu/MuEmuEventLevel.h"
 
 extern  int  WaterTextureNumber;
 extern	wchar_t TextList[50][100];
@@ -36,10 +37,17 @@ static  const BYTE  ACTION_DESTROY_DEF = 34;
 
 #define NUM_HELLAS	7
 
-static  const int g_iKalimaLevel[14][2] = { { 40, 999 }, { 131, 999 }, { 181, 999 }, { 231, 999 }, { 281, 999 }, { 331, 999 }, { 350, 999 },
+static  int g_iKalimaLevel[14][2] = { { 40, 999 }, { 131, 999 }, { 181, 999 }, { 231, 999 }, { 281, 999 }, { 331, 999 }, { 350, 999 },
                                             { 20, 999 }, { 111, 999 }, { 161, 999 }, { 211, 999 }, { 261, 999 }, { 311, 999 }, { 350, 999 } };
 
 #define KUNDUN_ZONE NUM_HELLAS
+
+// MuEmu (fork): niveles del servidor (CustomEventEntryLevel.txt), una vez antes de usar la tabla.
+static void LoadKalimaLevels()
+{
+    static const bool loaded = (MuEmu::EventLevel::Apply(MuEmu::EventLevel::Kalima, g_iKalimaLevel, NUM_HELLAS, NUM_HELLAS), true);
+    (void)loaded;
+}
 
 bool CreateWaterTerrain(int mapIndex)
 {
@@ -132,6 +140,7 @@ void SettingHellasColor()
 
 BYTE GetHellasLevel(CLASS_TYPE Class, int Level)
 {
+    LoadKalimaLevels();
     int startIndex = 0;
     int baseClass = gCharacterManager.GetBaseClass(Class);
     if (baseClass == CLASS_DARK || baseClass == CLASS_DARK_LORD || baseClass == CLASS_RAGEFIGHTER)
@@ -153,6 +162,7 @@ BYTE GetHellasLevel(CLASS_TYPE Class, int Level)
 
 bool EnableKalima(CLASS_TYPE Class, int Level, int ItemLevel)
 {
+    LoadKalimaLevels();
     int startIndex = 0;
 
     auto baseClass = gCharacterManager.GetBaseClass(Class);
@@ -171,6 +181,7 @@ bool EnableKalima(CLASS_TYPE Class, int Level, int ItemLevel)
 
 bool GetUseLostMap(bool bDrawAlert)
 {
+    LoadKalimaLevels();
     int Level = CharacterAttribute->Level;
 
     int startIndex = 0;
@@ -204,6 +215,7 @@ bool GetUseLostMap(bool bDrawAlert)
 
 int RenderHellasItemInfo(ITEM* ip, int textNum)
 {
+    LoadKalimaLevels();
     int TextNum = textNum;
     switch (ip->Type)
     {
