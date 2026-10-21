@@ -33,9 +33,17 @@
 		<span id="classname" data-style-opacity="classname_opacity">{{classname_text}}</span>
 		<span id="servername" data-style-opacity="servername_opacity">{{servername_text}}</span>
 
+		<div class="summary-fill"></div>
+		<span class="level-text">{{level_text}}</span>
+		<span class="levelup-point-text" data-class-hidden="!can_level_up">{{levelup_point_text}}</span>
+		<span class="exp-text">{{exp_text}}</span>
+		<span class="point-probability-text">{{point_probability_text}}</span>
+		<span class="point-text">{{point_text}}</span>
+
 		<!-- MuEmu (fork): Main.dll's character summary (InterfaceS8AdvancedUI.cpp CharacterInfoWindow()): the
 		     advanced-stats, pet and master buttons and one line per entry (class, resets, level, server, points
 		     and fruits). Each theme places and styles them; a theme without one of the buttons hides it. -->
+		<div class="ex-btn ex-btn-quest" data-event-click="chainfo_click_quest"><span class="ex-btn-label">Quest</span></div>
 		<div id="btn_advanced" class="ex-btn ex-btn-advanced" data-event-click="chainfo_click_advanced"><span class="ex-btn-label">Stats</span></div>
 		<div class="ex-btn ex-btn-pet" data-event-click="chainfo_click_pet"><span class="ex-btn-label">Pet</span></div>
 		<div class="ex-btn ex-btn-master" data-class-locked="!master_level_enabled" data-event-click="chainfo_click_masterlevel"><span class="ex-btn-label">Master</span></div>
@@ -47,13 +55,6 @@
 		<div class="ex-divider"></div>
 		<div class="ex-bar ex-bar-str"></div><div class="ex-bar ex-bar-agi"></div><div class="ex-bar ex-bar-vit"></div>
 		<div class="ex-bar ex-bar-ene"></div><div class="ex-bar ex-bar-cmd" data-class-hidden="!show_charisma"></div>
-
-		<div class="summary-fill"></div>
-		<span class="level-text">{{level_text}}</span>
-		<span class="levelup-point-text" data-class-hidden="!can_level_up">{{levelup_point_text}}</span>
-		<span class="exp-text">{{exp_text}}</span>
-		<span class="point-probability-text">{{point_probability_text}}</span>
-		<span class="point-text">{{point_text}}</span>
 
 		<!-- STR row -->
 		<div class="attr-textbox attr-textbox-str"></div>

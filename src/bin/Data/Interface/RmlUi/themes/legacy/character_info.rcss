@@ -205,54 +205,80 @@
 .attr-lines.attr-lines-ene span { height: calc(13px * var(--root-scale)); }
 
 /* =====================================================================================================
-   MuEmu (fork): Main.dll's summary instead of the level/EXP/points lines -- class, resets, level, server,
-   then points and fruits (their rate in blue) -- in a taller summary box; the attributes move down to make
-   room. The Stats button (advanced stats) sits at the top right; pet and master keep their own buttons.
+   MuEmu (fork): the EX700 layout of Main.dll's character window (InterfaceS8AdvancedUI.cpp,
+   CharacterInfoWindow()) on this theme's own art: the name alone at the top (the class/server line is in
+   the summary), the Quest/Stats/Pet/Master row at y 53, the summary from y 80 (class, resets, level,
+   server, then points and fruits) with a divider at 127, and each attribute at Main.dll's y (185, 230,
+   290, 335, 380): its name at x 29, the + at 90, the value at 105 and its derived lines below.
    ===================================================================================================== */
-.level-text, .levelup-point-text, .exp-text, .point-probability-text, .point-text, .edge-separator,
-.ex-btn-pet, .ex-btn-master, .ex-bar, .ex-divider { display: none; }
-.summary-fill { height: 82px; }
-.corner-bl, .corner-br, .edge-bottom { top: 116px; }
-.edge-left, .edge-right { height: 54px; }
-.ex-summary { position: absolute; left: 20px; top: 52px; transform-origin: left top; pointer-events: none; font-weight: bold; }
+#classname, #servername, .level-text, .levelup-point-text, .exp-text, .point-probability-text, .point-text,
+.summary-corner, .summary-edge, .ex-bar, .info-btn-quest, .info-btn-pet, .info-btn-masterlevel { display: none; }
+#name { top: 22px; }
+.summary-fill { left: 12px; right: 13px; top: 76px; height: 92px; }
+
+.ex-btn {
+	position: absolute;
+	top: 53px;
+	width: 43px;
+	height: 17px;
+	cursor: pointer;
+	pointer-events: auto;
+	background-color: rgba(0, 0, 0, 170);
+	border-width: 1px;
+	border-color: #8a7444;
+}
+.ex-btn.locked { filter: brightness(0.6); }
+.ex-btn-quest { left: 5px; }
+.ex-btn-advanced { left: 50px; }
+.ex-btn-pet { left: 95px; }
+.ex-btn-master { left: 140px; }
+.ex-btn-label {
+	display: block;
+	width: 43px;
+	line-height: 16px;
+	text-align: center;
+	font-size: 9px;
+	font-weight: bold;
+	color: #ffd23c;
+	pointer-events: none;
+}
+
+.ex-summary { position: absolute; left: 20px; top: 80px; transform-origin: left top; pointer-events: none; font-weight: bold; }
 .ex-line { display: block; position: relative; white-space: nowrap; }
 .ex-label { display: inline-block; color: #ffffff; }
 .ex-value { position: absolute; color: #e6e600; }
 .ex-note { position: absolute; color: #4cc5fe; }
-.ex-line { height: calc(10px * var(--root-scale)); }
-.ex-line.after-divider { top: calc(4px * var(--root-scale)); }
-.ex-value { left: calc(78px * var(--root-scale)); }
-.ex-note { left: calc(116px * var(--root-scale)); }
-.ex-btn {
-	position: absolute;
-	left: 146px;
-	top: 32px;
-	width: 32px;
-	height: 13px;
-	cursor: pointer;
-	pointer-events: auto;
-	background-color: rgba(0, 0, 0, 160);
-	border-width: 1px;
-	border-color: #8a7444;
-}
+.ex-divider { position: absolute; left: 14px; top: 127px; width: 162px; height: 1px; background-color: rgba(200, 180, 120, 120); pointer-events: none; }
+
+.attr-textbox { left: 18px; right: 12px; }
+.attr-textbox-str { top: 181px; }
+.attr-textbox-agi { top: 226px; }
+.attr-textbox-vit { top: 286px; }
+.attr-textbox-ene { top: 331px; }
+.attr-textbox-cmd { top: 376px; }
+.attr-label, .attr-value { text-align: left; transform-origin: left top; }
+.attr-label { left: 29px; width: 60px; }
+.attr-value { left: 105px; right: auto; width: 70px; }
+.attr-label-str, .attr-value-str { top: 185px; }
+.attr-label-agi, .attr-value-agi { top: 230px; }
+.attr-label-vit, .attr-value-vit { top: 290px; }
+.attr-label-ene, .attr-value-ene { top: 335px; }
+.attr-label-cmd, .attr-value-cmd { top: 380px; }
+.attr-lines-str { left: 25px; top: 202px; }
+.attr-lines-agi { left: 25px; top: 247px; }
+.attr-lines-vit { left: 25px; top: 307px; }
+.attr-lines-ene { left: 25px; top: 352px; }
+.stat-btn { left: 86px; right: auto; }
+.stat-btn-str { top: 183px; }
+.stat-btn-agi { top: 228px; }
+.stat-btn-vit { top: 288px; }
+.stat-btn-ene { top: 333px; }
+.stat-btn-cmd { top: 378px; }
+
+/* The summary is counter-scaled: its lengths are reference px times --root-scale. */
+.ex-line { height: calc(11px * var(--root-scale)); }
+.ex-line.after-divider { top: calc(8px * var(--root-scale)); }
+.ex-value { left: calc(80px * var(--root-scale)); }
+.ex-note { left: calc(118px * var(--root-scale)); }
 .ex-btn:hover { background-color: rgba(70, 60, 30, 220); }
-.ex-btn-label { display: block; width: 32px; line-height: 12px; text-align: center; font-size: 8px; color: #ffd23c; pointer-events: none; }
-.attr-textbox-str { top: 136px; }
-.attr-textbox-agi { top: 191px; }
-.attr-textbox-vit { top: 256px; }
-.attr-textbox-ene { top: 311px; }
-.attr-textbox-cmd { top: 366px; }
-.attr-label-str, .attr-value-str { top: 142px; }
-.attr-label-agi, .attr-value-agi { top: 197px; }
-.attr-label-vit, .attr-value-vit { top: 262px; }
-.attr-label-ene, .attr-value-ene { top: 317px; }
-.attr-label-cmd, .attr-value-cmd { top: 372px; }
-.attr-lines-str { left: 20px; top: 161px; }
-.attr-lines-agi { left: 20px; top: 215px; }
-.attr-lines-vit { left: 20px; top: 280px; }
-.attr-lines-ene { left: 18px; top: 335px; }
-.stat-btn-str { top: 138px; }
-.stat-btn-agi { top: 193px; }
-.stat-btn-vit { top: 258px; }
-.stat-btn-ene { top: 313px; }
-.stat-btn-cmd { top: 368px; }
+.summary-fill { background-color: rgba(0, 0, 0, 110); }

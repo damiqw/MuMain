@@ -163,7 +163,7 @@
 	background-color: transparent;
 	decorator: image(ex700-move-frame);
 }
-#title { top: 21px; }
+#title { top: 26px; }
 #head { left: 14px; top: 44px; }
 #list_box { left: 14px; right: 14px; top: 58px; bottom: 46px; }
 #close_bar {
