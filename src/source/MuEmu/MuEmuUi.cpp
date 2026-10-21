@@ -123,6 +123,7 @@ void MuEmu::Ui::Frame()
     Ranking::Frame();
     Rewards::Frame();
     PostItem::Frame();
+    Bank::Frame();
     Ping::Frame();
     PartyInfo::Frame();
     MiniMapInfo::Frame();

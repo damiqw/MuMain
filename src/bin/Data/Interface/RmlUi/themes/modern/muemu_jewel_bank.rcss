@@ -1,0 +1,116 @@
+/* MuEmu (fork): the modern theme shows the jewel bank in the generic MuEmu panel (MuEmuBank.cpp); this sheet
+   only keeps the window usable if a theme built on modern opens it. */
+
+/* The rows, buttons and pager, in the window's own units (dp), where CustomJewelBank::DrawJewelBankWindow()
+   drew them: rows from y 40 every 22, the name right-aligned up to x 60, the jewel at 65, the amount box
+   (CheckBox.tga) at 85 and the five withdraw buttons from 120 every 18; the hint at 265 and the pager at
+   75 / 95 / 145, y 275. */
+#panel {
+	position: absolute;
+	left: 50%;
+	top: 70dp;
+	margin-left: 20dp;
+	width: 226dp;
+	height: 315dp;
+	color: #ffffff;
+	font-family: "token(font-body)";
+	font-size: 9dp;
+	pointer-events: auto;
+}
+#jb_title {
+	position: absolute;
+	left: 0;
+	width: 226dp;
+	text-align: center;
+	color: #ffd23c;
+	font-weight: bold;
+	font-size: 10dp;
+	cursor: move;
+}
+#jb_close { position: absolute; cursor: pointer; pointer-events: auto; }
+#jb_message { position: absolute; left: 0; top: 120dp; width: 226dp; text-align: center; color: #ffd23c; }
+#jb_rows { position: absolute; left: 0; top: 40dp; width: 226dp; }
+.jb-row { display: block; position: relative; height: 22dp; }
+.jb-name {
+	position: absolute;
+	left: 0;
+	top: 3dp;
+	width: 60dp;
+	text-align: right;
+	white-space: nowrap;
+	color: #ffffff;
+}
+.jb-row.empty .jb-name { color: #9a9a9a; }
+.jb-icon { position: absolute; left: 63dp; top: 0dp; width: 18dp; height: 20dp; pointer-events: none; }
+.jb-count {
+	position: absolute;
+	left: 85dp;
+	top: 2dp;
+	width: 32dp;
+	height: 16dp;
+	background-color: rgba(0, 0, 0, 160);
+}
+.jb-count-text {
+	display: block;
+	width: 30dp;
+	line-height: 16dp;
+	text-align: right;
+	color: #ffd23c;
+	font-size: 8dp;
+	white-space: nowrap;
+}
+.jb-row.empty .jb-count-text { color: #9a9a9a; }
+.jb-buttons { position: absolute; left: 120dp; top: 2dp; width: 90dp; height: 16dp; }
+.jb-btn {
+	display: inline-block;
+	width: 16dp;
+	height: 16dp;
+	margin-right: 2dp;
+	line-height: 15dp;
+	text-align: center;
+	font-size: 7dp;
+	color: #ffffff;
+	background-color: rgba(20, 16, 10, 230);
+	border-width: 1dp;
+	border-color: #8a7444;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.jb-btn:hover { color: #ffd23c; background-color: rgba(70, 58, 30, 240); }
+#jb_hint { position: absolute; left: 0; top: 265dp; width: 226dp; text-align: center; color: #3cff3c; font-weight: bold; }
+#jb_prev, #jb_next {
+	position: absolute;
+	top: 277dp;
+	width: 20dp;
+	height: 18dp;
+	line-height: 18dp;
+	text-align: center;
+	color: #ffd23c;
+	font-size: 12dp;
+	cursor: pointer;
+	pointer-events: auto;
+}
+#jb_prev { left: 75dp; }
+#jb_next { left: 145dp; }
+#jb_prev:hover, #jb_next:hover { color: #ffffff; }
+#jb_page {
+	position: absolute;
+	left: 95dp;
+	top: 277dp;
+	width: 50dp;
+	height: 18dp;
+	line-height: 18dp;
+	text-align: center;
+	color: #ffffff;
+	background-color: rgba(0, 0, 0, 160);
+	border-width: 1dp;
+	border-color: #6b5a3a;
+	border-radius: 7dp;
+}
+
+
+
+#panel { background-color: rgba(10, 10, 12, 235); border-width: 1dp; border-color: #3a3f48; }
+#jb_frame_top, #jb_frame_body { display: none; }
+#jb_title { top: 12dp; }
+#jb_close { right: 8dp; top: 10dp; width: 14dp; height: 14dp; background-color: rgba(120, 40, 40, 200); }

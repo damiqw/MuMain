@@ -22,6 +22,12 @@ void OpenWarehouse(); // cambio de baul (C1 F3 F7)
 std::wstring WarehouseTitle(const wchar_t* storage);
 // Pasa al baul anterior (-1) o siguiente (1).
 void ChangeWarehouse(int step);
+// La ventana propia del banco (temas legacy/ex700): cerrarla, si esta abierta (o la generica) y sus joyas 3D.
+void CloseJewelBank();
+bool IsJewelBankOpen();
+void Frame();
+// Shift + click en el inventario: deposita el item de esa posicion si es una joya del banco (o su paquete).
+bool DepositAt(int position, int itemType);
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Bank
 

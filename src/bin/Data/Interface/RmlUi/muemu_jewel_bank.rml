@@ -1,0 +1,35 @@
+<rml>
+<head>
+	<title>Jewel Bank</title>
+	<link type="text/rcss" href="base.rcss"/>
+	<link type="text/rcss" href="muemu_jewel_bank.rcss"/>
+</head>
+<!-- MuEmu (fork): the jewel bank window with Main.dll's own look (CustomJewelBank.cpp), skinned by each
+     theme's muemu_jewel_bank.rcss: legacy the classic bg500 frame, ex700 the EX700 popup. The modern
+     theme keeps the generic MuEmu panel instead (MuEmuBank.cpp). Ten jewels per page: the name, the
+     jewel itself (a live 3D item C++ draws into each row's <img>, jb_icon_<row>), the amount in the bank
+     and the withdraw buttons; Shift + click on a jewel in the inventory deposits it. -->
+<body class="native-text" data-model="muemu_jewel_bank">
+	<div id="panel">
+		<div id="jb_frame_top"></div>
+		<div id="jb_frame_body"></div>
+		<div id="jb_title">{{title}}</div>
+		<div id="jb_close" data-event-click="jb_close"></div>
+		<div id="jb_message" data-if="message != ''">{{message}}</div>
+		<div id="jb_rows">
+			<div class="jb-row" data-for="row, i : rows" data-class-empty="row.empty">
+				<span class="jb-name">{{row.name}}</span>
+				<img class="jb-icon" data-attr-id="'jb_icon_' + i"/>
+				<div class="jb-count"><span class="jb-count-text">{{row.count}}</span></div>
+				<div class="jb-buttons">
+					<div class="jb-btn" data-for="amount, j : amounts" data-event-click="jb_withdraw(row.slot, j)">{{amount}}</div>
+				</div>
+			</div>
+		</div>
+		<div id="jb_hint">{{hint}}</div>
+		<div id="jb_prev" data-event-click="jb_page(-1)">&lt;</div>
+		<div id="jb_page">{{page_text}}</div>
+		<div id="jb_next" data-event-click="jb_page(1)">&gt;</div>
+	</div>
+</body>
+</rml>

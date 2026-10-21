@@ -28,6 +28,7 @@
 #include "Render/RmlUi/RmlUiRuntime.h"
 #include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUi.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 
 using namespace SEASON3B;
 using namespace mu::ui::window;
@@ -117,6 +118,12 @@ bool mu::ui::window::CHotKey::UpdateMouseEvent()
 bool mu::ui::window::CHotKey::UpdateKeyEvent()
 {
     // MuEmu (fork): ESC cierra primero la ventana MuEmu abierta.
+    if (mu::ui::window::IsPress(VK_ESCAPE) == true && MuEmu::Ui::Bank::IsJewelBankOpen() && !MuEmu::Panel::IsAnyShown())
+    {
+        MuEmu::Ui::Bank::CloseJewelBank();
+        PlayBuffer(SOUND_CLICK01);
+        return false;
+    }
     if (mu::ui::window::IsPress(VK_ESCAPE) == true && MuEmu::Panel::IsAnyShown())
     {
         MuEmu::Panel::Hide();

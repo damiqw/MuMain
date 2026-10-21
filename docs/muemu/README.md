@@ -302,3 +302,10 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
     Helper, caminan hasta el lider y al soltar lo vuelven a prender. `[MuEmu] AssignHelper = 0` lo apaga.
   - Minimapa (Tab): al abrirlo pide los datos (C1 E7 01, al cerrar E7 02); los lugares del servidor (C1 E7 03, grupo 0
     portal) y los miembros de la party en el mismo mapa (C1 F3 F9) se agregan como marcadores con su nombre.
+- **Tema EX700** (`themes/ex700`, Opciones > UI > Tema): la interfaz EX700 de Main.dll (CustomInterfaceType 2). Hereda
+  legacy y cambia la barra de abajo, el marco de las ventanas (`docked_panel_frame`), el inventario y la ventana Move.
+  Usa las imagenes del cliente MuEmu (`Data/Custom/Interface/CustomInterface/EX700`), que no estan en este repositorio.
+- **Jewel Bank con el aspecto de Main.dll** (`muemu_jewel_bank.rml`): en legacy el marco clasico (bg500) y en EX700 el
+  popup EX700; cada fila con el nombre, la joya en 3D, la cantidad y los botones 1/10/20/30/maximo. Shift + click en una
+  joya del inventario la deposita. El tema modern sigue usando la ventana generica de MuEmu.
+- Los numeros de vida, mana, SD y AG de la barra llevan separador de miles (1.848).

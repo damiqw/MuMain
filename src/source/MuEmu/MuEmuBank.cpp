@@ -9,8 +9,20 @@
 #include "UI/Core/WindowSystem.h"
 #include "UI/Inventory/InventoryCtrl.h"
 #include "UI/Inventory/MyInventory.h"
+#include "Audio/DSPlaySound.h"
+#include "Engine/Object/ZzzInventory.h"
+#include "UI/Inventory/ItemCameraTarget.h"
+#include "UI/RmlBridge/RmlDraggable.h"
+#include "UI/RmlBridge/RmlTheme.h"
+#include "UI/RmlBridge/RmlThemedView.h"
+
+#include <RmlUi/Core/DataModelHandle.h>
+#include <RmlUi/Core/ElementDocument.h>
+#include <RmlUi/Core/Event.h>
 
 #include <array>
+#include <memory>
+#include <vector>
 #include <set>
 #include <iterator>
 #include <string>
@@ -48,6 +60,7 @@ constexpr int PageCount = (JewelCount + JewelsPerPage - 1) / JewelsPerPage;
 struct JewelBank
 {
     std::array<int, JewelCount> counts{};
+    int max = 0; // cuantas se pueden retirar de una vez (el ultimo boton)
     bool enabled = false;
     bool received = false;
 };
@@ -172,6 +185,150 @@ MuEmu::Panel::Content BuildJewelBank()
     return content;
 }
 
+// ------------------------------------------------------------------------------------------------ Ventana propia
+// Con los temas que la tienen (legacy, ex700...) el banco usa su ventana con el aspecto de Main.dll
+// (muemu_jewel_bank.rml); el tema modern sigue con la ventana generica de MuEmu.
+struct JewelRowEntry
+{
+    std::string name;
+    std::string count;
+    bool empty = true;
+    int slot = 0;
+};
+
+struct JewelBankModel
+{
+    std::string title = "Jewel Bank";
+    std::string message;
+    std::vector<JewelRowEntry> rows;
+    std::vector<std::string> amounts;
+    std::string pageText;
+    std::string hint = "SHIFT + CLICK";
+};
+
+using JewelBankView = UI::RmlBridge::ThemedView<JewelBankModel>;
+
+bool g_windowShown = false;
+std::array<std::unique_ptr<UI::Items::ItemCameraTarget>, JewelsPerPage> g_icons;
+
+bool UseThemedWindow()
+{
+    return UI::RmlBridge::GetActiveThemeName() != "modern";
+}
+
+void SyncWindow();
+
+void BindJewelBank(Rml::DataModelConstructor& c, JewelBankModel& model)
+{
+    if (auto row = c.RegisterStruct<JewelRowEntry>())
+    {
+        row.RegisterMember("name", &JewelRowEntry::name);
+        row.RegisterMember("count", &JewelRowEntry::count);
+        row.RegisterMember("empty", &JewelRowEntry::empty);
+        row.RegisterMember("slot", &JewelRowEntry::slot);
+    }
+    c.RegisterArray<std::vector<JewelRowEntry>>();
+    c.RegisterArray<std::vector<std::string>>();
+    c.Bind("title", &model.title);
+    c.Bind("message", &model.message);
+    c.Bind("rows", &model.rows);
+    c.Bind("amounts", &model.amounts);
+    c.Bind("page_text", &model.pageText);
+    c.Bind("hint", &model.hint);
+    c.BindEventCallback("jb_withdraw",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+        {
+            if (args.size() < 2)
+                return;
+            const int slot = args[0].Get<int>();
+            const int index = args[1].Get<int>();
+            if (slot >= 0 && slot < JewelCount && index >= 0 && index < static_cast<int>(std::size(WithdrawCounts)))
+            {
+                const int count = WithdrawCounts[index] == 99 && g_bank.max > 0 ? g_bank.max : WithdrawCounts[index];
+                Withdraw(slot, count);
+                PlayBuffer(SOUND_CLICK01);
+            }
+        });
+    c.BindEventCallback("jb_page",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+        {
+            if (args.empty())
+                return;
+            g_bankPage = (g_bankPage + (args[0].Get<int>() > 0 ? 1 : PageCount - 1)) % PageCount;
+            PlayBuffer(SOUND_CLICK01);
+            SyncWindow();
+        });
+    c.BindEventCallback("jb_close",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { MuEmu::Ui::Bank::CloseJewelBank(); });
+}
+
+JewelBankView& Window()
+{
+    static std::unique_ptr<JewelBankView> view;
+    if (!view)
+    {
+        view = std::make_unique<JewelBankView>(
+            "muemu_jewel_bank",
+            [](Rml::DataModelConstructor& c, JewelBankModel& model) { BindJewelBank(c, model); },
+            std::vector<UI::RmlBridge::ThemedDocumentSpec>{ { "Data/Interface/RmlUi/muemu_jewel_bank.rml" } });
+        view->SetAfterBuild([]
+        {
+            Rml::ElementDocument* document = Window().Document();
+            if (document == nullptr)
+                return;
+            Rml::Element* panel = document->GetElementById("panel");
+            Rml::Element* title = document->GetElementById("jb_title");
+            if (panel != nullptr)
+                UI::RmlBridge::MakeDraggable(panel, title != nullptr ? title : panel, nullptr,
+                                             [panel] { UI::RmlBridge::KeepInsideWindow(panel); });
+        });
+        for (int n = 0; n < JewelsPerPage; ++n)
+        {
+            g_icons[static_cast<std::size_t>(n)] = std::make_unique<UI::Items::ItemCameraTarget>(
+                [n](const Rml::Vector2f& offset, const Rml::Vector2f& size)
+                {
+                    const int slot = g_bankPage * JewelsPerPage + n;
+                    if (slot < JewelCount)
+                        RenderItem3D(offset.x, offset.y, size.x, size.y, ItemType(slot), 0, 0, 0, false);
+                });
+        }
+    }
+    return *view;
+}
+
+void SyncWindow()
+{
+    if (!g_windowShown)
+        return;
+    JewelBankModel& model = Window().GetModel();
+    model.rows.clear();
+    model.message.clear();
+    if (!g_bank.received)
+        model.message = "Cargando...";
+    else if (!g_bank.enabled)
+        model.message = "El banco de joyas esta desactivado.";
+    else
+    {
+        const int first = g_bankPage * JewelsPerPage;
+        for (int slot = first; slot < first + JewelsPerPage && slot < JewelCount; ++slot)
+        {
+            JewelRowEntry row;
+            row.name = ItemName(ItemType(slot));
+            row.count = MuEmu::Ui::FormatNumber(g_bank.counts[static_cast<std::size_t>(slot)]);
+            row.empty = g_bank.counts[static_cast<std::size_t>(slot)] == 0;
+            row.slot = slot;
+            model.rows.push_back(std::move(row));
+        }
+    }
+    model.amounts.clear();
+    for (int count : WithdrawCounts)
+        model.amounts.push_back(count == 99 ? (g_bank.max > 0 ? std::to_string(g_bank.max) : std::string("Max"))
+                                            : std::to_string(count));
+    model.pageText = std::to_string(g_bankPage + 1) + " / " + std::to_string(PageCount);
+    for (const char* field : { "rows", "message", "amounts", "page_text" })
+        Window().MarkDirty(field);
+}
+
 MuEmu::Panel::Content BuildWarehouse()
 {
     MuEmu::Panel::Content content;
@@ -204,6 +361,24 @@ MuEmu::Panel::Content BuildWarehouse()
 void MuEmu::Ui::Bank::OpenJewelBank()
 {
     Send(0xF3, 0xF4);
+    if (UseThemedWindow())
+    {
+        if (g_windowShown)
+        {
+            CloseJewelBank();
+            return;
+        }
+        if (!Window().Ensure())
+            return;
+        g_windowShown = true;
+        SyncWindow();
+        if (Rml::ElementDocument* document = Window().Document())
+        {
+            document->Show(Rml::ModalFlag::None, Rml::FocusFlag::None);
+            document->PullToFront();
+        }
+        return;
+    }
     MuEmu::Panel::Show(JewelBankId, BuildJewelBank(), [](int action)
     {
         if (action == ActionRefresh)
@@ -264,8 +439,10 @@ bool MuEmu::Ui::Bank::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, 
             for (int slot = 0; slot < JewelCount; ++slot)
                 g_bank.counts[slot] = ReadInt(buffer, 4 + slot * 4);
             g_bank.enabled = buffer[124] != 0;
+            g_bank.max = buffer[125];
             g_bank.received = true;
             MuEmu::Panel::Update(JewelBankId, BuildJewelBank());
+            SyncWindow();
         }
         return true;
     }
@@ -286,3 +463,54 @@ bool MuEmu::Ui::Bank::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, 
     }
     return false;
 }
+
+void MuEmu::Ui::Bank::CloseJewelBank()
+{
+    if (!g_windowShown)
+        return;
+    g_windowShown = false;
+    for (auto& icon : g_icons)
+    {
+        if (icon)
+            icon->Disable();
+    }
+    Window().Hide();
+}
+
+bool MuEmu::Ui::Bank::IsJewelBankOpen()
+{
+    return g_windowShown || MuEmu::Panel::IsShown(JewelBankId);
+}
+
+void MuEmu::Ui::Bank::Frame()
+{
+    if (!g_windowShown)
+        return;
+    Rml::ElementDocument* document = Window().Document();
+    if (document == nullptr)
+        return;
+    for (int n = 0; n < JewelsPerPage; ++n)
+    {
+        auto& icon = g_icons[static_cast<std::size_t>(n)];
+        if (icon)
+            icon->Sync(document->GetElementById("jb_icon_" + std::to_string(n)), g_bankPage * JewelsPerPage + n < JewelCount);
+    }
+}
+
+bool MuEmu::Ui::Bank::DepositAt(int position, int itemType)
+{
+    if (!IsJewelBankOpen())
+        return false;
+    for (int slot = 0; slot < JewelCount; ++slot)
+    {
+        if (itemType == Jewels[slot][0] * MAX_ITEM_INDEX + Jewels[slot][1] || itemType == BundleType(slot))
+        {
+            std::vector<uint8_t> payload;
+            WriteInt(payload, position);
+            Send(0xF3, 0xF5, payload);
+            return true;
+        }
+    }
+    return false;
+}
+

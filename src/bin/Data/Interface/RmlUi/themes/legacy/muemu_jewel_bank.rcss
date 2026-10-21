@@ -1,0 +1,122 @@
+/* MuEmu (fork): the jewel bank's classic look (Main.dll CustomJewelBank.cpp, the non-EX700 branch): bg500top
+   over bg500buttom, the classic exit button at the top right. The art is the MuEmu client's
+   Data/Custom/Interface. */
+@spritesheet jb-top-sheet    { src: "../../../../Custom/Interface/bg500top.tga";    jb-top: 0px 0px 496px 73px; }
+@spritesheet jb-body-sheet   { src: "../../../../Custom/Interface/bg500buttom.tga"; jb-body: 0px 0px 496px 426px; }
+@spritesheet jb-exit-sheet   { src: "../../../newui_exit_00.tga"; jb-exit: 0px 0px 36px 29px; }
+
+/* The rows, buttons and pager, in the window's own units (dp), where CustomJewelBank::DrawJewelBankWindow()
+   drew them: rows from y 40 every 22, the name right-aligned up to x 60, the jewel at 65, the amount box
+   (CheckBox.tga) at 85 and the five withdraw buttons from 120 every 18; the hint at 265 and the pager at
+   75 / 95 / 145, y 275. */
+#panel {
+	position: absolute;
+	left: 50%;
+	top: 70dp;
+	margin-left: 20dp;
+	width: 226dp;
+	height: 315dp;
+	color: #ffffff;
+	font-family: "token(font-body)";
+	font-size: 9dp;
+	pointer-events: auto;
+}
+#jb_title {
+	position: absolute;
+	left: 0;
+	width: 226dp;
+	text-align: center;
+	color: #ffd23c;
+	font-weight: bold;
+	font-size: 10dp;
+	cursor: move;
+}
+#jb_close { position: absolute; cursor: pointer; pointer-events: auto; }
+#jb_message { position: absolute; left: 0; top: 120dp; width: 226dp; text-align: center; color: #ffd23c; }
+#jb_rows { position: absolute; left: 0; top: 40dp; width: 226dp; }
+.jb-row { display: block; position: relative; height: 22dp; }
+.jb-name {
+	position: absolute;
+	left: 0;
+	top: 3dp;
+	width: 60dp;
+	text-align: right;
+	white-space: nowrap;
+	color: #ffffff;
+}
+.jb-row.empty .jb-name { color: #9a9a9a; }
+.jb-icon { position: absolute; left: 63dp; top: 0dp; width: 18dp; height: 20dp; pointer-events: none; }
+.jb-count {
+	position: absolute;
+	left: 85dp;
+	top: 2dp;
+	width: 32dp;
+	height: 16dp;
+	decorator: image(jb-count);
+}
+.jb-count-text {
+	display: block;
+	width: 30dp;
+	line-height: 16dp;
+	text-align: right;
+	color: #ffd23c;
+	font-size: 8dp;
+	white-space: nowrap;
+}
+.jb-row.empty .jb-count-text { color: #9a9a9a; }
+.jb-buttons { position: absolute; left: 120dp; top: 2dp; width: 90dp; height: 16dp; }
+.jb-btn {
+	display: inline-block;
+	width: 16dp;
+	height: 16dp;
+	margin-right: 2dp;
+	line-height: 15dp;
+	text-align: center;
+	font-size: 7dp;
+	color: #ffffff;
+	background-color: rgba(20, 16, 10, 230);
+	border-width: 1dp;
+	border-color: #8a7444;
+	cursor: pointer;
+	pointer-events: auto;
+}
+.jb-btn:hover { color: #ffd23c; background-color: rgba(70, 58, 30, 240); }
+#jb_hint { position: absolute; left: 0; top: 265dp; width: 226dp; text-align: center; color: #3cff3c; font-weight: bold; }
+#jb_prev, #jb_next {
+	position: absolute;
+	top: 277dp;
+	width: 20dp;
+	height: 18dp;
+	line-height: 18dp;
+	text-align: center;
+	color: #ffd23c;
+	font-size: 12dp;
+	cursor: pointer;
+	pointer-events: auto;
+}
+#jb_prev { left: 75dp; }
+#jb_next { left: 145dp; }
+#jb_prev:hover, #jb_next:hover { color: #ffffff; }
+#jb_page {
+	position: absolute;
+	left: 95dp;
+	top: 277dp;
+	width: 50dp;
+	height: 18dp;
+	line-height: 18dp;
+	text-align: center;
+	color: #ffffff;
+	background-color: rgba(0, 0, 0, 160);
+	border-width: 1dp;
+	border-color: #6b5a3a;
+	border-radius: 7dp;
+}
+
+@spritesheet jb-count-sheet { src: "../../../../Custom/Interface/CheckBox.tga"; jb-count: 0px 0px 32px 16px; }
+
+#jb_frame_top  { position: absolute; left: 6dp; top: 1dp;    width: 220dp; height: 42dp;  decorator: image(jb-top); pointer-events: none; }
+#jb_frame_body { position: absolute; left: 6dp; top: 38.5dp; width: 220dp; height: 300dp; decorator: image(jb-body); pointer-events: none; }
+#jb_title { top: 15dp; }
+#jb_close { left: 188dp; top: 4dp; width: 36dp; height: 29dp; decorator: image(jb-exit); }
+#jb_close:hover { filter: brightness(1.25); }
+#panel { height: 340dp; }
