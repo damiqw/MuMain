@@ -55,4 +55,18 @@ void WriteInt(std::vector<uint8_t>& payload, int32_t value);
 std::string FormatNumber(int64_t value);
 // "hh:mm:ss" (o "d h" si pasa de un dia)
 std::string FormatTime(int seconds);
+// Main.dll's TrayMode: F12 hides the window to an icon in the notification area; a double click on it
+// brings the window back. Windows only; elsewhere the window is never hidden.
+namespace TrayMode
+{
+void Toggle();
+bool IsHidden();
+#ifdef _WIN32
+// The game window's Win32 messages: F12 and the icon's own. True when the message was the tray's.
+bool HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+// Takes the icon away (on exit).
+void Remove();
+} // namespace TrayMode
+
 } // namespace MuEmu::Ui

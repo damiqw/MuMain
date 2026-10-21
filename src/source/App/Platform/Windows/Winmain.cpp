@@ -699,6 +699,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
 
+#ifndef _EDITOR
+    // MuEmu: Main.dll's tray mode (F12, and the tray icon's double click). The editor keeps F12.
+    if (MuEmu::Ui::TrayMode::HandleMessage(msg, wParam, lParam))
+        return 0;
+#endif
+
     // ImGui (editor) now consumes input from the SDL event loop via
     // ImGui_ImplSDL3_ProcessEvent, not from Win32 messages (issue #442).
 
@@ -1593,7 +1599,8 @@ MSG MainLoop()
 
         if (CheckRenderNextFrame())
         {
-            if (g_bUseWindowMode || g_bWndActive || g_HasInactiveFpsOverride)
+            // MuEmu: nothing to draw while the window is in the tray (a hidden window's swapchain can stall, #535).
+            if ((g_bUseWindowMode || g_bWndActive || g_HasInactiveFpsOverride) && !MuEmu::Ui::TrayMode::IsHidden())
             {
 #ifdef _EDITOR
                 // F12 key toggle for editor, from the game window or the editor's
@@ -1925,6 +1932,7 @@ static void ShutdownRuntime(std::thread& cpuUsageRecorder, std::optional<Core::L
     {
         SDL_HideWindow(g_sdlWindow);
     }
+    MuEmu::Ui::TrayMode::Remove();
 
     UnregisterBundledFonts();
     DestroyWindow();
