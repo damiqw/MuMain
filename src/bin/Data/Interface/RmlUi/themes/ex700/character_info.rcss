@@ -206,6 +206,59 @@
 .attr-lines.attr-lines-ene span { height: calc(13px * var(--root-scale)); }
 
 /* =====================================================================================================
+   MuEmu (fork): Main.dll's summary instead of the level/EXP/points lines -- class, resets, level, server,
+   then points and fruits (their rate in blue) -- in a taller summary box; the attributes move down to make
+   room. The Stats button (advanced stats) sits at the top right; pet and master keep their own buttons.
+   ===================================================================================================== */
+.level-text, .levelup-point-text, .exp-text, .point-probability-text, .point-text, .edge-separator,
+.ex-btn-pet, .ex-btn-master, .ex-bar, .ex-divider { display: none; }
+.summary-fill { height: 82px; }
+.corner-bl, .corner-br, .edge-bottom { top: 116px; }
+.edge-left, .edge-right { height: 54px; }
+.ex-summary { position: absolute; left: 20px; top: 52px; transform-origin: left top; pointer-events: none; font-weight: bold; }
+.ex-line { display: block; position: relative; white-space: nowrap; }
+.ex-label { display: inline-block; color: #ffffff; }
+.ex-value { position: absolute; color: #e6e600; }
+.ex-note { position: absolute; color: #4cc5fe; }
+.ex-line { height: calc(10px * var(--root-scale)); }
+.ex-line.after-divider { top: calc(4px * var(--root-scale)); }
+.ex-value { left: calc(78px * var(--root-scale)); }
+.ex-note { left: calc(116px * var(--root-scale)); }
+.ex-btn {
+	position: absolute;
+	left: 146px;
+	top: 32px;
+	width: 32px;
+	height: 13px;
+	cursor: pointer;
+	pointer-events: auto;
+	background-color: rgba(0, 0, 0, 160);
+	border-width: 1px;
+	border-color: #8a7444;
+}
+.ex-btn:hover { background-color: rgba(70, 60, 30, 220); }
+.ex-btn-label { display: block; width: 32px; line-height: 12px; text-align: center; font-size: 8px; color: #ffd23c; pointer-events: none; }
+.attr-textbox-str { top: 136px; }
+.attr-textbox-agi { top: 191px; }
+.attr-textbox-vit { top: 256px; }
+.attr-textbox-ene { top: 311px; }
+.attr-textbox-cmd { top: 366px; }
+.attr-label-str, .attr-value-str { top: 142px; }
+.attr-label-agi, .attr-value-agi { top: 197px; }
+.attr-label-vit, .attr-value-vit { top: 262px; }
+.attr-label-ene, .attr-value-ene { top: 317px; }
+.attr-label-cmd, .attr-value-cmd { top: 372px; }
+.attr-lines-str { left: 20px; top: 161px; }
+.attr-lines-agi { left: 20px; top: 215px; }
+.attr-lines-vit { left: 20px; top: 280px; }
+.attr-lines-ene { left: 18px; top: 335px; }
+.stat-btn-str { top: 138px; }
+.stat-btn-agi { top: 193px; }
+.stat-btn-vit { top: 258px; }
+.stat-btn-ene { top: 313px; }
+.stat-btn-cmd { top: 368px; }
+
+/* =====================================================================================================
    EX700 character window (Main.dll InterfaceS8AdvancedUI.cpp, CharacterInfoWindow()): CharacterInfoFrame_I1
    as the window, the name in gold at y 27, the Stats/Pet/Master buttons at 50/95/140, y 53 on
    ButtonCharacterInfo, the summary lines from y 80 every 11 (labels at x 20, values at 100, the fruits'
@@ -231,7 +284,7 @@
 }
 
 #panel { decorator: image(ex700-chainfo-frame); }
-.frame-piece, .summary-fill, .summary-corner, .summary-edge, .attr-textbox,
+.frame-piece, .summary-fill, .summary-corner, .summary-edge, .attr-textbox, .ex-bar.hidden,
 .level-text, .levelup-point-text, .exp-text, .point-probability-text, .point-text,
 #classname, #servername, .info-btn, #btn_exit { display: none; }
 #name { top: 22px; color: #ffbd19; }
@@ -330,3 +383,17 @@
 .ex-line.after-divider { top: calc(8px * var(--root-scale)); }
 .ex-value { left: calc(80px * var(--root-scale)); }
 .ex-note { left: calc(118px * var(--root-scale)); }
+
+/* The legacy sheet above hides the EX700-only pieces; this theme shows them. */
+.ex-btn-pet, .ex-btn-master, .ex-divider { display: block; }
+.ex-bar { display: block; }
+.ex-bar.hidden { display: none; }
+.ex-btn { background-color: transparent; border-width: 0; top: 53px; width: 43px; height: 17px; }
+.ex-btn-advanced { left: 50px; }
+.ex-btn:hover { background-color: transparent; }
+.ex-btn-label { width: 43px; line-height: 17px; font-size: 9px; color: #ffffff; font-weight: bold; }
+.ex-summary { left: 20px; top: 80px; }
+.ex-line { height: calc(11px * var(--root-scale)); }
+.ex-line.after-divider { top: calc(8px * var(--root-scale)); }
+.ex-value { left: calc(80px * var(--root-scale)); color: #ffbd19; }
+.ex-note { left: calc(118px * var(--root-scale)); color: #6496ff; }

@@ -59,6 +59,8 @@ constexpr DocumentPlacement Placements[] = {
     {"muemu_panel.rml", 3.5f, MainScene},
     // MuEmu (fork): the jewel bank with Main.dll's look (MuEmuBank.cpp), for the themes that have it.
     {"muemu_jewel_bank.rml", 3.4f, MainScene},
+    // MuEmu (fork): the advanced stats beside the character window (MuEmuExtras.cpp).
+    {"muemu_stats_advance.rml", 5.1f, MainScene},
     // MuEmu (fork): the on-screen Menu button that opens it (MuEmuMenuButton.cpp).
     {"muemu_menu_button.rml", 1.05f, MainScene},
     {"trade.rml", 2.1f, MainScene},

@@ -5,7 +5,6 @@
 	<link type="text/rcss" href="docked_panel_frame.rcss"/>
 	<link type="text/rcss" href="character_info.rcss"/>
 </head>
-<!-- rml-contract-optional-callback: chainfo_click_advanced: only the EX700 theme (MuEmu fork) has the advanced-stats button -->
 <body>
 	<!-- Modern theme's own copy of CCharacterInfoWindow's frame -- matches CMyInventory's own
 	     forged-dialog chrome (shell-edge/groove/gradient panel, rail-with-rivet header, bordered
@@ -33,6 +32,21 @@
 		<span id="name" data-class-pk-0="pk_level == 0" data-class-pk-1="pk_level == 1" data-class-pk-2="pk_level == 2" data-class-pk-3="pk_level == 3" data-class-pk-4="pk_level == 4" data-class-pk-5="pk_level == 5" data-class-pk-6="pk_level >= 6">{{name_text}}</span>
 		<span id="classname" data-style-opacity="classname_opacity">{{classname_text}}</span>
 		<span id="servername" data-style-opacity="servername_opacity">{{servername_text}}</span>
+
+		<!-- MuEmu (fork): Main.dll's character summary (InterfaceS8AdvancedUI.cpp CharacterInfoWindow()): the
+		     advanced-stats, pet and master buttons and one line per entry (class, resets, level, server, points
+		     and fruits). Each theme places and styles them; a theme without one of the buttons hides it. -->
+		<div id="btn_advanced" class="ex-btn ex-btn-advanced" data-event-click="chainfo_click_advanced"><span class="ex-btn-label">Stats</span></div>
+		<div class="ex-btn ex-btn-pet" data-event-click="chainfo_click_pet"><span class="ex-btn-label">Pet</span></div>
+		<div class="ex-btn ex-btn-master" data-class-locked="!master_level_enabled" data-event-click="chainfo_click_masterlevel"><span class="ex-btn-label">Master</span></div>
+		<div class="ex-summary">
+			<div class="ex-line" data-for="line, i : summary" data-class-after-divider="i >= 4">
+				<span class="ex-label">{{line.label}}</span><span class="ex-value">{{line.value}}</span><span class="ex-note">{{line.note}}</span>
+			</div>
+		</div>
+		<div class="ex-divider"></div>
+		<div class="ex-bar ex-bar-str"></div><div class="ex-bar ex-bar-agi"></div><div class="ex-bar ex-bar-vit"></div>
+		<div class="ex-bar ex-bar-ene"></div><div class="ex-bar ex-bar-cmd" data-class-hidden="!show_charisma"></div>
 
 		<div class="summary-fill"></div>
 		<span class="level-text">{{level_text}}</span>

@@ -1,0 +1,33 @@
+/* MuEmu (fork): the advanced stats on a plain dark panel. */
+
+#panel {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 213px;
+	height: 422px;
+	transform-origin: left top;
+	font-family: "token(font-body)";
+	font-size: 9px;
+	color: #ffffff;
+	pointer-events: auto;
+}
+#sa_title {
+	position: absolute;
+	left: 0;
+	top: 22px;
+	width: 213px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 10px;
+	color: #ffbd19;
+}
+#sa_close { position: absolute; cursor: pointer; pointer-events: auto; }
+#sa_rows { position: absolute; left: 22px; top: 60px; width: 170px; }
+.sa-row { display: block; position: relative; height: 11px; line-height: 11px; white-space: nowrap; }
+.sa-label { display: inline; color: #ffffff; }
+.sa-value { position: absolute; right: 0; top: 0; color: #ffbd19; }
+
+#panel { background-color: rgba(10, 10, 12, 235); border-width: 1px; border-color: #3a3f48; }
+#sa_title { top: 10px; }
+#sa_close { left: 190px; top: 8px; width: 14px; height: 14px; background-color: rgba(120, 40, 40, 200); }

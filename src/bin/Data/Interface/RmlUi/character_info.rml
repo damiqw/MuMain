@@ -5,7 +5,6 @@
 	<link type="text/rcss" href="docked_panel_frame.rcss"/>
 	<link type="text/rcss" href="character_info.rcss"/>
 </head>
-<!-- rml-contract-optional-callback: chainfo_click_advanced: only the EX700 theme (MuEmu fork) has the advanced-stats button -->
 <body>
 	<!-- The workspace slot places #panel and sets its scale and --root-scale
 	     (CObject::GetPlacedDocument()); the panel lays out in reference px.
@@ -30,6 +29,21 @@
 		     between the two, RenderSubjectTexts()) -- two stacked spans, opacity-driven. -->
 		<span class="counter-scaled" id="classname" data-style-opacity="classname_opacity" data-style-font-size="text_px + 'px'">{{classname_text}}</span>
 		<span class="counter-scaled" id="servername" data-style-opacity="servername_opacity" data-style-font-size="text_px + 'px'">{{servername_text}}</span>
+
+		<!-- MuEmu (fork): Main.dll's character summary (InterfaceS8AdvancedUI.cpp CharacterInfoWindow()): the
+		     advanced-stats, pet and master buttons and one line per entry (class, resets, level, server, points
+		     and fruits). Each theme places and styles them; a theme without one of the buttons hides it. -->
+		<div id="btn_advanced" class="ex-btn ex-btn-advanced" data-event-click="chainfo_click_advanced"><span class="ex-btn-label">Stats</span></div>
+		<div class="ex-btn ex-btn-pet" data-event-click="chainfo_click_pet"><span class="ex-btn-label">Pet</span></div>
+		<div class="ex-btn ex-btn-master" data-class-locked="!master_level_enabled" data-event-click="chainfo_click_masterlevel"><span class="ex-btn-label">Master</span></div>
+		<div class="ex-summary counter-scaled" data-style-font-size="text_px + 'px'">
+			<div class="ex-line" data-for="line, i : summary" data-class-after-divider="i >= 4">
+				<span class="ex-label">{{line.label}}</span><span class="ex-value">{{line.value}}</span><span class="ex-note">{{line.note}}</span>
+			</div>
+		</div>
+		<div class="ex-divider"></div>
+		<div class="ex-bar ex-bar-str"></div><div class="ex-bar ex-bar-agi"></div><div class="ex-bar ex-bar-vit"></div>
+		<div class="ex-bar ex-bar-ene"></div><div class="ex-bar ex-bar-cmd" data-class-hidden="!show_charisma"></div>
 
 		<!-- Summary backdrop: the original's 8-piece frame (RenderFrame()) -- translucent fill, 4
 		     corner sprites, 1px-wide edge sprites stretched across each edge, and the separator

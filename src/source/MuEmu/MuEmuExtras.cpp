@@ -6,6 +6,17 @@
 #include "Engine/Object/ZzzCharacter.h"
 #include "Engine/Object/ZzzInfomation.h"
 #include "Engine/Object/ZzzInventory.h"
+#include "Render/RmlUi/RmlUiRuntime.h"
+#include "UI/Character/CharacterInfoWindow.h"
+#include "UI/Core/WindowSystem.h"
+#include "UI/RmlBridge/RmlTheme.h"
+#include "UI/RmlBridge/RmlThemedView.h"
+
+#include <RmlUi/Core/Context.h>
+#include <RmlUi/Core/DataModelHandle.h>
+#include <RmlUi/Core/ElementDocument.h>
+#include <RmlUi/Core/Event.h>
+#include <memory>
 
 #include <algorithm>
 #include <array>
@@ -242,6 +253,105 @@ constexpr std::array<StatLabel, 52> StatLabels = { {
 std::array<int, 52> g_stats = {};
 bool g_statsReceived = false;
 
+// ------------------------------------------------------------------------------------------------ Ventana
+// Como Main.dll: una ventana de 213x422 pegada a la izquierda de la del personaje, a su misma escala.
+struct AdvancedRow
+{
+    std::string label;
+    std::string value;
+};
+
+struct StatsAdvanceModel
+{
+    std::string title = "ADVANCED STATUS";
+    std::vector<AdvancedRow> rows;
+};
+
+using StatsAdvanceView = UI::RmlBridge::ThemedView<StatsAdvanceModel>;
+bool g_statsShown = false;
+
+void BindStatsAdvance(Rml::DataModelConstructor& c, StatsAdvanceModel& model)
+{
+    if (auto row = c.RegisterStruct<AdvancedRow>())
+    {
+        row.RegisterMember("label", &AdvancedRow::label);
+        row.RegisterMember("value", &AdvancedRow::value);
+    }
+    c.RegisterArray<std::vector<AdvancedRow>>();
+    c.Bind("title", &model.title);
+    c.Bind("rows", &model.rows);
+    c.BindEventCallback("sa_close",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { MuEmu::Ui::StatsAdvance::Close(); });
+}
+
+StatsAdvanceView& StatsWindow()
+{
+    static std::unique_ptr<StatsAdvanceView> view;
+    if (!view)
+        view = std::make_unique<StatsAdvanceView>(
+            "muemu_stats_advance", [](Rml::DataModelConstructor& c, StatsAdvanceModel& model) { BindStatsAdvance(c, model); },
+            std::vector<UI::RmlBridge::ThemedDocumentSpec>{ { "Data/Interface/RmlUi/muemu_stats_advance.rml" } });
+    return *view;
+}
+
+// Las lineas en el orden de Main.dll (PrintAdvanceStatus): indices de STATS_ADVANCE_DATA.
+std::vector<AdvancedRow> BuildAdvancedRows()
+{
+    const auto value = [](int index, bool percent)
+    {
+        const int v = g_stats[static_cast<std::size_t>(index)];
+        return v == 0 ? std::string("-") : MuEmu::Ui::FormatNumber(v) + (percent ? "%" : "");
+    };
+    const auto pair = [](int inc, int res)
+    {
+        const int a = g_stats[static_cast<std::size_t>(inc)];
+        const int b = g_stats[static_cast<std::size_t>(res)];
+        if (a == 0 && b == 0)
+            return std::string("-");
+        return std::to_string(a) + " / " + std::to_string(b) + "%";
+    };
+    std::vector<AdvancedRow> rows = {
+        { "Total Dmg Reflect", value(3, true) },          { "Full Dmg Reflect Rate", value(4, true) },
+        { "Crit Dmg Rate", value(5, true) },              { "Crit Dmg (PVM)", value(6, false) },
+        { "Crit Dmg (PVP)", value(7, false) },            { "Excellent Dmg Rate", value(8, true) },
+        { "Excellent Dmg (PVM)", value(9, false) },       { "Excellent Dmg (PVP)", value(10, false) },
+        { "Double Dmg Rate", value(11, true) },           { "Triple Dmg Rate", value(12, true) },
+        { "Dmg Reduction Rate", value(13, true) },        { "Shield Skill Dmg Redc Rate", value(14, true) },
+        { "SD Dmg Reduction Rate", value(15, true) },     { "SD Decrease Dmg Rate", value(16, true) },
+        { "Ignore Def Rate", value(17, true) },           { "Ignore SD Rate", value(18, true) },
+        { "Inc Dmg PvP", value(19, false) },              { "Inc Def PvP", value(20, false) },
+        { "Resist Double Dmg Rate", value(21, true) },    { "Resist Ignore Def Rate", value(22, true) },
+        { "Resist Ignore SD Rate", value(23, true) },     { "Resist Crit Dmg Rate", value(24, true) },
+        { "Resist Excellent Dmg Rate", value(25, true) }, { "Resist Stun Rate", value(26, true) },
+        { "Ice Inc / Resist Rate", pair(27, 34) },        { "Poison Inc / Resist Rate", pair(28, 35) },
+        { "Lighting Inc / Resist Rate", pair(29, 36) },   { "Fire Inc / Resist Rate", pair(30, 37) },
+        { "Earth Inc / Resist Rate", pair(31, 38) },      { "Wind Inc / Resist Rate", pair(32, 39) },
+        { "Water Inc / Resist Rate", pair(33, 40) },
+    };
+    return rows;
+}
+
+// La ventana del personaje, o null si no se ve.
+Rml::Element* CharacterPanel(Rml::Context* context)
+{
+    for (int n = 0; n < context->GetNumDocuments(); ++n)
+    {
+        Rml::ElementDocument* other = context->GetDocument(n);
+        if (other != nullptr && other->IsVisible() && other->GetSourceURL().find("character_info.rml") != Rml::String::npos)
+            return other->GetElementById("panel");
+    }
+    return nullptr;
+}
+
+void SyncStatsWindow()
+{
+    if (!g_statsShown)
+        return;
+    StatsAdvanceModel& model = StatsWindow().GetModel();
+    model.rows = BuildAdvancedRows();
+    StatsWindow().MarkDirty("rows");
+}
+
 MuEmu::Panel::Content BuildStats()
 {
     MuEmu::Panel::Content content;
@@ -347,7 +457,59 @@ bool MuEmu::Ui::ItemColor::Tint(int characterKey, int slot, float* light)
 
 void MuEmu::Ui::StatsAdvance::Open()
 {
-    MuEmu::Panel::Show(StatsId, BuildStats(), [](int) {});
+    if (g_statsShown)
+    {
+        Close();
+        return;
+    }
+    if (!StatsWindow().Ensure())
+        return;
+    // Va pegada a la ventana del personaje: si no esta abierta, se abre.
+    if (g_pNewUISystem != nullptr && !g_pNewUISystem->IsVisible(mu::ui::window::INTERFACE_CHARACTER))
+        g_pNewUISystem->Show(mu::ui::window::INTERFACE_CHARACTER);
+    g_statsShown = true;
+    SyncStatsWindow();
+    if (Rml::ElementDocument* document = StatsWindow().Document())
+    {
+        document->Show(Rml::ModalFlag::None, Rml::FocusFlag::None);
+        document->PullToFront();
+    }
+}
+
+void MuEmu::Ui::StatsAdvance::Close()
+{
+    if (!g_statsShown)
+        return;
+    g_statsShown = false;
+    StatsWindow().Hide();
+}
+
+void MuEmu::Ui::StatsAdvance::Frame()
+{
+    if (!g_statsShown)
+        return;
+    Rml::ElementDocument* document = StatsWindow().Document();
+    Rml::Context* context = RmlUiRuntime::Instance().GetContext();
+    if (document == nullptr || context == nullptr)
+        return;
+    // Se cierra con la ventana del personaje y va pegada a su izquierda, a su escala.
+    Rml::Element* anchor = CharacterPanel(context);
+    if (anchor == nullptr)
+    {
+        Close();
+        return;
+    }
+    Rml::Element* panel = document->GetElementById("panel");
+    if (panel == nullptr)
+        return;
+    float scale = g_pCharacterInfoWindow != nullptr ? g_pCharacterInfoWindow->GetPlacedScale() : 0.f;
+    if (scale <= 0.f)
+        scale = 1.f;
+    const Rml::Vector2f at = anchor->GetAbsoluteOffset(Rml::BoxArea::Border);
+    const float width = panel->GetBox().GetSize(Rml::BoxArea::Border).x * scale;
+    panel->SetProperty(Rml::PropertyId::Left, Rml::Property(std::max(0.f, at.x - width), Rml::Unit::PX));
+    panel->SetProperty(Rml::PropertyId::Top, Rml::Property(at.y, Rml::Unit::PX));
+    panel->SetProperty("transform", "scale(" + std::to_string(scale) + ")");
 }
 
 bool MuEmu::Ui::StatsAdvance::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size)
@@ -360,6 +522,7 @@ bool MuEmu::Ui::StatsAdvance::Receive(uint8_t head, uint8_t sub, const uint8_t* 
             g_stats[n] = ReadInt(buffer, 8 + static_cast<int>(n) * 4);
         g_statsReceived = true;
         MuEmu::Panel::Update(StatsId, BuildStats());
+        SyncStatsWindow();
     }
     return true;
 }

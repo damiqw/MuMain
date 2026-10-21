@@ -1,0 +1,38 @@
+/* MuEmu (fork): the advanced stats in the classic look: the original window background and exit sprite. */
+@spritesheet sa-back-sheet { src: "../../../newui_msgbox_back.jpg"; sa-back: 0px 0px 190px 429px; }
+@spritesheet sa-top-sheet { src: "../../../newui_item_back04.tga"; sa-top: 0px 0px 190px 64px; }
+@spritesheet sa-bottom-sheet { src: "../../../newui_item_back03.tga"; sa-bottom: 0px 0px 190px 45px; }
+@spritesheet sa-exit-sheet { src: "../../../newui_exit_00.tga"; sa-exit: 0px 0px 36px 29px; }
+
+#panel {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 213px;
+	height: 422px;
+	transform-origin: left top;
+	font-family: "token(font-body)";
+	font-size: 9px;
+	color: #ffffff;
+	pointer-events: auto;
+}
+#sa_title {
+	position: absolute;
+	left: 0;
+	top: 22px;
+	width: 213px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 10px;
+	color: #ffbd19;
+}
+#sa_close { position: absolute; cursor: pointer; pointer-events: auto; }
+#sa_rows { position: absolute; left: 22px; top: 60px; width: 170px; }
+.sa-row { display: block; position: relative; height: 11px; line-height: 11px; white-space: nowrap; }
+.sa-label { display: inline; color: #ffffff; }
+.sa-value { position: absolute; right: 0; top: 0; color: #ffbd19; }
+
+#panel { decorator: image(sa-back); }
+#sa_title { top: 12px; }
+#sa_close { left: 13px; top: 386px; width: 36px; height: 29px; decorator: image(sa-exit); }
+#sa_close:hover { filter: brightness(1.25); }

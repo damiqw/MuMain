@@ -1,0 +1,36 @@
+/* MuEmu (fork): the advanced stats in the EX700 look: CharacterInfoFrame_I2 as the window, the close X of
+   the EX700 windows. */
+@spritesheet sa-frame-sheet { src: "../../../../Custom/Interface/CustomInterface/EX700/UI/CharacterInfoFrame_I2.tga"; sa-frame: 0px 0px 213px 422px; }
+@spritesheet sa-close-sheet { src: "../../../../Custom/Interface/CustomInterface/EX700/UI/button_close.tga"; sa-close: 0px 42px 21px 20px; sa-close-pressed: 0px 0px 21px 20px; }
+
+#panel {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 213px;
+	height: 422px;
+	transform-origin: left top;
+	font-family: "token(font-body)";
+	font-size: 9px;
+	color: #ffffff;
+	pointer-events: auto;
+}
+#sa_title {
+	position: absolute;
+	left: 0;
+	top: 22px;
+	width: 213px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 10px;
+	color: #ffbd19;
+}
+#sa_close { position: absolute; cursor: pointer; pointer-events: auto; }
+#sa_rows { position: absolute; left: 22px; top: 60px; width: 170px; }
+.sa-row { display: block; position: relative; height: 11px; line-height: 11px; white-space: nowrap; }
+.sa-label { display: inline; color: #ffffff; }
+.sa-value { position: absolute; right: 0; top: 0; color: #ffbd19; }
+
+#panel { decorator: image(sa-frame); }
+#sa_close { left: 181px; top: 28px; width: 11px; height: 11px; decorator: image(sa-close); }
+#sa_close:hover { decorator: image(sa-close-pressed); }

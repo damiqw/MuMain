@@ -76,6 +76,9 @@ namespace mu::ui::window
             PlaceDocument(left, top, scale);
         }
         bool IsInWorkspace() const { return m_inWorkspace; }
+        // MuEmu (fork): the scale the workspace draws this window at (0 while unplaced), for a window
+        // docked next to it.
+        float GetPlacedScale() const { return m_slotPlacement.scale; }
         // Places the document's root at `left`/`top` (screen pixels) and `scale`.
         void PlaceDocument(float left, float top, float scale)
         {

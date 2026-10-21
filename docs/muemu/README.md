@@ -309,3 +309,7 @@ lugar "Vacio" guarda lo que esta escrito. Se guardan donde los guardaba Main.dll
   popup EX700; cada fila con el nombre, la joya en 3D, la cantidad y los botones 1/10/20/30/maximo. Shift + click en una
   joya del inventario la deposita. El tema modern sigue usando la ventana generica de MuEmu.
 - Los numeros de vida, mana, SD y AG de la barra llevan separador de miles (1.848).
+- **Ventana del personaje (C)** en todos los temas: el resumen de Main.dll (clase, resets, nivel, servidor, puntos y
+  frutas con su porcentaje) y el boton Stats, que abre los **stats avanzados** en su propia ventana pegada a la
+  izquierda de la del personaje y a su escala (`muemu_stats_advance.rml`; EX700 con CharacterInfoFrame_I2).
+- **Move**: la columna del mapa mas ancha y la primera se llama "Battle".

@@ -460,7 +460,7 @@ void mu::ui::window::CMoveCommandWindow::BindRmlModel(Rml::DataModelConstructor&
         });
 
     model.titleText = StringUtils::WideToNarrow(I18N::Game::WarpCommandWindow);
-    model.headStrife = StringUtils::WideToNarrow(I18N::Game::BattleZone);
+    model.headStrife = "Battle"; // MuEmu (fork): short, so the map names get the room
     model.headMap = StringUtils::WideToNarrow(I18N::Game::Map);
     model.headLevel = StringUtils::WideToNarrow(I18N::Game::MinLevel);
     model.headZen = StringUtils::WideToNarrow(I18N::Game::Cost);

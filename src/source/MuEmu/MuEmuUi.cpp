@@ -124,6 +124,7 @@ void MuEmu::Ui::Frame()
     Rewards::Frame();
     PostItem::Frame();
     Bank::Frame();
+    StatsAdvance::Frame();
     Ping::Frame();
     PartyInfo::Frame();
     MiniMapInfo::Frame();

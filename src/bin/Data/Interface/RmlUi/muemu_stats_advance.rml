@@ -1,0 +1,22 @@
+<rml>
+<head>
+	<title>Advanced Status</title>
+	<link type="text/rcss" href="base.rcss"/>
+	<link type="text/rcss" href="muemu_stats_advance.rcss"/>
+</head>
+<!-- MuEmu (fork): the advanced stats (C1 F3 F4) the way Main.dll drew them (CustomStatsAdvance.cpp,
+     InterfaceS8AdvancedUI.cpp PrintAdvanceStatus()): a 213x422 window docked to the left of the character
+     window at its scale, one line per stat with its name and its value in gold ("-" while it is 0).
+     MuEmuExtras.cpp places #panel; the theme's muemu_stats_advance.rcss draws it. -->
+<body data-model="muemu_stats_advance">
+	<div id="panel">
+		<div id="sa_title">{{title}}</div>
+		<div id="sa_close" data-event-click="sa_close"></div>
+		<div id="sa_rows">
+			<div class="sa-row" data-for="row : rows">
+				<span class="sa-label">{{row.label}}</span><span class="sa-value">{{row.value}}</span>
+			</div>
+		</div>
+	</div>
+</body>
+</rml>

@@ -145,3 +145,52 @@
 .attr-lines span { color: token(text-primary); }
 .attr-lines span.boosted { color: rgb(100, 150, 255); }
 .attr-lines span.buffed { color: token(accent-gold); }
+
+/* =====================================================================================================
+   MuEmu (fork): Main.dll's summary instead of the level/EXP/points lines (class, resets, level, server,
+   points and fruits), in a taller summary box; the attributes move down to make room. The Stats button
+   (advanced stats) sits at the top right; pet and master keep their own buttons.
+   ===================================================================================================== */
+.level-text, .levelup-point-text, .exp-text, .point-probability-text, .point-text,
+.ex-btn-pet, .ex-btn-master, .ex-bar, .ex-divider { display: none; }
+.summary-fill { height: 82px; }
+.ex-summary { position: absolute; left: 18px; top: 52px; pointer-events: none; font-size: 10px; }
+.ex-line { display: block; position: relative; height: 10px; line-height: 10px; white-space: nowrap; }
+.ex-line.after-divider { top: 4px; }
+.ex-label { display: inline-block; color: token(text-primary); }
+.ex-value { position: absolute; left: 78px; color: token(accent-gold-hover); font-weight: bold; }
+.ex-note { position: absolute; left: 116px; color: token(accent-steel-hover); }
+.ex-btn {
+	position: absolute;
+	left: 146px;
+	top: 30px;
+	width: 32px;
+	height: 14px;
+	cursor: pointer;
+	pointer-events: auto;
+	background-color: token(surface-panel);
+	border-width: 1px;
+	border-color: token(accent-steel);
+	border-radius: token(radius-sm)dp;
+}
+.ex-btn:hover { border-color: token(accent-steel-hover); }
+.ex-btn-label { display: block; width: 32px; line-height: 13px; text-align: center; font-size: 9px; color: token(text-warm); pointer-events: none; }
+.attr-textbox-str { top: 136px; }
+.attr-textbox-agi { top: 191px; }
+.attr-textbox-vit { top: 256px; }
+.attr-textbox-ene { top: 311px; }
+.attr-textbox-cmd { top: 366px; }
+.attr-label-str, .attr-value-str { top: 142px; }
+.attr-label-agi, .attr-value-agi { top: 197px; }
+.attr-label-vit, .attr-value-vit { top: 262px; }
+.attr-label-ene, .attr-value-ene { top: 317px; }
+.attr-label-cmd, .attr-value-cmd { top: 372px; }
+.attr-lines-str { left: 20px; top: 161px; }
+.attr-lines-agi { left: 20px; top: 215px; }
+.attr-lines-vit { left: 20px; top: 280px; }
+.attr-lines-ene { left: 18px; top: 335px; }
+.stat-btn-str { top: 138px; }
+.stat-btn-agi { top: 193px; }
+.stat-btn-vit { top: 258px; }
+.stat-btn-ene { top: 313px; }
+.stat-btn-cmd { top: 368px; }

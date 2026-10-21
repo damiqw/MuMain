@@ -130,8 +130,11 @@ bool Tint(int characterKey, int slot, float* light);
 
 namespace MuEmu::Ui::StatsAdvance
 {
-// Stats avanzados (CustomStatsAdvance de Main.dll): C1 F3 F4.
+// Stats avanzados (CustomStatsAdvance de Main.dll): C1 F3 F4. Open abre o cierra la ventana pegada a la del
+// personaje, en todos los temas.
 void Open();
+void Close();
+void Frame();
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::StatsAdvance
 

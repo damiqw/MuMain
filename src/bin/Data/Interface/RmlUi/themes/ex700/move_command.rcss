@@ -108,10 +108,10 @@
 	white-space: nowrap;
 	transform: translateX(-50%);
 }
-.col-strife { left: 8.654%; }
-.col-map    { left: 28.846%; }
-.col-level  { left: 56.250%; }
-.col-zen    { left: 75.481%; }
+.col-strife { left: 7%; }
+.col-map    { left: 35%; }
+.col-level  { left: 67%; }
+.col-zen    { left: 86%; }
 
 /* Only a reachable destination highlights, matching native's own `if (_bCanMove)` guard around
    setting _bSelected. Native painted this quad AFTER the row text (so the tint sat over the
@@ -179,3 +179,5 @@
 
 /* MuEmu (fork): the title is the drag handle (MoveCommandWindow.cpp). */
 #title { cursor: move; pointer-events: auto; }
+
+/* MuEmu (fork): the map column is wider (long custom map names) and the others sit further right. */
