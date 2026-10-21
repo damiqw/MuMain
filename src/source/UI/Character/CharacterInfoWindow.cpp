@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "UI/Chat/Chat.h"
 #include "UI/Character/CharacterInfoWindow.h"
+#include "MuEmu/MuEmuUi.h"
+#include "MuEmu/MuEmuUiFeatures.h"
 #include "UI/Core/WindowSystem.h"
 #include "UI/Core/WindowGeometry.h"
 #include "Character/CharacterManager.h"
@@ -159,6 +161,13 @@ void mu::ui::window::CCharacterInfoWindow::BindRmlModel(Rml::DataModelConstructo
     statLine.RegisterMember("text", &StatLine::text);
     statLine.RegisterMember("source", &StatLine::source);
     c.RegisterArray<std::vector<StatLine>>();
+    // MuEmu (fork): the EX700 summary and its advanced-stats button (themes/ex700/character_info.rml).
+    auto summaryLine = c.RegisterStruct<CharacterInfoRmlModel::SummaryLine>();
+    summaryLine.RegisterMember("label", &CharacterInfoRmlModel::SummaryLine::label);
+    summaryLine.RegisterMember("value", &CharacterInfoRmlModel::SummaryLine::value);
+    summaryLine.RegisterMember("note", &CharacterInfoRmlModel::SummaryLine::note);
+    c.RegisterArray<std::vector<CharacterInfoRmlModel::SummaryLine>>();
+    c.Bind("summary", &model.summary);
     c.Bind("str_lines", &model.strLines);
     c.Bind("agi_lines", &model.agiLines);
     c.Bind("vit_lines", &model.vitLines);
@@ -180,6 +189,8 @@ void mu::ui::window::CCharacterInfoWindow::BindRmlModel(Rml::DataModelConstructo
     UI::RmlBridge::BindWindowClose(c, mu::ui::window::INTERFACE_CHARACTER);
     c.BindEventCallback("chainfo_click_quest",
         [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { RmlClickQuest(); });
+    c.BindEventCallback("chainfo_click_advanced",
+        [](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { MuEmu::Ui::StatsAdvance::Open(); });
     c.BindEventCallback("chainfo_click_pet",
         [this](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) { RmlClickPet(); });
     c.BindEventCallback("chainfo_click_masterlevel",
@@ -557,6 +568,36 @@ void mu::ui::window::CCharacterInfoWindow::BuildTableTexts()
               StringUtils::WideToNarrow(strPointProbability));
 
     SyncField(m_RmlView.Binder(), &CharacterInfoRmlModel::pointText, "point_text", StringUtils::WideToNarrow(strPoint));
+
+    // MuEmu (fork): the EX700 summary (Main.dll InterfaceS8AdvancedUI.cpp CharacterInfoWindow()).
+    {
+        using Line = CharacterInfoRmlModel::SummaryLine;
+        const auto number = [](long long value) { return MuEmu::Ui::FormatNumber(value); };
+        const auto fruit = [&number](int current, int max, int rate)
+        { return Line{ "", number(current) + "/" + number(max), "(" + std::to_string(rate) + "%)" }; };
+        std::vector<Line> summary;
+        summary.push_back({ "Clase", StringUtils::WideToNarrow(gCharacterManager.GetCharacterClassText(CharacterAttribute->Class)), "" });
+        summary.push_back({ "Resets", number(CharacterAttribute->Resets), "" });
+        summary.push_back({ "Nivel", number(CharacterAttribute->Level), "" });
+        summary.push_back({ "Servidor", StringUtils::WideToNarrow(g_ServerListManager->GetSelectServerName()) + "-" +
+                                            std::to_string(g_ServerListManager->GetSelectServerIndex()), "" });
+        summary.push_back({ "Puntos", number(CharacterAttribute->LevelUpPoint), "" });
+        Line add = fruit(CharacterAttribute->AddPoint, CharacterAttribute->MaxAddPoint, iAddPoint);
+        add.label = "Frutas (+)";
+        summary.push_back(add);
+        Line minus = fruit(CharacterAttribute->wMinusPoint, CharacterAttribute->wMaxMinusPoint, iMinusPoint);
+        minus.label = "Frutas (-)";
+        summary.push_back(minus);
+
+        const bool changed = summary.size() != model.summary.size() ||
+                             !std::equal(summary.begin(), summary.end(), model.summary.begin(), [](const Line& a, const Line& b)
+                                         { return a.label == b.label && a.value == b.value && a.note == b.note; });
+        if (changed)
+        {
+            model.summary = std::move(summary);
+            m_RmlView.MarkDirty("summary");
+        }
+    }
 }
 
 void mu::ui::window::CCharacterInfoWindow::BuildAttributeLines()

@@ -147,6 +147,16 @@ namespace mu::ui::window
 
             bool masterLevelEnabled = false;
 
+            // MuEmu (fork): the summary Main.dll's EX700 window showed (class, resets, level, server, points
+            // and fruits), one line each: label, value and an optional note (the fruits' rate).
+            struct SummaryLine
+            {
+                Rml::String label;
+                Rml::String value;
+                Rml::String note;
+            };
+            std::vector<SummaryLine> summary;
+
             // Set once at Create() -- static tooltip text, no per-frame update needed.
             Rml::String exitTooltip, questTooltip, petTooltip, masterLevelTooltip;
         };

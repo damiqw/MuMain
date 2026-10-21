@@ -5,6 +5,7 @@
 	<link type="text/rcss" href="docked_panel_frame.rcss"/>
 	<link type="text/rcss" href="character_info.rcss"/>
 </head>
+<!-- rml-contract-optional-callback: chainfo_click_advanced: only the EX700 theme (MuEmu fork) has the advanced-stats button -->
 <body>
 	<!-- Modern theme's own copy of CCharacterInfoWindow's frame -- matches CMyInventory's own
 	     forged-dialog chrome (shell-edge/groove/gradient panel, rail-with-rivet header, bordered

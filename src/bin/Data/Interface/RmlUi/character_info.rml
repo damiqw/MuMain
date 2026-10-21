@@ -5,6 +5,7 @@
 	<link type="text/rcss" href="docked_panel_frame.rcss"/>
 	<link type="text/rcss" href="character_info.rcss"/>
 </head>
+<!-- rml-contract-optional-callback: chainfo_click_advanced: only the EX700 theme (MuEmu fork) has the advanced-stats button -->
 <body>
 	<!-- The workspace slot places #panel and sets its scale and --root-scale
 	     (CObject::GetPlacedDocument()); the panel lays out in reference px.

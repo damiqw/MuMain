@@ -7,7 +7,7 @@
 
 // Stats de mas de 65.535: el formato de OpenMU los manda en 16 bits, asi que el cliente toma los valores de 32 bits
 // de los paquetes propios de los servidores MuEmu (los mismos que leia Main.dll):
-// - C1 F3 E0 (120 bytes): puntos libres (64) y stats base (100 fuerza, 104 agilidad, 108 vitalidad, 112 energia,
+// - C1 F3 E0 (120 bytes): resets (52), puntos libres (64) y stats base (100 fuerza, 104 agilidad, 108 vitalidad, 112 energia,
 //   116 comando).
 // - C1 F3 E1 (172 bytes): stats agregados por items y buffs (36 a 52).
 namespace
@@ -40,6 +40,7 @@ bool MuEmu::Ui::Stats::Receive(uint8_t head, uint8_t sub, const uint8_t* buffer,
 
     if (sub == 0xE0 && size >= 120)
     {
+        CharacterAttribute->Resets = static_cast<DWORD>(ReadInt(buffer, 52)); // ViewReset
         CharacterAttribute->LevelUpPoint = static_cast<DWORD>(ReadInt(buffer, 64));
         CharacterAttribute->Strength = static_cast<DWORD>(ReadInt(buffer, 100));
         CharacterAttribute->Dexterity = static_cast<DWORD>(ReadInt(buffer, 104));
