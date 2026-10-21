@@ -15,7 +15,9 @@
 #include "UI/RmlBridge/RmlDraggable.h"
 #include "UI/RmlBridge/RmlTheme.h"
 #include "UI/RmlBridge/RmlThemedView.h"
+#include "Render/RmlUi/RmlUiRuntime.h"
 
+#include <RmlUi/Core/Context.h>
 #include <RmlUi/Core/DataModelHandle.h>
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Event.h>
@@ -203,12 +205,13 @@ struct JewelBankModel
     std::vector<JewelRowEntry> rows;
     std::vector<std::string> amounts;
     std::string pageText;
-    std::string hint = "SHIFT + CLICK";
+    std::string hint = "SHIFT + CLICK DERECHO";
 };
 
 using JewelBankView = UI::RmlBridge::ThemedView<JewelBankModel>;
 
 bool g_windowShown = false;
+bool g_docked = true; // pegado a la izquierda del inventario (o del inventario extendido) hasta que se arrastre
 std::array<std::unique_ptr<UI::Items::ItemCameraTarget>, JewelsPerPage> g_icons;
 
 bool UseThemedWindow()
@@ -278,8 +281,9 @@ JewelBankView& Window()
                 return;
             Rml::Element* panel = document->GetElementById("panel");
             Rml::Element* title = document->GetElementById("jb_title");
+            // Arrastrando el titulo se mueve la ventana; desde ahi deja de seguir al inventario.
             if (panel != nullptr)
-                UI::RmlBridge::MakeDraggable(panel, title != nullptr ? title : panel, nullptr,
+                UI::RmlBridge::MakeDraggable(title != nullptr ? title : panel, panel, [](float, float) { g_docked = false; },
                                              [panel] { UI::RmlBridge::KeepInsideWindow(panel); });
         });
         for (int n = 0; n < JewelsPerPage; ++n)
@@ -294,6 +298,38 @@ JewelBankView& Window()
         }
     }
     return *view;
+}
+
+// La ventana visible de un documento de RmlUi (por su archivo), o null.
+Rml::Element* VisiblePanel(Rml::Context* context, const char* file)
+{
+    for (int n = 0; n < context->GetNumDocuments(); ++n)
+    {
+        Rml::ElementDocument* other = context->GetDocument(n);
+        if (other == nullptr || !other->IsVisible() || other->GetSourceURL().find(file) == Rml::String::npos)
+            continue;
+        return other->GetElementById("panel");
+    }
+    return nullptr;
+}
+
+// Pega la ventana a la izquierda del inventario extendido, o del inventario, arriba a la misma altura.
+void DockToInventory(Rml::ElementDocument* document)
+{
+    Rml::Context* context = RmlUiRuntime::Instance().GetContext();
+    Rml::Element* panel = document->GetElementById("panel");
+    if (context == nullptr || panel == nullptr)
+        return;
+    Rml::Element* anchor = VisiblePanel(context, "inventory_extension.rml");
+    if (anchor == nullptr)
+        anchor = VisiblePanel(context, "my_inventory.rml");
+    if (anchor == nullptr)
+        return;
+    const Rml::Vector2f at = anchor->GetAbsoluteOffset(Rml::BoxArea::Border);
+    const float width = panel->GetBox().GetSize(Rml::BoxArea::Border).x;
+    panel->SetProperty(Rml::PropertyId::MarginLeft, Rml::Property(0.f, Rml::Unit::PX));
+    panel->SetProperty(Rml::PropertyId::Left, Rml::Property(std::max(0.f, at.x - width), Rml::Unit::PX));
+    panel->SetProperty(Rml::PropertyId::Top, Rml::Property(at.y, Rml::Unit::PX));
 }
 
 void SyncWindow()
@@ -370,6 +406,10 @@ void MuEmu::Ui::Bank::OpenJewelBank()
         }
         if (!Window().Ensure())
             return;
+        // Como Main.dll: la J abre tambien el inventario y el banco va pegado a su izquierda.
+        if (g_pNewUISystem != nullptr && !g_pNewUISystem->IsVisible(mu::ui::window::INTERFACE_INVENTORY))
+            g_pNewUISystem->Show(mu::ui::window::INTERFACE_INVENTORY);
+        g_docked = true;
         g_windowShown = true;
         SyncWindow();
         if (Rml::ElementDocument* document = Window().Document())
@@ -489,6 +529,8 @@ void MuEmu::Ui::Bank::Frame()
     Rml::ElementDocument* document = Window().Document();
     if (document == nullptr)
         return;
+    if (g_docked)
+        DockToInventory(document);
     for (int n = 0; n < JewelsPerPage; ++n)
     {
         auto& icon = g_icons[static_cast<std::size_t>(n)];

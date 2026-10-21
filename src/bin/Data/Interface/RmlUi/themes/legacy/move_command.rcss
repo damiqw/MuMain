@@ -146,3 +146,6 @@
 #head { width: calc(100% * var(--root-scale) - 22px * var(--root-scale)); }
 #list { width: calc(100% * var(--root-scale)); height: calc(100% * var(--root-scale)); }
 .mc-row { width: calc(100% - 17px * var(--root-scale)); padding-bottom: calc(2px * var(--root-scale)); }
+
+/* MuEmu (fork): the title is the drag handle (MoveCommandWindow.cpp). */
+#title { cursor: move; pointer-events: auto; }

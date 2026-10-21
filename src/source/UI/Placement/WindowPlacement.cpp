@@ -307,7 +307,8 @@ static bool FitRegions(Rml::ElementDocument* workspace, const UI::Scaling::Trans
 }
 
 // MuEmu (fork): con [MuEmu] DockRightMiddle = 1 (por defecto), las ventanas de la derecha (inventario,
-// personaje, MU Helper...) quedan centradas en vertical en vez de apoyarse sobre el HUD.
+// personaje, MU Helper...) y la de la izquierda (Move) quedan centradas en vertical en vez de apoyarse sobre
+// el HUD.
 // True cuando movio una region, para volver a calcular el layout.
 static bool CenterDockRegions(Rml::ElementDocument* workspace)
 {
@@ -317,7 +318,7 @@ static bool CenterDockRegions(Rml::ElementDocument* workspace)
 
     bool changed = false;
     Rml::ElementList regions;
-    workspace->QuerySelectorAll(regions, ".region.dock-right");
+    workspace->QuerySelectorAll(regions, ".region.dock-right, .region.dock-left");
     for (Rml::Element* region : regions)
     {
         Rml::Element* parent = region->GetParentNode();

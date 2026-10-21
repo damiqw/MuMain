@@ -16,6 +16,7 @@
 #include "UI/RmlBridge/RmlTheme.h"
 #include "UI/RmlBridge/RmlNativeTextSize.h"
 #include "UI/RmlBridge/RmlDocumentVisibility.h"
+#include "UI/RmlBridge/RmlDraggable.h"
 #include "UI/RmlBridge/RmlPointer.h"
 #include "Core/Utilities/StringUtils.h"
 #include <RmlUi/Core/Element.h>
@@ -469,6 +470,16 @@ void mu::ui::window::CMoveCommandWindow::BindRmlModel(Rml::DataModelConstructor&
 void mu::ui::window::CMoveCommandWindow::OnRmlBuilt()
 {
     ApplyFillSize();
+    // MuEmu (fork): the warp list moves by its title, like the other windows (until the workspace places
+    // it again).
+    if (Rml::ElementDocument* document = m_RmlView.Document())
+    {
+        Rml::Element* panel = document->GetElementById("panel");
+        Rml::Element* title = document->GetElementById("title");
+        if (panel != nullptr)
+            UI::RmlBridge::MakeDraggable(title != nullptr ? title : panel, panel, nullptr,
+                                         [panel] { UI::RmlBridge::KeepInsideWindow(panel); });
+    }
 }
 
 void mu::ui::window::CMoveCommandWindow::BuildRmlUi()

@@ -176,3 +176,6 @@
 }
 #close_bar:hover { decorator: image(ex700-move-btn-pressed); }
 #head { width: calc(100% * var(--root-scale) - 50px * var(--root-scale)); }
+
+/* MuEmu (fork): the title is the drag handle (MoveCommandWindow.cpp). */
+#title { cursor: move; pointer-events: auto; }

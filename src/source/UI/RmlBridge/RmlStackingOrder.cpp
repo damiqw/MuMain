@@ -117,7 +117,9 @@ constexpr DocumentPlacement Placements[] = {
     {"slide_notice.rml", 1.91f, MainScene},
     {"mini_map.rml", 8.1f, MainScene},
     {"help_window.rml", 8.3f, MainScene},
-    {"move_command.rml", 8.3f, MainScene},
+    // MuEmu (fork): over the system log and the chat (the original drew the warp list over them), under
+    // the tooltips and message boxes.
+    {"move_command.rml", 10.6f, MainScene},
     {"crywolf.rml", 10.0f, MainScene},
     // CInGameShop::GetLayerDepth(): the shop sits above crywolf and below kanturu_enter.
     {"in_game_shop.rml", 10.08f, MainScene},

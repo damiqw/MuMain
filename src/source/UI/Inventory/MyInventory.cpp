@@ -625,14 +625,16 @@ void CMyInventory::SetRepairMode(bool bRepair)
 
 bool CMyInventory::UpdateMouseEvent()
 {
-    // MuEmu (fork): Shift + click on a jewel deposits it in the open jewel bank (Main.dll's CustomJewelBank).
-    if (m_pNewInventoryCtrl && IsRepeat(VK_SHIFT) && IsRelease(VK_LBUTTON) && CInventoryCtrl::GetPickedItem() == nullptr
+    // MuEmu (fork): Shift + right click on a jewel deposits it in the open jewel bank (Main.dll's
+    // CustomJewelBank), before the right click uses or equips it.
+    if (m_pNewInventoryCtrl && IsRepeat(VK_SHIFT) && IsPress(VK_RBUTTON) && CInventoryCtrl::GetPickedItem() == nullptr
         && MuEmu::Ui::Bank::IsJewelBankOpen())
     {
         if (ITEM* pItem = m_pNewInventoryCtrl->FindItemAtPointer())
         {
             if (MuEmu::Ui::Bank::DepositAt(m_pNewInventoryCtrl->GetIndexByItem(pItem), pItem->Type))
             {
+                ResetMouseRButton();
                 PlayBuffer(SOUND_CLICK01);
                 return false;
             }

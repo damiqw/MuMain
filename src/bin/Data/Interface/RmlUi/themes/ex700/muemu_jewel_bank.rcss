@@ -4,15 +4,15 @@
 @spritesheet jb-x-sheet     { src: "../../../../Custom/Interface/Transcur.tga"; jb-x: 0px 0px 29px 29px; jb-x-hover: 0px 29px 29px 29px; }
 
 /* The rows, buttons and pager, in the window's own units (dp), where CustomJewelBank::DrawJewelBankWindow()
-   drew them: rows from y 40 every 22, the name right-aligned up to x 60, the jewel at 65, the amount box
-   (CheckBox.tga) at 85 and the five withdraw buttons from 120 every 18; the hint at 265 and the pager at
-   75 / 95 / 145, y 275. */
+   drew them, widened to 300 so the names fit: rows from y 40 every 22, the name right-aligned up to x 110,
+   the jewel at 113, the amount box (CheckBox.tga) at 134 and the five withdraw buttons from 182 every 18; the
+   hint at 265 and the pager centred at y 277. */
 #panel {
 	position: absolute;
 	left: 50%;
 	top: 70dp;
 	margin-left: 20dp;
-	width: 226dp;
+	width: 300dp;
 	height: 315dp;
 	color: #ffffff;
 	font-family: "token(font-body)";
@@ -22,7 +22,7 @@
 #jb_title {
 	position: absolute;
 	left: 0;
-	width: 226dp;
+	width: 300dp;
 	text-align: center;
 	color: #ffd23c;
 	font-weight: bold;
@@ -30,31 +30,31 @@
 	cursor: move;
 }
 #jb_close { position: absolute; cursor: pointer; pointer-events: auto; }
-#jb_message { position: absolute; left: 0; top: 120dp; width: 226dp; text-align: center; color: #ffd23c; }
-#jb_rows { position: absolute; left: 0; top: 40dp; width: 226dp; }
+#jb_message { position: absolute; left: 0; top: 120dp; width: 300dp; text-align: center; color: #ffd23c; }
+#jb_rows { position: absolute; left: 0; top: 40dp; width: 300dp; }
 .jb-row { display: block; position: relative; height: 22dp; }
 .jb-name {
 	position: absolute;
-	left: 0;
+	left: 2dp;
 	top: 3dp;
-	width: 60dp;
+	width: 108dp;
 	text-align: right;
 	white-space: nowrap;
 	color: #ffffff;
 }
 .jb-row.empty .jb-name { color: #9a9a9a; }
-.jb-icon { position: absolute; left: 63dp; top: 0dp; width: 18dp; height: 20dp; pointer-events: none; }
+.jb-icon { position: absolute; left: 113dp; top: 0dp; width: 18dp; height: 20dp; pointer-events: none; }
 .jb-count {
 	position: absolute;
-	left: 85dp;
+	left: 134dp;
 	top: 2dp;
-	width: 32dp;
+	width: 44dp;
 	height: 16dp;
 	decorator: image(jb-count);
 }
 .jb-count-text {
 	display: block;
-	width: 30dp;
+	width: 42dp;
 	line-height: 16dp;
 	text-align: right;
 	color: #ffd23c;
@@ -62,7 +62,7 @@
 	white-space: nowrap;
 }
 .jb-row.empty .jb-count-text { color: #9a9a9a; }
-.jb-buttons { position: absolute; left: 120dp; top: 2dp; width: 90dp; height: 16dp; }
+.jb-buttons { position: absolute; left: 182dp; top: 2dp; width: 100dp; height: 16dp; }
 .jb-btn {
 	display: inline-block;
 	width: 16dp;
@@ -79,7 +79,7 @@
 	pointer-events: auto;
 }
 .jb-btn:hover { color: #ffd23c; background-color: rgba(70, 58, 30, 240); }
-#jb_hint { position: absolute; left: 0; top: 265dp; width: 226dp; text-align: center; color: #3cff3c; font-weight: bold; }
+#jb_hint { position: absolute; left: 0; top: 265dp; width: 300dp; text-align: center; color: #3cff3c; font-weight: bold; }
 #jb_prev, #jb_next {
 	position: absolute;
 	top: 277dp;
@@ -92,12 +92,12 @@
 	cursor: pointer;
 	pointer-events: auto;
 }
-#jb_prev { left: 75dp; }
-#jb_next { left: 145dp; }
+#jb_prev { left: 100dp; }
+#jb_next { left: 180dp; }
 #jb_prev:hover, #jb_next:hover { color: #ffffff; }
 #jb_page {
 	position: absolute;
-	left: 95dp;
+	left: 125dp;
 	top: 277dp;
 	width: 50dp;
 	height: 18dp;
@@ -115,5 +115,5 @@
 #panel { decorator: image(jb-popup); }
 #jb_frame_top, #jb_frame_body { display: none; }
 #jb_title { top: 19dp; }
-#jb_close { left: 205dp; top: 21dp; width: 14dp; height: 16dp; decorator: image(jb-x); }
+#jb_close { left: 279dp; top: 21dp; width: 14dp; height: 16dp; decorator: image(jb-x); }
 #jb_close:hover { decorator: image(jb-x-hover); }
