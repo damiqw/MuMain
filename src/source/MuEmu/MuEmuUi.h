@@ -62,7 +62,7 @@ namespace TrayMode
 void Toggle();
 bool IsHidden();
 #ifdef _WIN32
-// The game window's Win32 messages: F12 and the icon's own. True when the message was the tray's.
+// The game window's Win32 messages: F12. True when the message was the tray's.
 bool HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 // Takes the icon away (on exit).
