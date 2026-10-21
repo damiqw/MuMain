@@ -377,7 +377,7 @@
    y 429, AG x 395-465 y 429). */
 .gauge-num.value-current { display: none; }
 .gauge-num.value-full { display: block; }
-.gauge-num { transform: none; font-size: 10dp; line-height: 11dp; }
+.gauge-num { transform: none; font-size: 10dp; line-height: 11dp; font-weight: normal; }
 #bar_hp .gauge-num { left: -5.5dp; top: 29.5dp; width: 70dp; }
 #bar_mp .gauge-num { left: -0.5dp; top: 29dp;   width: 70dp; }
 #bar_sd .gauge-num { left: 0dp;    top: 0dp;    width: 65dp; font-size: 8dp; line-height: 9.4dp; }

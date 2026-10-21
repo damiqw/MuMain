@@ -337,9 +337,11 @@ bool MuEmu::Ui::ItemColor::Tint(int characterKey, int slot, float* light)
     const auto color = player->second.find(slot);
     if (color == player->second.end())
         return false;
-    light[0] *= color->second.r / 255.f;
-    light[1] *= color->second.g / 255.f;
-    light[2] *= color->second.b / 255.f;
+    // Como Main.dll (HookRenderPartObjectBody): la luz de la pieza ES el color, sin la del lugar, asi se ve
+    // vivo de dia y de noche.
+    light[0] = color->second.r / 255.f;
+    light[1] = color->second.g / 255.f;
+    light[2] = color->second.b / 255.f;
     return true;
 }
 

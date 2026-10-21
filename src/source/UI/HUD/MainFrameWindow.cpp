@@ -512,15 +512,19 @@ void mu::ui::window::CMainFrameWindow::SyncRmlModel()
     syncBool(&MainFrameRmlModel::poisoned, "poisoned", g_isCharacterBuff((&Hero->Object), eDeBuff_Poison));
 
     // "X / Y" (current/max), not just "X" -- shared model field, both themes.
-    wchar_t szNum[32] = {};
-    mu_swprintf(szNum, L"%d / %d", wLife, wLifeMax);
-    syncWide(&MainFrameRmlModel::hpText, "hp_text", szNum);
-    mu_swprintf(szNum, L"%d / %d", wMana, wManaMax);
-    syncWide(&MainFrameRmlModel::mpText, "mp_text", szNum);
-    mu_swprintf(szNum, L"%d", wLife);
-    syncWide(&MainFrameRmlModel::hpCurrentText, "hp_current_text", szNum);
-    mu_swprintf(szNum, L"%d", wMana);
-    syncWide(&MainFrameRmlModel::mpCurrentText, "mp_current_text", szNum);
+    // MuEmu (fork): thousands grouped with '.' (1.848 / 16.871), as the MuEmu servers' clients show them.
+    const auto grouped = [](long long value)
+    {
+        std::wstring digits = std::to_wstring(value < 0 ? -value : value);
+        for (int at = static_cast<int>(digits.size()) - 3; at > 0; at -= 3)
+            digits.insert(static_cast<std::size_t>(at), 1, L'.');
+        return (value < 0 ? L"-" : L"") + digits;
+    };
+    const auto pair = [&grouped](long long current, long long max) { return grouped(current) + L" / " + grouped(max); };
+    syncWide(&MainFrameRmlModel::hpText, "hp_text", pair(wLife, wLifeMax).c_str());
+    syncWide(&MainFrameRmlModel::mpText, "mp_text", pair(wMana, wManaMax).c_str());
+    syncWide(&MainFrameRmlModel::hpCurrentText, "hp_current_text", grouped(wLife).c_str());
+    syncWide(&MainFrameRmlModel::mpCurrentText, "mp_current_text", grouped(wMana).c_str());
 
     wchar_t szTip[256] = {};
     mu_swprintf(szTip, I18N::Game::LifeDD, wLife, wLifeMax);
@@ -541,10 +545,8 @@ void mu::ui::window::CMainFrameWindow::SyncRmlModel()
         dwSkillMana = std::min<int>(dwMaxSkillMana, CharacterAttribute->SkillMana);
     }
     syncFloat(&MainFrameRmlModel::agFraction, "ag_fraction", dwSkillMana / (float)dwMaxSkillMana);
-    mu_swprintf(szNum, L"%d / %d", dwSkillMana, dwMaxSkillMana);
-    syncWide(&MainFrameRmlModel::agText, "ag_text", szNum);
-    mu_swprintf(szNum, L"%d", dwSkillMana);
-    syncWide(&MainFrameRmlModel::agCurrentText, "ag_current_text", szNum);
+    syncWide(&MainFrameRmlModel::agText, "ag_text", pair(dwSkillMana, dwMaxSkillMana).c_str());
+    syncWide(&MainFrameRmlModel::agCurrentText, "ag_current_text", grouped(dwSkillMana).c_str());
     mu_swprintf(szTip, I18N::Game::AGDD, dwSkillMana, dwMaxSkillMana);
     syncWide(&MainFrameRmlModel::agTooltip, "ag_tooltip", szTip);
 
@@ -561,10 +563,8 @@ void mu::ui::window::CMainFrameWindow::SyncRmlModel()
         wShield = std::min<int>(wMaxShield, CharacterAttribute->Shield);
     }
     syncFloat(&MainFrameRmlModel::sdFraction, "sd_fraction", wShield / (float)wMaxShield);
-    mu_swprintf(szNum, L"%d / %d", wShield, wMaxShield);
-    syncWide(&MainFrameRmlModel::sdText, "sd_text", szNum);
-    mu_swprintf(szNum, L"%d", wShield);
-    syncWide(&MainFrameRmlModel::sdCurrentText, "sd_current_text", szNum);
+    syncWide(&MainFrameRmlModel::sdText, "sd_text", pair(wShield, wMaxShield).c_str());
+    syncWide(&MainFrameRmlModel::sdCurrentText, "sd_current_text", grouped(wShield).c_str());
     mu_swprintf(szTip, I18N::Game::SDDD, wShield, wMaxShield);
     syncWide(&MainFrameRmlModel::sdTooltip, "sd_tooltip", szTip);
 
