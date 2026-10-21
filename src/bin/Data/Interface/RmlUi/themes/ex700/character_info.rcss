@@ -217,6 +217,9 @@
 #name { top: 22px; }
 .summary-fill { left: 12px; right: 13px; top: 76px; height: 92px; }
 
+/* The classic tab button (MU Helper's Hunting/Obtaining/Other tabs, newui_guild_tab04: 56x22, the same
+   proportions as these 43x17 buttons), lit on hover like the active tab. */
+@spritesheet chainfo-ex-btn-sheet { src: "../../../newui_guild_tab04.tga"; chainfo-ex-btn-up: 0px 0px 56px 22px; chainfo-ex-btn-on: 0px 22px 56px 22px; }
 .ex-btn {
 	position: absolute;
 	top: 53px;
@@ -224,9 +227,7 @@
 	height: 17px;
 	cursor: pointer;
 	pointer-events: auto;
-	background-color: rgba(0, 0, 0, 170);
-	border-width: 1px;
-	border-color: #8a7444;
+	decorator: image(chainfo-ex-btn-up);
 }
 .ex-btn.locked { filter: brightness(0.6); }
 .ex-btn-quest { left: 5px; }
@@ -240,7 +241,7 @@
 	text-align: center;
 	font-size: 9px;
 	font-weight: bold;
-	color: #ffd23c;
+	color: token(text-muted);
 	pointer-events: none;
 }
 
@@ -281,7 +282,8 @@
 .ex-line.after-divider { top: calc(8px * var(--root-scale)); }
 .ex-value { left: calc(80px * var(--root-scale)); }
 .ex-note { left: calc(118px * var(--root-scale)); }
-.ex-btn:hover { background-color: rgba(70, 60, 30, 220); }
+.ex-btn:hover { decorator: image(chainfo-ex-btn-on); }
+.ex-btn:hover .ex-btn-label { color: token(text-primary); }
 .summary-fill { background-color: rgba(0, 0, 0, 110); }
 
 /* =====================================================================================================
@@ -421,6 +423,7 @@
 .ex-btn-advanced { left: 50px; }
 .ex-btn:hover { background-color: transparent; }
 .ex-btn-label { width: 43px; line-height: 17px; font-size: 9px; color: #ffffff; font-weight: bold; }
+.ex-btn:hover .ex-btn-label { color: #ffffff; }
 .ex-summary { left: 20px; top: 80px; }
 .ex-line { height: calc(11px * var(--root-scale)); }
 .ex-line.after-divider { top: calc(8px * var(--root-scale)); }
