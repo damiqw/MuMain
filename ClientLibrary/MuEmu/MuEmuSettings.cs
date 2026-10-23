@@ -83,12 +83,22 @@ internal sealed class MuEmuSettings
         try
         {
             var path = Path.Combine(AppContext.BaseDirectory, "config.ini");
-            if (!File.Exists(path))
+            var values = File.Exists(path)
+                ? ReadSection(path, SectionName)
+                : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            // Data/Local/SvenInfo.bmd (GetMainInfo_SVEN) wins over config.ini: the customer name and the serial
+            // of the XOR layer are not left in plain text for the player.
+            foreach (var (key, value) in ReadSvenInfoSection(SectionName))
+            {
+                values[key] = value;
+            }
+
+            if (values.Count == 0)
             {
                 return settings;
             }
 
-            var values = ReadSection(path, SectionName);
             settings.Enabled = GetInt(values, "Enabled") == 1;
             if (!settings.Enabled)
             {
@@ -186,11 +196,75 @@ internal sealed class MuEmuSettings
         return int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : 0;
     }
 
+    /// <summary>
+    /// Reads a section of the <c>SvenInfo.ini</c> entry of <c>Data/Local/SvenInfo.bmd</c>: "SVEN" and the format
+    /// version in clear, then the rest encrypted like Main.bmd (xor 0xDA^LOBYTE(n), minus 0x95^HIBYTE(n)): the
+    /// number of entries and, for each, its name (WORD length + text) and its data (DWORD length + bytes).
+    /// </summary>
+    private static Dictionary<string, string> ReadSvenInfoSection(string section)
+    {
+        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var path = Path.Combine(AppContext.BaseDirectory, "Data", "Local", "SvenInfo.bmd");
+        if (!File.Exists(path))
+        {
+            return result;
+        }
+
+        var data = File.ReadAllBytes(path);
+        if (data.Length < 12 || Encoding.ASCII.GetString(data, 0, 4) != "SVEN" || BitConverter.ToUInt32(data, 4) != 1)
+        {
+            return result;
+        }
+
+        var body = new byte[data.Length - 8];
+        for (var n = 0; n < body.Length; n++)
+        {
+            var value = (byte)(data[n + 8] + (0x95 ^ ((n >> 8) & 0xFF)));
+            body[n] = (byte)(value ^ (0xDA ^ (n & 0xFF)));
+        }
+
+        var at = 4;
+        var count = BitConverter.ToUInt32(body, 0);
+        for (var entry = 0; entry < count && at + 2 <= body.Length; entry++)
+        {
+            int nameLength = BitConverter.ToUInt16(body, at);
+            at += 2;
+            if (at + nameLength + 4 > body.Length)
+            {
+                break;
+            }
+
+            var name = Encoding.Latin1.GetString(body, at, nameLength);
+            at += nameLength;
+            var length = (int)BitConverter.ToUInt32(body, at);
+            at += 4;
+            if (length < 0 || at + length > body.Length)
+            {
+                break;
+            }
+
+            if (string.Equals(name, "SvenInfo.ini", StringComparison.OrdinalIgnoreCase))
+            {
+                var lines = Encoding.Latin1.GetString(body, at, length).Split('\n');
+                return ParseSection(lines, section);
+            }
+
+            at += length;
+        }
+
+        return result;
+    }
+
     private static Dictionary<string, string> ReadSection(string path, string section)
+    {
+        return ParseSection(File.ReadAllLines(path), section);
+    }
+
+    private static Dictionary<string, string> ParseSection(IEnumerable<string> lines, string section)
     {
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var inSection = false;
-        foreach (var rawLine in File.ReadAllLines(path))
+        foreach (var rawLine in lines)
         {
             var line = rawLine.Trim();
             if (line.Length == 0 || line[0] == ';' || line[0] == '#')
