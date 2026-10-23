@@ -145,6 +145,13 @@ void Frame();
 bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
 } // namespace MuEmu::Ui::Ping
 
+namespace MuEmu::Ui::Evidence
+{
+// Evidencia de hack (HackCheck.cpp de Main.dll): al pedido C1 FB 75 del servidor contesta C2 FB 76 (ventanas,
+// DLL y procesos sospechosos) y, si es manual, la lista de procesos en C2 FB 77.
+bool Receive(uint8_t head, uint8_t sub, const uint8_t* buffer, int size);
+} // namespace MuEmu::Ui::Evidence
+
 namespace MuEmu::Ui::QuickStats
 {
 // Sumar puntos rapido (CustomQuickAddStats de Main.dll): C1 FF 0C.

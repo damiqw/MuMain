@@ -2061,6 +2061,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int nC
         g_ServerPort = GameConfig::GetInstance().GetServerPort();
     }
 
+    // MuEmu: un solo cliente abierto por PC (Main.dll CheckInstance).
+    if (!MuEmu::Ui::CheckSingleInstance(szServerIpAddress))
+    {
+        return 0;
+    }
+
     // #ifdef _DEBUG
 
     m_Username[0] = '\0';

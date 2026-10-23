@@ -89,7 +89,7 @@ bool MuEmu::Ui::Receive(const uint8_t* buffer, int size)
            Ruud::Receive(head, sub, buffer, size) || ItemColor::Receive(head, sub, buffer, size) ||
            StatsAdvance::Receive(head, sub, buffer, size) || Ping::Receive(head, sub, buffer, size) ||
            Register::Receive(head, sub, buffer, size) || PartyInfo::Receive(head, sub, buffer, size) ||
-           MiniMapInfo::Receive(head, sub, buffer, size);
+           MiniMapInfo::Receive(head, sub, buffer, size) || Evidence::Receive(head, sub, buffer, size);
 }
 
 bool MuEmu::Ui::HandleKeys()

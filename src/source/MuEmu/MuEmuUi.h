@@ -55,6 +55,10 @@ void WriteInt(std::vector<uint8_t>& payload, int32_t value);
 std::string FormatNumber(int64_t value);
 // "hh:mm:ss" (o "d h" si pasa de un dia)
 std::string FormatTime(int seconds);
+// Una sola instancia por PC y servidor (CProtect::CheckInstance de Main.dll, mismo mutex). Falso si ya hay un
+// cliente abierto (avisa al jugador); [MuEmu] SingleInstance = 0 lo apaga.
+bool CheckSingleInstance(const wchar_t* serverAddress);
+
 // Main.dll's TrayMode: F12 hides the window to an icon in the notification area; a double click on it
 // brings the window back. Windows only; elsewhere the window is never hidden.
 namespace TrayMode
