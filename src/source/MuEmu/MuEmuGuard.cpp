@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUi.h"
 #include "MuEmu/MuEmuUiFeatures.h"
 
@@ -16,15 +15,12 @@
 extern HWND g_hWnd;
 #endif
 
-// Las protecciones de Main.dll que tienen sentido en el cliente SVEN:
-//  - La evidencia de hack (HackCheck.cpp, GCHackEvidenceRequestRecv): cuando el GameServer detecta algo (speed hack,
-//    latencia, flood) o un GM la pide, manda C1 FB 75 (motivo 64, detalles 128) y el cliente contesta C2 FB 76 con
-//    la ventana activa, las ventanas abiertas, las DLL cargadas fuera de Windows y los procesos sospechosos. En un
-//    pedido manual ("ManualRequest") agrega la lista completa de procesos en partes C2 FB 77. El servidor lo guarda
-//    en Log/HACK_EVIDENCIAS. Mismo formato que Main.dll (estructuras sin empaquetar: FB 76 lleva los dos int en 8 y
-//    12 y el texto en 16; FB 77 lleva parte y total en 5 y 6 y el texto en 7).
-//  - Una sola instancia por PC (CProtect::CheckInstance): el mismo mutex de Main.dll, por servidor, asi tampoco se
-//    abre junto a un cliente original que lo tenga activo. [MuEmu] SingleInstance = 0 lo apaga.
+// La evidencia de hack (HackCheck.cpp, GCHackEvidenceRequestRecv): cuando el GameServer detecta algo (speed hack,
+// latencia, flood) o un GM la pide, manda C1 FB 75 (motivo 64, detalles 128) y el cliente contesta C2 FB 76 con
+// la ventana activa, las ventanas abiertas, las DLL cargadas fuera de Windows y los procesos sospechosos. En un
+// pedido manual ("ManualRequest") agrega la lista completa de procesos en partes C2 FB 77. El servidor lo guarda
+// en Log/HACK_EVIDENCIAS. Mismo formato que Main.dll (estructuras sin empaquetar: FB 76 lleva los dos int en 8 y
+// 12 y el texto en 16; FB 77 lleva parte y total en 5 y 6 y el texto en 7).
 namespace
 {
 #ifdef _WIN32
@@ -326,24 +322,3 @@ bool MuEmu::Ui::Evidence::Receive(uint8_t head, uint8_t sub, const uint8_t* buff
     return true;
 }
 
-bool MuEmu::Ui::CheckSingleInstance(const wchar_t* serverAddress)
-{
-#ifdef _WIN32
-    if (GetConfigInt("SingleInstance", 1) == 0)
-        return true;
-
-    wchar_t name[256];
-    std::swprintf(name, 256, L"XTEAM_MAIN_10405_%ls", serverAddress != nullptr ? serverAddress : L"");
-    // El handle queda abierto hasta que se cierra el juego; Windows lo libera solo.
-    HANDLE mutex = CreateMutexW(nullptr, FALSE, name);
-    if (mutex != nullptr && GetLastError() == ERROR_ALREADY_EXISTS)
-    {
-        CloseHandle(mutex);
-        MessageBoxW(nullptr, L"El juego ya está abierto en esta PC.", L"MU Online", MB_OK | MB_ICONWARNING);
-        return false;
-    }
-#else
-    (void)serverAddress;
-#endif
-    return true;
-}
