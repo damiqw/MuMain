@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuBuff.h"
 
 #include "Core/Text/Utf8.h"
@@ -44,7 +45,9 @@ void Load()
 {
     g_loaded = true;
 
-    std::ifstream file("Data/MuEmu/CustomBuffIcon.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomBuffIcon.txt");
+
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         // Los comentarios empiezan con "//" fuera de las comillas.

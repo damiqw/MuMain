@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MuEmu/MuEmuMenuButton.h"
 
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUi.h"
 #include "UI/RmlBridge/RmlThemedView.h"
 
@@ -41,7 +42,9 @@ MenuButtonView& View()
 
 void MuEmu::MenuButton::Show()
 {
-    if (!View().Ensure())
+    // CustomMenuSwitch de MainInfo.ini (SvenInfo.bmd): sin menu no hay boton.
+    static const bool enabled = GetConfigInt("Menu", 1) != 0;
+    if (!enabled || !View().Ensure())
         return;
 
     Rml::ElementDocument* document = View().Document();

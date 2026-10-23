@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuEffect.h"
 
 #include "MuEmu/MuEmuTexture.h"
@@ -87,7 +88,8 @@ bool g_loaded = false;
 std::vector<std::vector<float>> ReadRows(const char* path, std::size_t minColumns)
 {
     std::vector<std::vector<float>> rows;
-    std::ifstream file(path);
+    const auto fileStream = MuEmu::OpenData(path);
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         const auto comment = line.find("//");
@@ -157,6 +159,10 @@ void LoadModelEffects()
 
 void LoadRunes()
 {
+    // RuneEffect de MainInfo.ini (SvenInfo.bmd): apagado, no se carga ninguna runa.
+    if (MuEmu::GetConfigInt("RuneEffect", 1) == 0)
+        return;
+
     // Active TextureIndex Speed Size R G B FloorDistance
     for (const auto& row : ReadRows("Data/MuEmu/CustomRuneEffect.txt", 8))
     {

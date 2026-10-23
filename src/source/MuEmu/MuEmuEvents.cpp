@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUiFeatures.h"
 
 #include "MuEmu/MuEmuPanel.h"
@@ -81,7 +82,8 @@ std::string StripComment(const std::string& line)
 void LoadEventNames()
 {
     g_namesLoaded = true;
-    std::ifstream file("Data/MuEmu/CustomEventTimeText.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomEventTimeText.txt");
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         line = StripComment(line);
@@ -102,7 +104,9 @@ void LoadCommands()
     static const char* const colors[] = { "#ffffff", "#ffd23c", "#ffffff", "#ff9a3c", "#ff5050",
                                           "#60e060", "#ffff79", "#c080ff" };
 
-    std::ifstream file("Data/MuEmu/CustomCommandInfo.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomCommandInfo.txt");
+
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         line = StripComment(line);

@@ -14,6 +14,7 @@
 #include "Core/Platform/WinIni.h"  // private-profile (.ini) API
 #include "Core/Platform/Dpapi.h"   // Legacy credential format migration
 #include "Core/Platform/PlatformCrypto.h"
+#include "MuEmu/MuEmuTools.h"
 
 GameConfig& GameConfig::GetInstance()
 {
@@ -76,6 +77,21 @@ void GameConfig::Load()
         ReadString(CfgSectionConnectionSettings, CfgKeyServerIP, CfgDefaultServerIP), CfgDefaultServerIP);
     m_serverPort = GameConfigValidation::ValidateServerPort(
         ReadInt(CfgSectionConnectionSettings, CfgKeyServerPort, CfgDefaultServerPort), CfgDefaultServerPort);
+
+    // MuEmu (fork): con Data/Local/SvenInfo.bmd (GetMainInfo_SVEN) la conexion viene de ahi, cifrada, y no queda
+    // en config.ini a la vista del jugador.
+    std::string infoIp;
+    std::string infoPort;
+    if (MuEmu::GetInfoValue("Connection", "IpAddress", infoIp) && !infoIp.empty())
+    {
+        m_connectionFromInfo = true;
+        m_serverIP = std::wstring(infoIp.begin(), infoIp.end());
+        if (MuEmu::GetInfoValue("Connection", "IpAddressPort", infoPort))
+        {
+            m_serverPort = GameConfigValidation::ValidateServerPort(std::atoi(infoPort.c_str()), CfgDefaultServerPort);
+        }
+        RemoveObsoleteSection(CfgSectionConnectionSettings);
+    }
 
     m_chatCommandFavourites = ReadStringList(L"ChatCommands", L"Favourite");
     m_chatCommandTemplates = ReadStringList(L"ChatCommands", L"Template");
@@ -145,8 +161,11 @@ void GameConfig::Save()
     WriteString(CfgSectionLogin, CfgKeyEncryptedUsername, m_encryptedUsername);
     WriteString(CfgSectionLogin, CfgKeyEncryptedPassword, m_encryptedPassword);
 
-    WriteString(CfgSectionConnectionSettings, CfgKeyServerIP, m_serverIP);
-    WriteInt(CfgSectionConnectionSettings, CfgKeyServerPort, m_serverPort);
+    if (!m_connectionFromInfo)
+    {
+        WriteString(CfgSectionConnectionSettings, CfgKeyServerIP, m_serverIP);
+        WriteInt(CfgSectionConnectionSettings, CfgKeyServerPort, m_serverPort);
+    }
 
     WriteStringList(L"ChatCommands", L"Favourite", m_chatCommandFavourites);
     WriteStringList(L"ChatCommands", L"Template", m_chatCommandTemplates);

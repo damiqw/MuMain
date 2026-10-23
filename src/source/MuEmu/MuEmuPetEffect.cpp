@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuPetEffect.h"
 
 #include "MuEmu/MuEmuPet.h"
@@ -68,7 +69,8 @@ int Effect104E(int code)
 std::vector<std::vector<float>> ReadRows(const char* path, std::size_t minColumns)
 {
     std::vector<std::vector<float>> rows;
-    std::ifstream file(path);
+    const auto fileStream = MuEmu::OpenData(path);
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         const auto comment = line.find("//");

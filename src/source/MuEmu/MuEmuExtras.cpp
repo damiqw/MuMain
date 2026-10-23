@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUiFeatures.h"
 
 #include "MuEmu/MuEmuPanel.h"
@@ -457,6 +458,9 @@ bool MuEmu::Ui::ItemColor::Tint(int characterKey, int slot, float* light)
 
 void MuEmu::Ui::StatsAdvance::Open()
 {
+    // DisableAdvanceStatus de MainInfo.ini (SvenInfo.bmd).
+    if (GetConfigInt("StatsAdvance", 1) == 0)
+        return;
     if (g_statsShown)
     {
         Close();

@@ -146,6 +146,11 @@ namespace mu::ui::window
             std::vector<StatLine> eneLines;
 
             bool masterLevelEnabled = false;
+            // MuEmu (fork): the buttons MainInfo.ini leaves on (SvenInfo.bmd: DisableButton...InStats, DisableAdvanceStatus).
+            bool showQuestButton = true;
+            bool showStatsButton = true;
+            bool showPetButton = true;
+            bool showMasterButton = true;
 
             // MuEmu (fork): the summary Main.dll's EX700 window showed (class, resets, level, server, points
             // and fruits), one line each: label, value and an optional note (the fruits' rate).

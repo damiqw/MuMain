@@ -415,6 +415,9 @@ std::filesystem::path GetFlagPath(const char* commandLine, const char* flag, con
 
 int MuEmu::GetConfigInt(const char* key, int defaultValue)
 {
+    if (std::string locked; GetInfoValue("MuEmu", key, locked))
+        return std::atoi(locked.c_str());
+
     std::ifstream stream("config.ini");
     bool inSection = false;
     for (std::string line; std::getline(stream, line);)

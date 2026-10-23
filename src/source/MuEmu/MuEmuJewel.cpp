@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuJewel.h"
 
 #include <fstream>
@@ -57,7 +58,9 @@ void Load()
 {
     g_loaded = true;
 
-    std::ifstream file("Data/MuEmu/CustomJewel.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomJewel.txt");
+
+    std::istream& file = *fileStream;
     int section = -1;
     for (std::string line; std::getline(file, line);)
     {

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "UI/Chat/Chat.h"
 #include "UI/Character/CharacterInfoWindow.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUi.h"
 #include "MuEmu/MuEmuUiFeatures.h"
 #include "UI/Core/WindowSystem.h"
@@ -174,6 +175,15 @@ void mu::ui::window::CCharacterInfoWindow::BindRmlModel(Rml::DataModelConstructo
     c.Bind("ene_lines", &model.eneLines);
 
     c.Bind("master_level_enabled", &model.masterLevelEnabled);
+
+    model.showQuestButton = MuEmu::GetConfigInt("CharQuest", 1) != 0;
+    model.showStatsButton = MuEmu::GetConfigInt("StatsAdvance", 1) != 0;
+    model.showPetButton = MuEmu::GetConfigInt("CharPet", 1) != 0;
+    model.showMasterButton = MuEmu::GetConfigInt("CharMaster", 1) != 0;
+    c.Bind("show_quest_button", &model.showQuestButton);
+    c.Bind("show_stats_button", &model.showStatsButton);
+    c.Bind("show_pet_button", &model.showPetButton);
+    c.Bind("show_master_button", &model.showMasterButton);
 
     c.Bind("exit_tooltip", &model.exitTooltip);
     c.Bind("quest_tooltip", &model.questTooltip);

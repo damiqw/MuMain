@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuPet.h"
 
 #include "Engine/AI/GOBoid.h"
@@ -81,7 +82,8 @@ void EnsureLoaded()
 
     g_loaded = true;
     // ItemIndex IndexInv Type "ModelName" Fenrir Inv Drop View
-    std::ifstream file("Data/MuEmu/CustomPet.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomPet.txt");
+    std::istream& file = *fileStream;
     bool end = false;
     for (std::string line; !end && std::getline(file, line);)
     {

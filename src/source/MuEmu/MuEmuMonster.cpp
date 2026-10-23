@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuMonster.h"
 
 #include "Core/Text/Utf8.h"
@@ -90,7 +91,8 @@ std::wstring ToPath(const std::string& text)
 
 void LoadMonsters()
 {
-    std::ifstream file("Data/MuEmu/CustomMonster.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomMonster.txt");
+    std::istream& file = *fileStream;
     int nextModel = FirstFreeModel;
     bool inSection = false;
     for (std::string line; std::getline(file, line);)
@@ -133,7 +135,8 @@ void LoadMonsters()
 
 void LoadNpcNames()
 {
-    std::ifstream file("Data/MuEmu/CustomNPCName.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomNPCName.txt");
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         line = StripComment(line);

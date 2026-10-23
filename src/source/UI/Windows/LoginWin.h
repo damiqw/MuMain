@@ -129,6 +129,7 @@ private:
     {
         bool rememberMeChecked = false;
         bool savePasswordChecked = false;
+        bool registerEnabled = true; // MuEmu (fork): CreateAccount de MainInfo.ini (SvenInfo.bmd)
         Rml::String serverName;
         // Synced from I18N::Game::* slots to keep these localization-correct.
         Rml::String accountLabel;

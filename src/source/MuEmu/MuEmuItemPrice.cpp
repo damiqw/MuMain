@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuItemPrice.h"
 
 #include <fstream>
@@ -67,7 +68,9 @@ void Load()
 {
     g_loaded = true;
 
-    std::ifstream file("Data/MuEmu/ItemValue.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/ItemValue.txt");
+
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         const auto comment = line.find("//");

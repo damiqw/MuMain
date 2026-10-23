@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuItemGlow.h"
 
 #include <cstdlib>
@@ -40,7 +41,8 @@ std::vector<float> ReadNumbers(std::string line)
 // CustomItem y CustomFlag: indice y R G B (el nombre del modelo o de la bandera va entre comillas).
 void LoadFile(const char* path)
 {
-    std::ifstream file(path);
+    const auto fileStream = MuEmu::OpenData(path);
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         const std::vector<float> values = ReadNumbers(line);

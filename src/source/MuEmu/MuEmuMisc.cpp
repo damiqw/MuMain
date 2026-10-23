@@ -293,6 +293,8 @@ bool MuEmu::Ui::QuickStats::IsShown()
 
 void MuEmu::Ui::Register::Open()
 {
+    if (GetConfigInt("CreateAccount", 1) == 0)
+        return;
     g_register = {};
     ShowRegister();
 }

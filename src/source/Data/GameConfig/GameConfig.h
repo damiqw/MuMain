@@ -198,6 +198,7 @@ private:
 
     std::wstring m_serverIP;
     int m_serverPort;
+    bool m_connectionFromInfo = false; // MuEmu (fork): IP y puerto de SvenInfo.bmd, no se guardan en config.ini
 
     std::wstring m_uiLocale;
     std::wstring m_fontSelection;

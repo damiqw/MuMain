@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuServerInfo.h"
 
 #include "Core/Text/Utf8.h"
@@ -24,7 +25,9 @@ void Load()
 {
     g_loaded = true;
 
-    std::ifstream file("Data/MuEmu/CustomServerInfo.txt");
+    const auto fileStream = MuEmu::OpenData("Data/MuEmu/CustomServerInfo.txt");
+
+    std::istream& file = *fileStream;
     for (std::string line; std::getline(file, line);)
     {
         const auto comment = line.find("//");

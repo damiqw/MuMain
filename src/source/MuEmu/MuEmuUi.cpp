@@ -3,6 +3,7 @@
 
 #include "MuEmu/MuEmuMenuButton.h"
 #include "MuEmu/MuEmuPanel.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuUiFeatures.h"
 
 #include "Network/Server/WSclient.h"
@@ -101,13 +102,13 @@ bool MuEmu::Ui::HandleKeys()
         Toggle(PartyMenuId, ShowPartyMenu);
         return true;
     }
-    if (mu::ui::window::IsPress('H'))
+    if (mu::ui::window::IsPress('H') && GetConfigInt("MenuEvents", 1) != 0)
     {
         mu::log::Get("ui")->info("[MuEmu] H: horarios de eventos");
         Toggle("events", Events::Open);
         return true;
     }
-    if (mu::ui::window::IsPress('J'))
+    if (mu::ui::window::IsPress('J') && GetConfigInt("MenuJewelBank", 1) != 0)
     {
         mu::log::Get("ui")->info("[MuEmu] J: banco de joyas");
         Toggle("jewel_bank", Bank::OpenJewelBank);
@@ -141,29 +142,34 @@ void MuEmu::Ui::ShowMenu()
     Panel::Content content;
     content.title = "Menu";
 
+    // switchKey: el interruptor de MainInfo.ini (SvenInfo.bmd o [MuEmu] de config.ini); nullptr = siempre.
     const struct
     {
         const char* label;
         int action;
+        const char* switchKey;
     } entries[] = {
-        { "Event Timer", MenuEvents },
-        { "Jewel Bank", MenuJewelBank },
-        { "Commands Info", MenuCommands },
-        { "Daily Reward", MenuDaily },
-        { "Custom Ranking", MenuRanking },
-        { "Invasiones", MenuInvasion },
-        { "Medidor de dano", MenuDps },
-        { "Items publicados", MenuPostItem },
-        { "Buy Vip", MenuVip },
-        { "AntiLag", MenuAntiLag },
-        { "Lucky Wheel", MenuWheel },
-        { "XShop", MenuXShop },
-        { "Banderas", MenuFlag },
-        { "Stats avanzados", MenuStatsAdvance },
-        { "Sumar puntos", MenuQuickStats },
+        { "Event Timer", MenuEvents, "MenuEvents" },
+        { "Jewel Bank", MenuJewelBank, "MenuJewelBank" },
+        { "Commands Info", MenuCommands, "MenuCommands" },
+        { "Daily Reward", MenuDaily, "MenuDaily" },
+        { "Custom Ranking", MenuRanking, "MenuRanking" },
+        { "Invasiones", MenuInvasion, "MenuInvasion" },
+        { "Medidor de dano", MenuDps, nullptr },
+        { "Items publicados", MenuPostItem, nullptr },
+        { "Buy Vip", MenuVip, "MenuVip" },
+        { "AntiLag", MenuAntiLag, "MenuAntiLag" },
+        { "Lucky Wheel", MenuWheel, "MenuWheel" },
+        { "XShop", MenuXShop, "MenuXShop" },
+        { "Banderas", MenuFlag, "MenuFlag" },
+        { "Stats avanzados", MenuStatsAdvance, "StatsAdvance" },
+        { "Sumar puntos", MenuQuickStats, nullptr },
     };
     for (const auto& entry : entries)
-        content.buttons.push_back({ entry.label, entry.action });
+    {
+        if (entry.switchKey == nullptr || GetConfigInt(entry.switchKey, 1) != 0)
+            content.buttons.push_back({ entry.label, entry.action });
+    }
 
     Panel::Show(MenuId, std::move(content), [](int action)
     {

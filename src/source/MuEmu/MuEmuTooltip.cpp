@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "MuEmu/MuEmuTools.h"
 #include "MuEmu/MuEmuTooltip.h"
 
 #include "Core/Text/Utf8.h"
@@ -86,7 +87,9 @@ void Load()
 {
     g_loaded = true;
 
-    std::ifstream texts("Data/MuEmu/CustomItemTooltipText.txt");
+    const auto textsStream = MuEmu::OpenData("Data/MuEmu/CustomItemTooltipText.txt");
+
+    std::istream& texts = *textsStream;
     for (std::string line; std::getline(texts, line);)
     {
         line = StripComment(line);
@@ -97,7 +100,9 @@ void Load()
             g_texts[index] = Core::Text::FromUtf8(text);
     }
 
-    std::ifstream tooltips("Data/MuEmu/CustomItemToolTip.txt");
+    const auto tooltipsStream = MuEmu::OpenData("Data/MuEmu/CustomItemToolTip.txt");
+
+    std::istream& tooltips = *tooltipsStream;
     for (std::string line; std::getline(tooltips, line);)
     {
         line = StripComment(line);

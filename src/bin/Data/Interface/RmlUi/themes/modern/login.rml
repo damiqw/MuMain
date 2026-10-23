@@ -95,7 +95,7 @@
 			</div>
 		</div>
 		<!-- MuEmu (fork): Main.dll's account registration (LoginWin.cpp, login_register). -->
-		<div class="quick-register" data-event-click="login_register">Crear cuenta</div>
+		<div class="quick-register" data-if="register_enabled" data-event-click="login_register">Crear cuenta</div>
 	</div>
 </body>
 </rml>

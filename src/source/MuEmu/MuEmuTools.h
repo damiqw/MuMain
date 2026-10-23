@@ -1,5 +1,9 @@
 #pragma once
 
+#include <istream>
+#include <memory>
+#include <string>
+
 // Herramientas de linea de comandos para servidores MuEmu (ver docs/muemu/README.md).
 namespace MuEmu
 {
@@ -9,8 +13,14 @@ namespace MuEmu
 //                                     GetMainInfo (CustomItem, CustomJewel, CustomPet, CustomFlag). Por defecto MAIN_INFO/Custom.
 bool RunCommandLineTool(const char* commandLine);
 
-// Lee un entero de la seccion [MuEmu] de config.ini (junto a Main.exe); defaultValue si no esta.
+// Lee un entero de la seccion [MuEmu]: el de SvenInfo.bmd si lo trae (el jugador no lo puede cambiar), si no
+// el de config.ini (junto a Main.exe); defaultValue si no esta.
 int GetConfigInt(const char* key, int defaultValue);
+// Data/Local/SvenInfo.bmd (GetMainInfo_SVEN.exe): un valor de la seccion indicada ([Connection] o [MuEmu]).
+// Falso si no hay archivo o no trae la clave. Los de [MuEmu] mandan sobre config.ini (ver GetConfigInt).
+bool GetInfoValue(const char* section, const char* key, std::string& value);
+// Abre un archivo custom ("Data/MuEmu/CustomItem.txt"): el de SvenInfo.bmd si lo trae, si no el del disco.
+std::unique_ptr<std::istream> OpenData(const char* path);
 // Guarda un entero en la seccion [MuEmu] de config.ini (reemplaza la clave o la agrega al final de la seccion).
 void SetConfigInt(const char* key, int value);
 } // namespace MuEmu

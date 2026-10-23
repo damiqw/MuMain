@@ -2155,8 +2155,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int nC
 
     const SDL_WindowFlags windowFlags = Core::Platform::BuildSDLWindowFlags(g_bUseWindowMode != TRUE, false);
 
-    g_sdlWindow =
-        SDL_CreateWindow("MU Online", static_cast<int>(WindowWidth), static_cast<int>(WindowHeight), windowFlags);
+    // MuEmu (fork): el nombre de la ventana de MainInfo.ini (SvenInfo.bmd), como Main.dll.
+    std::string windowTitle = "MU Online";
+    if (std::string infoTitle; MuEmu::GetInfoValue("Connection", "WindowName", infoTitle) && !infoTitle.empty())
+    {
+        windowTitle = infoTitle;
+    }
+    g_sdlWindow = SDL_CreateWindow(windowTitle.c_str(), static_cast<int>(WindowWidth), static_cast<int>(WindowHeight),
+                                   windowFlags);
     if (!g_sdlWindow)
     {
         g_ErrorReport.Write(L"> SDL_CreateWindow failed.\r\n");
