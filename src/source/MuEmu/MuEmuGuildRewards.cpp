@@ -4,6 +4,8 @@
 #include "MuEmu/MuEmuPanel.h"
 #include "MuEmu/MuEmuUi.h"
 
+#include "Core/Utilities/Log/MuLogger.h"
+
 #include <cstdio>
 #include <cstring>
 #include <iterator>
@@ -208,6 +210,8 @@ bool MuEmu::Ui::GuildRewards::Receive(uint8_t head, uint8_t sub, const uint8_t* 
 {
     if (head != 0xFF || buffer[0] != 0xC2)
         return false;
+
+    mu::log::Get("ui")->info("[MuEmu] GuildRewards: C2 FF {:02X} ({} bytes)", sub, size);
 
     if (sub == 0x30)
     {

@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "Core/Utilities/Log/MuLogger.h"
 #include "Guild/GuildTypes.h"
 #include "Core/Input/KeyState.h"
 #include "Core/Platform/Imm.h"
@@ -1539,6 +1540,8 @@ void Action(CHARACTER* c, OBJECT* o, bool Now)
 			// === Rozpoznanie napotkanego NPC ===
 			const int npcIndex = 205;
 			const int monsterIndex = CharactersClient[TargetNpc].MonsterIndex;
+			// MuEmu (fork): a que NPC se le habla (diagnostico de los NPC custom del servidor).
+			mu::log::Get("ui")->info("[MuEmu] Hablar con NPC {} (key {})", monsterIndex, CharactersClient[TargetNpc].Key);
 
 			if (monsterIndex >= npcIndex)
 			{
