@@ -23,6 +23,15 @@
 #include <optional>
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL.h>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h> // IsWindowVisible/IsIconic (RecoverStalledSwapchain)
+#endif
 #if __has_include(<SDL3_ttf/SDL_ttf.h>)
 #include <SDL3_ttf/SDL_ttf.h>
 #define MU_HAS_SDL_TTF 1
@@ -295,6 +304,19 @@ static SDL_Window* s_window = nullptr;
 
     return SDL_GPU_PRESENTMODE_IMMEDIATE;
 }
+
+// The present mode the swapchain was last built with (SetVSyncEnabled), to rebuild it the same way.
+static SDL_GPUPresentMode s_presentModeInUse = SDL_GPU_PRESENTMODE_VSYNC;
+
+// Frames in a row without a swapchain texture while the window is on screen, and when the swapchain was last
+// rebuilt for that. After a minimize (or a few seconds in the background) Vulkan could keep handing back no
+// texture with the window restored, so every frame was skipped and the picture froze although the game ran on.
+static int s_framesWithoutSwapchain = 0;
+static Uint64 s_lastSwapchainRecoveryTicks = 0;
+constexpr int SwapchainStallFrames = 60;
+constexpr Uint64 SwapchainRecoveryIntervalMs = 2000;
+
+static void RecoverStalledSwapchain();
 
 [[nodiscard]] static const char* PresentModeName(SDL_GPUPresentMode mode)
 {
@@ -2216,8 +2238,10 @@ public:
             // renders; its consumer decides how long to wait.
             SDL_CancelGPUCommandBuffer(s_cmdBuf);
             s_cmdBuf = nullptr;
+            RecoverStalledSwapchain();
             return;
         }
+        s_framesWithoutSwapchain = 0;
 
         // Fog/alpha uniform is now pushed per-draw-call via
         // SDL_PushGPUFragmentUniformData — no copy pass needed here.
@@ -3635,8 +3659,10 @@ public:
         }
 
         const SDL_GPUPresentMode presentMode = enabled ? SDL_GPU_PRESENTMODE_VSYNC : PickUncappedPresentMode();
+        s_presentModeInUse = presentMode;
         if (!SDL_SetGPUSwapchainParameters(s_device, s_window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, presentMode))
         {
+            s_presentModeInUse = SDL_GPU_PRESENTMODE_VSYNC;
             mu::log::Get("render")->warn("SDL_gpu -- failed to set {} present mode: {}", PresentModeName(presentMode),
                                          SDL_GetError());
             // Vulkan keeps the failed mode and has already destroyed the old swapchain, so build one in
@@ -7274,6 +7300,54 @@ void WaitForSDLGpuIdle()
 void ShutdownSDLGpuRenderer()
 {
     MuRendererSDLGpu::Shutdown();
+}
+
+// No swapchain texture is normal while the window is minimized or hidden, and for a single frame now and then.
+// For a second in a row with the window on screen, the swapchain is stuck: bring SDL's idea of the window in
+// line with Windows' and rebuild the swapchain (after the GPU is idle, so no frame in flight keeps its fence).
+static void RecoverStalledSwapchain()
+{
+    if (s_device == nullptr || s_window == nullptr)
+        return;
+
+    const SDL_WindowFlags flags = SDL_GetWindowFlags(s_window);
+    bool onScreen = (flags & (SDL_WINDOW_MINIMIZED | SDL_WINDOW_HIDDEN)) == 0;
+#ifdef _WIN32
+    HWND hwnd = static_cast<HWND>(
+        SDL_GetPointerProperty(SDL_GetWindowProperties(s_window), SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr));
+    const bool winVisible = hwnd != nullptr && IsWindowVisible(hwnd) && !IsIconic(hwnd);
+    onScreen = onScreen || winVisible;
+#endif
+    if (!onScreen)
+    {
+        s_framesWithoutSwapchain = 0;
+        return;
+    }
+
+    if (++s_framesWithoutSwapchain < SwapchainStallFrames)
+        return;
+    const Uint64 now = SDL_GetTicks();
+    if (s_lastSwapchainRecoveryTicks != 0 && now - s_lastSwapchainRecoveryTicks < SwapchainRecoveryIntervalMs)
+        return;
+    s_lastSwapchainRecoveryTicks = now;
+    s_framesWithoutSwapchain = 0;
+
+    mu::log::Get("render")->warn("SDL_gpu -- no swapchain texture for {} frames with the window on screen (SDL flags "
+                                 "0x{:x}); rebuilding the swapchain",
+                                 SwapchainStallFrames, static_cast<unsigned long long>(flags));
+
+    // SDL still thinks the window is minimized or hidden while Windows shows it: tell SDL.
+    if (flags & SDL_WINDOW_MINIMIZED)
+        SDL_RestoreWindow(s_window);
+    if (flags & SDL_WINDOW_HIDDEN)
+        SDL_ShowWindow(s_window);
+
+    SDL_WaitForGPUIdle(s_device);
+    if (!SDL_SetGPUSwapchainParameters(s_device, s_window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, s_presentModeInUse) &&
+        !SDL_SetGPUSwapchainParameters(s_device, s_window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC))
+    {
+        mu::log::Get("render")->error("SDL_gpu -- swapchain rebuild failed: {}", SDL_GetError());
+    }
 }
 
 } // namespace mu
