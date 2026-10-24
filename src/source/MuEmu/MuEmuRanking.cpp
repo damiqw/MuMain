@@ -11,7 +11,9 @@
 #include "Engine/Object/ZzzCharacter.h"
 #include "Engine/Object/ZzzInfomation.h"
 #include "Engine/Object/ZzzInterface.h"
+#include "Render/Terrain/ZzzLodTerrain.h"
 #include "Render/Text/CUIRenderText.h"
+#include "UI/Core/WindowCommon.h"
 #include "Render/Textures/ZzzOpenglUtil.h"
 
 #include <algorithm>
@@ -162,9 +164,45 @@ void RenderLine(int x, int y, const std::string& text, BYTE r, BYTE g, BYTE b)
     g_pRenderText->RenderText(x, y, wide.c_str(), 0, 0, RT3_WRITE_CENTER);
 }
 
+// Los interruptores de CustomRankUser de MainInfo.ini (SvenInfo.bmd o [MuEmu] de config.ini). Sin archivo, todo
+// visible como hasta ahora.
+struct RankSwitches
+{
+    int type = 0;            // RankUserType: 4 = solo el rango sobre la cabeza, sin los datos del jugador
+    bool overHead = true;    // RankUserShowOverHead: el rango sobre la cabeza de cada jugador
+    bool needAlt = false;    // RankUserNeedAltKey: los datos del jugador solo con Alt apretado
+    bool safeZone = false;   // RankUserOnlyOnSafeZone: solo de los jugadores en zona segura
+    bool showReset = true;   // RankUserShowReset
+    bool showMasterReset = true; // RankUserShowMasterReset
+};
+
+const RankSwitches& Switches()
+{
+    static const RankSwitches switches = []
+    {
+        RankSwitches s;
+        s.type = MuEmu::GetConfigInt("RankType", 0);
+        s.overHead = MuEmu::GetConfigInt("RankOverHead", 1) != 0;
+        s.needAlt = MuEmu::GetConfigInt("RankNeedAlt", 0) != 0;
+        s.safeZone = MuEmu::GetConfigInt("RankSafeZone", 0) != 0;
+        s.showReset = MuEmu::GetConfigInt("RankShowReset", 1) != 0;
+        s.showMasterReset = MuEmu::GetConfigInt("RankShowMasterReset", 1) != 0;
+        return s;
+    }();
+    return switches;
+}
+
+bool InSafeZone(const OBJECT* o)
+{
+    const int x = static_cast<int>(o->Position[0] / TERRAIN_SCALE);
+    const int y = static_cast<int>(o->Position[1] / TERRAIN_SCALE);
+    return (TerrainWall[TERRAIN_INDEX_REPEAT(x, y)] & TW_SAFEZONE) == TW_SAFEZONE;
+}
+
 // El rango sobre cada jugador y, en el seleccionado, su nivel, resets y VIP (como CustomRankUser).
 void RenderRankUsers()
 {
+    const RankSwitches& switches = Switches();
     for (const auto& [key, user] : g_rankUsers)
     {
         const int index = FindCharacterIndex(key);
@@ -176,19 +214,27 @@ void RenderRankUsers()
         if (o->Type != MODEL_PLAYER || !IsVisible(o, c))
             continue;
 
+        if (switches.safeZone && !InSafeZone(o))
+            continue;
+
         int x = 0;
         int y = 0;
         if (!ToScreen(o, 150.f, x, y))
             continue;
 
-        if (!user.title.empty())
+        const bool selected = index == SelectedCharacter;
+        if (!user.title.empty() && (switches.overHead || (selected && switches.type == 4)))
             RenderLine(x, y - 12, user.title, 255, 210, 60);
 
-        if (index == SelectedCharacter)
+        if (selected && switches.type != 4 && (!switches.needAlt || mu::ui::window::IsRepeat(VK_MENU)))
         {
-            std::string info = "Lvl " + std::to_string(user.level) + "  Res " + std::to_string(user.resets);
-            if (user.masterResets > 0)
+            std::string info = "Lvl " + std::to_string(user.level);
+            if (switches.showReset)
+                info += "  Res " + std::to_string(user.resets);
+            if (switches.showMasterReset && user.masterResets > 0)
                 info += "  MRes " + std::to_string(user.masterResets);
+            if (!switches.overHead && !user.title.empty())
+                info = user.title + "  " + info;
             RenderLine(x, y - 24, info, 255, 255, 255);
             if (!user.vip.empty())
                 RenderLine(x, y - 36, user.vip, 120, 200, 255);
