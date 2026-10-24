@@ -50,6 +50,10 @@ public:
         return m_bConnectionReconnectDone.load();
     }
     void ProcessPendingConnectionReconnect();
+    // Before the game shuts down: waits up to timeoutMs for a reconnect still in flight and joins it. False if it
+    // is still blocked in the connect; the thread must then not outlive the shutdown into the static destructors
+    // (it logs, and the loggers are gone by then).
+    bool FinishConnectionReconnect(unsigned int timeoutMs);
 
     // Sends a login without touching the text boxes or the remembered
     // credentials in config.ini. The manual path calls it after validating

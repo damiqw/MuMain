@@ -28,6 +28,7 @@
 #include "Network/Server/ServerListManager.h"
 #ifdef _WIN32
 #include <dpapi.h>
+#include <chrono>
 #endif
 
 #include "Data/GameConfig/GameConfig.h"
@@ -694,6 +695,22 @@ void CLoginWin::ProcessPendingConnectionReconnect()
         m_ConnectionReconnectThread.join();
     m_bConnectionReconnectDone.store(false);
     m_bConnectionReconnectInFlight.store(false);
+}
+
+bool CLoginWin::FinishConnectionReconnect(unsigned int timeoutMs)
+{
+    if (!m_ConnectionReconnectThread.joinable())
+        return true;
+
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMs);
+    while (!m_bConnectionReconnectDone.load() && std::chrono::steady_clock::now() < deadline)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    if (!m_bConnectionReconnectDone.load())
+        return false;
+
+    ProcessPendingConnectionReconnect();
+    return true;
 }
 
 void CLoginWin::ConnectConnectionServer()

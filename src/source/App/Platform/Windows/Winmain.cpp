@@ -22,6 +22,7 @@
 #include <mach-o/dyld.h>
 #endif
 #include <clocale>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <optional>
@@ -1903,6 +1904,15 @@ static void ShutdownRuntime(std::thread& cpuUsageRecorder, std::optional<Core::L
     // The recorder polls process state until Destroy is set.
     Destroy = true;
 
+    // A reconnect to the server list can still be running on its own thread (CLoginWin::CancelLogin()). It has to
+    // end before the shutdown reaches the static destructors: it logs, and the loggers are gone by then (that was
+    // a crash on closing a client that had lost the connection).
+    const bool reconnectFinished = g_LoginWin.FinishConnectionReconnect(5000);
+    if (!reconnectFinished)
+    {
+        mu::log::Get("core")->warn("Shutdown: the server reconnect is still connecting; the process ends without it");
+    }
+
     // Closes the control socket and removes its file, so a later client with
     // the same name does not find a live-looking socket.
     App::Control::ControlServer::Instance().Stop();
@@ -1941,6 +1951,12 @@ static void ShutdownRuntime(std::thread& cpuUsageRecorder, std::optional<Core::L
     // SDL_Quit() may still log, so the bridge outlives it and dies before mu::log.
     sdlLogOutput.reset();
     mu::log::Shutdown();
+
+    // The reconnect thread is still blocked in the connect: end here, before the static destructors run under it.
+    if (!reconnectFinished)
+    {
+        std::_Exit(0); // no atexit handlers nor static destructors
+    }
 }
 
 static void WriteStartupDiagnostics(const wchar_t* executableVersion, const WORD (&fileVersion)[4])
